@@ -75,13 +75,13 @@ class StudentController extends Controller
         $attendanceHistory = $student->attendances()
             ->with(['lectureSession.group'])
             ->latest()
-            ->paginate(5, ['*'], 'attendance_page')
+            ->paginate(10, ['*'], 'attendance_page')
             ->withQueryString();
 
         $transferHistory = $student->transferLogs()
             ->with(['fromGroup', 'toGroup'])
             ->latest()
-            ->paginate(5, ['*'], 'transfer_page')
+            ->paginate(10, ['*'], 'transfer_page')
             ->withQueryString();
 
         return Inertia::render('Students/Show', [

@@ -24,6 +24,7 @@ class TransferLogFactory extends Factory
             'to_group_id' => Group::factory(),
             'transferred_at' => now(),
             'effective_date' => now()->addWeek(),
+            'reason' => fake()->sentence(),
         ];
     }
 }
