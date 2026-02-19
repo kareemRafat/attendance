@@ -187,83 +187,90 @@ export default function GroupsIndex({ groups, branches = [], daysPatterns = [], 
                     </Link>
                 </div>
 
-                <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
                     {groups.data.map((group) => (
-                        <Card key={group.id} className="overflow-hidden shadow-sm hover:shadow-md transition-shadow">
-                            <CardHeader className="p-4 pb-2">
-                                <div className="flex items-start justify-between">
-                                    <div className="space-y-0.5">
-                                        <CardTitle className="text-base font-bold text-indigo-600 dark:text-indigo-400">
+                        <div 
+                            key={group.id} 
+                            className="group relative flex flex-col bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-xl hover:shadow-indigo-500/10 transition-all duration-300"
+                        >
+                            {/* Card Header Area */}
+                            <div className="p-5 pb-0">
+                                <div className="flex items-start justify-between gap-4">
+                                    <div className="min-w-0">
+                                        <h3 className="text-lg font-extrabold text-slate-900 dark:text-white leading-tight truncate group-hover:text-indigo-600 transition-colors">
                                             {group.name}
-                                        </CardTitle>
-                                        <div className="flex items-center gap-1 text-xs text-muted-foreground">
-                                            {group.branch?.name}
+                                        </h3>
+                                        <div className="mt-1 flex items-center gap-1.5">
+                                            <span className="inline-flex items-center rounded-full bg-slate-100 dark:bg-slate-800 px-2 py-0.5 text-[10px] font-bold text-slate-500 uppercase tracking-wider">
+                                                {group.branch?.name}
+                                            </span>
                                         </div>
                                     </div>
-                                    <Button
-                                        variant="ghost"
-                                        size="icon"
-                                        className="size-7 text-muted-foreground cursor-pointer"
+                                    <button 
                                         onClick={() => handleEditClick(group)}
+                                        className="size-8 flex items-center justify-center text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 rounded-full transition-all cursor-pointer border border-transparent hover:border-indigo-100"
                                     >
-                                        <Edit className="size-3.5" />
-                                    </Button>
+                                        <Edit className="size-4" />
+                                    </button>
                                 </div>
-                            </CardHeader>
-                            <CardContent className="p-4 pt-0 space-y-3">
-                                <div className="grid grid-cols-2 gap-2 text-xs">
-                                    <div className="flex items-center gap-1.5 font-medium text-orange-600 dark:text-orange-400 bg-orange-50 dark:bg-orange-950/30 px-2 py-1 rounded-md">
-                                        <Calendar className="size-3.5" />
-                                        <span>{group.formatted_pattern}</span>
+                            </div>
+
+                            {/* Card Body Area */}
+                            <div className="p-5">
+                                <div className="grid grid-cols-1 gap-3">
+                                    <div className="flex items-center gap-3 text-sm font-medium text-slate-600 dark:text-slate-400 bg-slate-50 dark:bg-slate-800/50 p-3 rounded-xl border border-slate-100 dark:border-slate-800/50">
+                                        <div className="size-8 flex items-center justify-center rounded-lg bg-white dark:bg-slate-800 shadow-sm text-amber-500">
+                                            <Calendar className="size-4" />
+                                        </div>
+                                        <div className="flex flex-col">
+                                            <span className="text-[10px] text-slate-400 uppercase font-bold tracking-tight">Schedule</span>
+                                            <span className="text-slate-900 dark:text-slate-200">{group.formatted_pattern}</span>
+                                        </div>
                                     </div>
-                                    <div className="flex items-center gap-1.5 font-medium text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/30 px-2 py-1 rounded-md">
-                                        <Users className="size-3.5" />
-                                        <span>
-                                            {group.students_count || 0} Students
-                                        </span>
+
+                                    <div className="flex items-center gap-3 text-sm font-medium text-slate-600 dark:text-slate-400 bg-slate-50 dark:bg-slate-800/50 p-3 rounded-xl border border-slate-100 dark:border-slate-800/50">
+                                        <div className="size-8 flex items-center justify-center rounded-lg bg-white dark:bg-slate-800 shadow-sm text-emerald-500">
+                                            <Users className="size-4" />
+                                        </div>
+                                        <div className="flex flex-col">
+                                            <span className="text-[10px] text-slate-400 uppercase font-bold tracking-tight">Enrolled</span>
+                                            <span className="text-slate-900 dark:text-slate-200">{group.students_count || 0} Students</span>
+                                        </div>
                                     </div>
                                 </div>
 
-                                <div className="flex gap-2 pt-1">
+                                {/* Actions Area */}
+                                <div className="mt-6 flex items-center gap-3">
                                     <Button
                                         variant={group.is_active ? "outline" : "default"}
-                                        size="sm"
                                         className={cn(
-                                            "flex-1 gap-1.5 cursor-pointer h-8 text-xs",
-                                            group.is_active && "hover:bg-red-600 hover:text-white hover:border-red-600 transition-colors"
+                                            "flex-1 h-10 font-bold rounded-xl transition-all cursor-pointer border-2",
+                                            group.is_active 
+                                                ? "border-slate-100 text-slate-600 hover:bg-red-50 hover:text-red-600 hover:border-red-100" 
+                                                : "bg-indigo-600 hover:bg-indigo-700 text-white border-transparent shadow-lg shadow-indigo-500/20"
                                         )}
                                         onClick={() => toggleStatus(group)}
                                     >
                                         {group.is_active ? (
-                                            <>
-                                                <CheckCircle className="size-3.5" />
-                                                Finish
-                                            </>
+                                            <><CheckCircle className="mr-2 size-4" /> Finish Group</>
                                         ) : (
-                                            <>
-                                                <RotateCcw className="size-3.5" />
-                                                Activate
-                                            </>
+                                            <><RotateCcw className="mr-2 size-4" /> Reactivate</>
                                         )}
                                     </Button>
                                     
                                     {group.is_active && (
                                         <Button
-                                            variant="outline"
-                                            size="sm"
-                                            className="flex-1 h-8 text-xs cursor-pointer"
                                             asChild
+                                            className="h-10 px-5 font-bold rounded-xl bg-slate-900 hover:bg-slate-800 text-white shadow-lg shadow-slate-500/10 cursor-pointer transition-all"
                                         >
-                                            <Link
-                                                href={`/attendance?group_id=${group.id}`}
-                                            >
+                                            <Link href={`/attendance?group_id=${group.id}`}>
                                                 Attendance
                                             </Link>
                                         </Button>
                                     )}
                                 </div>
-                            </CardContent>
-                        </Card>
+                            </div>
+                        </div>
                     ))}
 
                     {groups.data.length === 0 && (
