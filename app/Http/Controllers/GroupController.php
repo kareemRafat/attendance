@@ -2,33 +2,39 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\DaysPattern;
 use App\Http\Requests\GroupRequest;
+use App\Models\Branch;
 use App\Models\Group;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 use Inertia\Response;
 
-use App\Models\Branch;
-use App\Enums\CourseType;
-use App\Enums\DaysPattern;
-
 class GroupController extends Controller
 {
-    public function index(): Response
+    public function index(Request $request): Response
     {
+        $status = $request->input('tab', 'active');
+        $isActive = $status === 'active';
+
+        $groups = Group::where('is_active', $isActive)
+            ->with('branch')
+            ->withCount('students')
+            ->latest()
+            ->paginate(9)
+            ->withQueryString();
+
         return Inertia::render('Groups/Index', [
-            'groups' => Group::with('branch')->withCount('students')->get(),
+            'groups' => $groups,
             'branches' => Branch::all(),
-            'courseTypes' => collect(CourseType::cases())->map(fn($case) => [
-                'name' => $case->label(),
-                'value' => $case->value,
-            ]),
-            'daysPatterns' => collect(DaysPattern::cases())->map(fn($case) => [
+            'daysPatterns' => collect(DaysPattern::cases())->map(fn ($case) => [
                 'name' => $case->label(),
                 'value' => $case->value,
             ]),
             'canManageEverything' => Auth::user()->isAdmin(),
+            'currentTab' => $status,
         ]);
     }
 

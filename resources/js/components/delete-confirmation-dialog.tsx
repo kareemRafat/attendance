@@ -8,6 +8,7 @@ import {
     DialogHeader,
     DialogTitle,
 } from '@/components/ui/dialog';
+import { cn } from '@/lib/utils';
 
 interface DeleteConfirmationDialogProps {
     isOpen: boolean;
@@ -16,6 +17,9 @@ interface DeleteConfirmationDialogProps {
     title: string;
     description: string;
     processing?: boolean;
+    confirmText?: string;
+    confirmVariant?: 'default' | 'destructive' | 'outline' | 'secondary' | 'ghost' | 'link';
+    confirmSize?: 'default' | 'sm' | 'lg' | 'icon';
 }
 
 export function DeleteConfirmationDialog({
@@ -25,14 +29,17 @@ export function DeleteConfirmationDialog({
     title,
     description,
     processing = false,
+    confirmText = 'Delete',
+    confirmVariant = 'destructive',
+    confirmSize = 'default',
 }: DeleteConfirmationDialogProps) {
     return (
         <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
             <DialogContent className="sm:max-w-[425px]">
                 <DialogHeader>
-                    <div className="flex items-center gap-2 text-red-600 mb-2">
+                    <div className={cn("flex items-center gap-2 mb-2", confirmVariant === 'destructive' ? "text-red-600" : "text-primary")}>
                         <AlertTriangle className="size-5" />
-                        <DialogTitle>{title}</DialogTitle>
+                        <DialogTitle className={cn(confirmVariant === 'destructive' && "text-red-600")}>{title}</DialogTitle>
                     </div>
                     <DialogDescription>
                         {description}
@@ -43,21 +50,25 @@ export function DeleteConfirmationDialog({
                         variant="ghost"
                         onClick={onClose}
                         disabled={processing}
+                        className="cursor-pointer"
+                        size={confirmSize}
                     >
                         Cancel
                     </Button>
                     <Button
-                        variant="destructive"
+                        variant={confirmVariant}
                         onClick={onConfirm}
                         disabled={processing}
+                        className="cursor-pointer"
+                        size={confirmSize}
                     >
                         {processing ? (
                             <>
                                 <Loader2 className="mr-2 size-4 animate-spin" />
-                                Deleting...
+                                {confirmVariant === 'destructive' ? 'Deleting...' : 'Processing...'}
                             </>
                         ) : (
-                            'Delete'
+                            confirmText
                         )}
                     </Button>
                 </DialogFooter>

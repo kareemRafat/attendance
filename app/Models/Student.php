@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\CourseType;
 use App\Models\Concerns\BelongsToBranch;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -14,7 +15,21 @@ class Student extends Model
     /** @use HasFactory<\Database\Factories\StudentFactory> */
     use BelongsToBranch, HasFactory;
 
-    protected $fillable = ['branch_id', 'name', 'details'];
+    protected $fillable = ['branch_id', 'track', 'name', 'details'];
+
+    protected $appends = ['formatted_track'];
+
+    protected function casts(): array
+    {
+        return [
+            'track' => CourseType::class,
+        ];
+    }
+
+    public function getFormattedTrackAttribute(): ?string
+    {
+        return $this->track?->label();
+    }
 
     public function branch(): BelongsTo
     {

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\CourseType;
 use App\Http\Requests\StudentRequest;
 use App\Models\Group;
 use App\Models\Student;
@@ -25,7 +26,7 @@ class StudentController extends Controller
             }]);
 
         if ($request->filled('search')) {
-            $query->where('name', 'like', '%' . $request->search . '%');
+            $query->where('name', 'like', '%'.$request->search.'%');
         }
 
         if ($request->filled('branch_id')) {
@@ -35,15 +36,23 @@ class StudentController extends Controller
         if ($request->filled('group_id')) {
             $query->whereHas('groups', function ($q) use ($request) {
                 $q->where('groups.id', $request->group_id)
-                  ->whereNull('enrollments.ended_at');
+                    ->whereNull('enrollments.ended_at');
             });
+        }
+
+        if ($request->filled('track')) {
+            $query->where('track', $request->track);
         }
 
         return Inertia::render('Students/Index', [
             'students' => $query->latest()->paginate(10)->withQueryString(),
             'availableGroups' => Group::where('is_active', true)->get(),
             'availableBranches' => \App\Models\Branch::all(),
-            'filters' => $request->only(['search', 'branch_id', 'group_id']),
+            'courseTypes' => collect(CourseType::cases())->map(fn ($case) => [
+                'name' => $case->label(),
+                'value' => $case->value,
+            ]),
+            'filters' => $request->only(['search', 'branch_id', 'group_id', 'track']),
         ]);
     }
 
@@ -90,17 +99,19 @@ class StudentController extends Controller
     {
         $validated = $request->validated();
         $branchId = $validated['branch_id'];
+        $track = $validated['track'];
 
         if ($request->has('students')) {
-            DB::transaction(function () use ($validated, $branchId) {
+            DB::transaction(function () use ($validated, $branchId, $track) {
                 foreach ($validated['students'] as $studentData) {
                     $student = Student::create([
                         'name' => $studentData['name'],
                         'details' => $studentData['details'] ?? null,
                         'branch_id' => $branchId,
+                        'track' => $track,
                     ]);
 
-                    if (!empty($validated['group_id'])) {
+                    if (! empty($validated['group_id'])) {
                         $student->enrollments()->create([
                             'group_id' => $validated['group_id'],
                             'enrolled_at' => now(),
@@ -112,14 +123,15 @@ class StudentController extends Controller
             return redirect()->route('students.index')->with('success', 'Students created successfully.');
         }
 
-        DB::transaction(function () use ($validated, $branchId) {
+        DB::transaction(function () use ($validated, $branchId, $track) {
             $student = Student::create([
                 'name' => $validated['name'],
                 'details' => $validated['details'] ?? null,
                 'branch_id' => $branchId,
+                'track' => $track,
             ]);
 
-            if (!empty($validated['group_id'])) {
+            if (! empty($validated['group_id'])) {
                 $student->enrollments()->create([
                     'group_id' => $validated['group_id'],
                     'enrolled_at' => now(),

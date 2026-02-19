@@ -43,6 +43,8 @@ interface Enrollment {
 interface Student {
     id: number;
     name: string;
+    track: string;
+    formatted_track: string;
     branch?: { name: string };
     enrollments: Enrollment[];
 }
@@ -127,7 +129,7 @@ export default function StudentShow({
                         </CardTitle>
                     </CardHeader>
                     <CardContent>
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
                             <div>
                                 <p className="text-xs font-medium uppercase tracking-wider text-slate-500">Full Name</p>
                                 <p className="mt-1 text-sm font-semibold text-slate-900">{student.name}</p>
@@ -135,6 +137,10 @@ export default function StudentShow({
                             <div>
                                 <p className="text-xs font-medium uppercase tracking-wider text-slate-500">Branch</p>
                                 <p className="mt-1 text-sm font-semibold text-slate-900">{student.branch?.name || 'N/A'}</p>
+                            </div>
+                            <div>
+                                <p className="text-xs font-medium uppercase tracking-wider text-slate-500">Track</p>
+                                <p className="mt-1 text-sm font-semibold text-slate-900 capitalize">{student.formatted_track || 'N/A'}</p>
                             </div>
                             <div>
                                 <p className="text-xs font-medium uppercase tracking-wider text-slate-500">Current Groups</p>

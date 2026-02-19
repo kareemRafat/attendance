@@ -2,7 +2,6 @@
 
 namespace Database\Factories;
 
-use App\Enums\CourseType;
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Group>
  */
@@ -22,7 +21,6 @@ class GroupFactory extends Factory
         return [
             'branch_id' => Branch::factory(),
             'name' => fake()->unique()->word().' Group',
-            'course_type' => fake()->randomElement(CourseType::cases()),
             'pattern' => fake()->randomElement(DaysPattern::cases()),
             'start_date' => fake()->dateTimeBetween('-1 month', '+1 month'),
             'max_lectures' => 45,

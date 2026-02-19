@@ -1,7 +1,9 @@
 import { Head, Link, useForm } from '@inertiajs/react';
-import { Plus, Users, Calendar, BookOpen, CheckCircle, RotateCcw, Edit, Loader2 } from 'lucide-react';
-import { useState, FormEventHandler } from 'react';
+import { Plus, Users, Calendar, CheckCircle, RotateCcw, Edit, Loader2 } from 'lucide-react';
+import type { FormEventHandler } from 'react';
+import { useState } from 'react';
 import { end, reactivate, store, update } from '@/actions/App/Http/Controllers/GroupController';
+import { DeleteConfirmationDialog } from '@/components/delete-confirmation-dialog';
 import InputError from '@/components/input-error';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -30,11 +32,6 @@ interface Branch {
     name: string;
 }
 
-interface CourseTypeOption {
-    name: string;
-    value: string;
-}
-
 interface DaysPatternOption {
     name: string;
     value: string;
@@ -44,9 +41,7 @@ interface Group {
     id: number;
     branch_id: number;
     name: string;
-    course_type: string;
     pattern: string;
-    formatted_course_type: string;
     formatted_pattern: string;
     start_date: string;
     max_lectures: number;
@@ -58,25 +53,32 @@ interface Group {
 }
 
 interface Props {
-    groups: Group[];
+    groups: {
+        data: Group[];
+        links: {
+            url: string | null;
+            label: string;
+            active: boolean;
+        }[];
+    };
     branches: Branch[];
-    courseTypes: CourseTypeOption[];
     daysPatterns: DaysPatternOption[];
+    currentTab: string;
 }
 
-export default function GroupsIndex({ groups = [], branches = [], courseTypes = [], daysPatterns = [] }: Props) {
+export default function GroupsIndex({ groups, branches = [], daysPatterns = [], currentTab }: Props) {
     const breadcrumbs = [{ title: 'Groups', href: '/groups' }];
-    const [activeTab, setActiveTab] = useState<'active' | 'closed'>('active');
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
     const [editingGroup, setEditingGroup] = useState<Group | null>(null);
+    const [finishingGroup, setFinishingGroup] = useState<Group | null>(null);
+    const [reactivatingGroup, setReactivatingGroup] = useState<Group | null>(null);
 
-    const { post: postEnd } = useForm();
-    const { post: postReactivate } = useForm();
+    const { post: postEnd, processing: finishing } = useForm();
+    const { post: postReactivate, processing: reactivating } = useForm();
 
     const createForm = useForm({
         branch_id: branches.length > 0 ? branches[0].id : 0,
         name: '',
-        course_type: courseTypes.length > 0 ? courseTypes[0].value : '',
         pattern: daysPatterns.length > 0 ? daysPatterns[0].value : '',
         start_date: new Date().toISOString().split('T')[0],
         max_lectures: 45,
@@ -85,24 +87,31 @@ export default function GroupsIndex({ groups = [], branches = [], courseTypes = 
     const editForm = useForm({
         branch_id: 0,
         name: '',
-        course_type: '',
         pattern: '',
         start_date: '',
         max_lectures: 45,
     });
 
-    const filteredGroups = (groups || []).filter((group) =>
-        activeTab === 'active' ? group.is_active : !group.is_active
-    );
-
     const toggleStatus = (group: Group) => {
         if (group.is_active) {
-            if (confirm('Are you sure you want to finish this group?')) {
-                postEnd(end.url({ group: group.id }));
-            }
+            setFinishingGroup(group);
         } else {
-            postReactivate(reactivate.url({ group: group.id }));
+            setReactivatingGroup(group);
         }
+    };
+
+    const handleConfirmFinish = () => {
+        if (!finishingGroup) return;
+        postEnd(end.url({ group: finishingGroup.id }), {
+            onSuccess: () => setFinishingGroup(null),
+        });
+    };
+
+    const handleConfirmReactivate = () => {
+        if (!reactivatingGroup) return;
+        postReactivate(reactivate.url({ group: reactivatingGroup.id }), {
+            onSuccess: () => setReactivatingGroup(null),
+        });
     };
 
     const handleCreateSubmit: FormEventHandler = (e) => {
@@ -120,7 +129,6 @@ export default function GroupsIndex({ groups = [], branches = [], courseTypes = 
         editForm.setData({
             branch_id: group.branch_id,
             name: group.name,
-            course_type: group.course_type,
             pattern: group.pattern,
             start_date: group.start_date ? group.start_date.split('T')[0] : '',
             max_lectures: group.max_lectures,
@@ -149,94 +157,91 @@ export default function GroupsIndex({ groups = [], branches = [], courseTypes = 
                         <h1 className="text-2xl font-bold">Groups Management</h1>
                         <p className="text-sm text-muted-foreground">Manage your course groups and their status.</p>
                     </div>
-                    <Button className="gap-2" onClick={() => setIsCreateModalOpen(true)}>
+                    <Button className="gap-2 cursor-pointer" onClick={() => setIsCreateModalOpen(true)}>
                         <Plus className="size-4" /> New Group
                     </Button>
                 </div>
 
                 <div className="inline-flex gap-1 rounded-lg bg-neutral-100 p-1 dark:bg-neutral-800 self-start">
-                    <button
-                        onClick={() => setActiveTab('active')}
+                    <Link
+                        href="/groups?tab=active"
                         className={cn(
-                            'flex items-center rounded-md px-4 py-2 transition-colors text-sm font-medium',
-                            activeTab === 'active'
+                            'flex items-center rounded-md px-4 py-2 transition-colors text-sm font-medium cursor-pointer',
+                            currentTab === 'active'
                                 ? 'bg-white shadow-xs dark:bg-neutral-700 dark:text-neutral-100'
                                 : 'text-neutral-500 hover:bg-neutral-200/60 hover:text-black dark:text-neutral-400 dark:hover:bg-neutral-700/60',
                         )}
                     >
                         Active Groups
-                    </button>
-                    <button
-                        onClick={() => setActiveTab('closed')}
+                    </Link>
+                    <Link
+                        href="/groups?tab=closed"
                         className={cn(
-                            'flex items-center rounded-md px-4 py-2 transition-colors text-sm font-medium',
-                            activeTab === 'closed'
+                            'flex items-center rounded-md px-4 py-2 transition-colors text-sm font-medium cursor-pointer',
+                            currentTab === 'closed'
                                 ? 'bg-white shadow-xs dark:bg-neutral-700 dark:text-neutral-100'
                                 : 'text-neutral-500 hover:bg-neutral-200/60 hover:text-black dark:text-neutral-400 dark:hover:bg-neutral-700/60',
                         )}
                     >
                         Closed Groups
-                    </button>
+                    </Link>
                 </div>
 
                 <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-                    {filteredGroups.map((group) => (
-                        <Card key={group.id} className="overflow-hidden">
-                            <CardHeader className="pb-2">
+                    {groups.data.map((group) => (
+                        <Card key={group.id} className="overflow-hidden shadow-sm hover:shadow-md transition-shadow">
+                            <CardHeader className="p-4 pb-2">
                                 <div className="flex items-start justify-between">
-                                    <div className="space-y-1">
-                                        <CardTitle className="text-lg">
+                                    <div className="space-y-0.5">
+                                        <CardTitle className="text-base font-bold text-indigo-600 dark:text-indigo-400">
                                             {group.name}
                                         </CardTitle>
-                                        <div className="flex items-center gap-1 text-sm text-muted-foreground">
+                                        <div className="flex items-center gap-1 text-xs text-muted-foreground">
                                             {group.branch?.name}
                                         </div>
                                     </div>
                                     <Button
                                         variant="ghost"
                                         size="icon"
-                                        className="size-8 text-muted-foreground"
+                                        className="size-7 text-muted-foreground cursor-pointer"
                                         onClick={() => handleEditClick(group)}
                                     >
-                                        <Edit className="size-4" />
+                                        <Edit className="size-3.5" />
                                     </Button>
                                 </div>
                             </CardHeader>
-                            <CardContent className="space-y-4">
-                                <div className="grid grid-cols-2 gap-2 text-sm">
-                                    <div className="flex items-center gap-2 text-muted-foreground">
-                                        <BookOpen className="size-4" />
-                                        <span>
-                                            {group.formatted_course_type}
-                                        </span>
-                                    </div>
-                                    <div className="flex items-center gap-2 text-muted-foreground">
-                                        <Calendar className="size-4" />
+                            <CardContent className="p-4 pt-0 space-y-3">
+                                <div className="grid grid-cols-2 gap-2 text-xs">
+                                    <div className="flex items-center gap-1.5 font-medium text-orange-600 dark:text-orange-400 bg-orange-50 dark:bg-orange-950/30 px-2 py-1 rounded-md">
+                                        <Calendar className="size-3.5" />
                                         <span>{group.formatted_pattern}</span>
                                     </div>
-                                    <div className="flex items-center gap-2 text-muted-foreground">
-                                        <Users className="size-4" />
+                                    <div className="flex items-center gap-1.5 font-medium text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/30 px-2 py-1 rounded-md">
+                                        <Users className="size-3.5" />
                                         <span>
                                             {group.students_count || 0} Students
                                         </span>
                                     </div>
                                 </div>
 
-                                <div className="flex gap-2 pt-2">
+                                <div className="flex gap-2 pt-1">
                                     <Button
                                         variant={group.is_active ? "outline" : "default"}
                                         size="sm"
-                                        className="flex-1 gap-2"
+                                        className={cn(
+                                            "flex-1 gap-1.5 cursor-pointer h-8 text-xs",
+                                            group.is_active && "hover:bg-red-600 hover:text-white hover:border-red-600 transition-colors"
+                                        )}
                                         onClick={() => toggleStatus(group)}
                                     >
                                         {group.is_active ? (
                                             <>
-                                                <CheckCircle className="size-4" />
+                                                <CheckCircle className="size-3.5" />
                                                 Finish
                                             </>
                                         ) : (
                                             <>
-                                                <RotateCcw className="size-4" />
+                                                <RotateCcw className="size-3.5" />
                                                 Activate
                                             </>
                                         )}
@@ -246,7 +251,7 @@ export default function GroupsIndex({ groups = [], branches = [], courseTypes = 
                                         <Button
                                             variant="outline"
                                             size="sm"
-                                            className="flex-1"
+                                            className="flex-1 h-8 text-xs cursor-pointer"
                                             asChild
                                         >
                                             <Link
@@ -261,14 +266,31 @@ export default function GroupsIndex({ groups = [], branches = [], courseTypes = 
                         </Card>
                     ))}
 
-                    {filteredGroups.length === 0 && (
+                    {groups.data.length === 0 && (
                         <div className="col-span-full rounded-xl border bg-muted/20 py-24 text-center">
                             <p className="text-muted-foreground">
-                                No {activeTab} groups found.
+                                No {currentTab} groups found.
                             </p>
                         </div>
                     )}
                 </div>
+
+                {/* Pagination */}
+                {groups.links && groups.links.length > 3 && (
+                    <div className="py-4 flex flex-wrap justify-center gap-1">
+                        {groups.links.map((link, i) => (
+                            <Link key={i} href={link.url || '#'} preserveScroll>
+                                <Button
+                                    variant={link.active ? 'default' : 'outline'}
+                                    size="sm"
+                                    className={`h-8 px-3 ${!link.url ? 'pointer-events-none opacity-50' : 'cursor-pointer'}`}
+                                >
+                                    <span dangerouslySetInnerHTML={{ __html: link.label }} />
+                                </Button>
+                            </Link>
+                        ))}
+                    </div>
+                )}
             </div>
 
             {/* Create Group Modal */}
@@ -313,45 +335,24 @@ export default function GroupsIndex({ groups = [], branches = [], courseTypes = 
                                 <InputError message={createForm.errors.name} />
                             </div>
 
-                            <div className="grid grid-cols-2 gap-4">
-                                <div className="grid gap-2">
-                                    <Label htmlFor="create-course-type">Course Type</Label>
-                                    <Select
-                                        value={createForm.data.course_type}
-                                        onValueChange={(v) => createForm.setData('course_type', v)}
-                                    >
-                                        <SelectTrigger id="create-course-type">
-                                            <SelectValue placeholder="Select type" />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            {(courseTypes || []).map((type) => (
-                                                <SelectItem key={type.value} value={type.value}>
-                                                    {type.name}
-                                                </SelectItem>
-                                            ))}
-                                        </SelectContent>
-                                    </Select>
-                                    <InputError message={createForm.errors.course_type} />
-                                </div>
-                                <div className="grid gap-2">
-                                    <Label htmlFor="create-pattern">Days Pattern</Label>
-                                    <Select
-                                        value={createForm.data.pattern}
-                                        onValueChange={(v) => createForm.setData('pattern', v)}
-                                    >
-                                        <SelectTrigger id="create-pattern">
-                                            <SelectValue placeholder="Select pattern" />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            {(daysPatterns || []).map((pattern) => (
-                                                <SelectItem key={pattern.value} value={pattern.value}>
-                                                    {pattern.name}
-                                                </SelectItem>
-                                            ))}
-                                        </SelectContent>
-                                    </Select>
-                                    <InputError message={createForm.errors.pattern} />
-                                </div>
+                            <div className="grid gap-2">
+                                <Label htmlFor="create-pattern">Days Pattern</Label>
+                                <Select
+                                    value={createForm.data.pattern}
+                                    onValueChange={(v) => createForm.setData('pattern', v)}
+                                >
+                                    <SelectTrigger id="create-pattern">
+                                        <SelectValue placeholder="Select pattern" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        {(daysPatterns || []).map((pattern) => (
+                                            <SelectItem key={pattern.value} value={pattern.value}>
+                                                {pattern.name}
+                                            </SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
+                                <InputError message={createForm.errors.pattern} />
                             </div>
 
                             <div className="grid grid-cols-2 gap-4">
@@ -431,45 +432,24 @@ export default function GroupsIndex({ groups = [], branches = [], courseTypes = 
                                 <InputError message={editForm.errors.name} />
                             </div>
 
-                            <div className="grid grid-cols-2 gap-4">
-                                <div className="grid gap-2">
-                                    <Label htmlFor="edit-course-type">Course Type</Label>
-                                    <Select
-                                        value={editForm.data.course_type}
-                                        onValueChange={(v) => editForm.setData('course_type', v)}
-                                    >
-                                        <SelectTrigger id="edit-course-type">
-                                            <SelectValue placeholder="Select type" />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            {(courseTypes || []).map((type) => (
-                                                <SelectItem key={type.value} value={type.value}>
-                                                    {type.name}
-                                                </SelectItem>
-                                            ))}
-                                        </SelectContent>
-                                    </Select>
-                                    <InputError message={editForm.errors.course_type} />
-                                </div>
-                                <div className="grid gap-2">
-                                    <Label htmlFor="edit-pattern">Days Pattern</Label>
-                                    <Select
-                                        value={editForm.data.pattern}
-                                        onValueChange={(v) => editForm.setData('pattern', v)}
-                                    >
-                                        <SelectTrigger id="edit-pattern">
-                                            <SelectValue placeholder="Select pattern" />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            {(daysPatterns || []).map((pattern) => (
-                                                <SelectItem key={pattern.value} value={pattern.value}>
-                                                    {pattern.name}
-                                                </SelectItem>
-                                            ))}
-                                        </SelectContent>
-                                    </Select>
-                                    <InputError message={editForm.errors.pattern} />
-                                </div>
+                            <div className="grid gap-2">
+                                <Label htmlFor="edit-pattern">Days Pattern</Label>
+                                <Select
+                                    value={editForm.data.pattern}
+                                    onValueChange={(v) => editForm.setData('pattern', v)}
+                                >
+                                    <SelectTrigger id="edit-pattern">
+                                        <SelectValue placeholder="Select pattern" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        {(daysPatterns || []).map((pattern) => (
+                                            <SelectItem key={pattern.value} value={pattern.value}>
+                                                {pattern.name}
+                                            </SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
+                                <InputError message={editForm.errors.pattern} />
                             </div>
 
                             <div className="grid grid-cols-2 gap-4">
@@ -507,6 +487,32 @@ export default function GroupsIndex({ groups = [], branches = [], courseTypes = 
                     </form>
                 </DialogContent>
             </Dialog>
+
+            {/* Finish Confirmation Modal */}
+            <DeleteConfirmationDialog
+                isOpen={!!finishingGroup}
+                onClose={() => setFinishingGroup(null)}
+                onConfirm={handleConfirmFinish}
+                processing={finishing}
+                title="Finish Group"
+                description={`Are you sure you want to finish the group "${finishingGroup?.name}"? This will move it to the closed groups section.`}
+                confirmText="Finish Group"
+                confirmVariant="destructive"
+                confirmSize="sm"
+            />
+
+            {/* Reactivate Confirmation Modal */}
+            <DeleteConfirmationDialog
+                isOpen={!!reactivatingGroup}
+                onClose={() => setReactivatingGroup(null)}
+                onConfirm={handleConfirmReactivate}
+                processing={reactivating}
+                title="Reactivate Group"
+                description={`Are you sure you want to reactivate the group "${reactivatingGroup?.name}"? This will move it back to the active groups section.`}
+                confirmText="Reactivate"
+                confirmVariant="default"
+                confirmSize="sm"
+            />
         </AppLayout>
     );
 }

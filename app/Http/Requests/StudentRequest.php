@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests;
 
+use App\Enums\CourseType;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class StudentRequest extends FormRequest
 {
@@ -35,6 +37,7 @@ class StudentRequest extends FormRequest
     {
         $rules = [
             'branch_id' => ['required', 'exists:branches,id'],
+            'track' => ['required', Rule::enum(CourseType::class)],
         ];
 
         if ($this->has('students')) {
@@ -44,6 +47,13 @@ class StudentRequest extends FormRequest
                 'students.*.details' => ['nullable', 'string'],
                 'group_id' => ['required', 'exists:groups,id'],
             ]);
+        }
+
+        if ($this->isMethod('PUT') || $this->isMethod('PATCH')) {
+            return [
+                'name' => ['required', 'string', 'max:255'],
+                'track' => ['required', Rule::enum(CourseType::class)],
+            ];
         }
 
         return array_merge($rules, [

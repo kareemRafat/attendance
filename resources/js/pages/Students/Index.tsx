@@ -1,5 +1,5 @@
 import { Head, useForm, Link, usePage, router } from '@inertiajs/react';
-import { Plus, Pencil, Trash, ArrowRightLeft, Eye, Users, UserPlus, Info } from 'lucide-react';
+import { Plus, Pencil, Trash, ArrowRightLeft, Eye, Users, UserPlus } from 'lucide-react';
 import { useState } from 'react';
 import { DeleteConfirmationDialog } from '@/components/delete-confirmation-dialog';
 import { Button } from '@/components/ui/button';
@@ -48,9 +48,16 @@ interface Group {
     name: string;
 }
 
+interface CourseTypeOption {
+    name: string;
+    value: string;
+}
+
 interface Student {
     id: number;
     name: string;
+    track: string;
+    formatted_track: string;
     branch?: { name: string; id: number };
     groups: Group[];
 }
@@ -62,10 +69,12 @@ interface Props {
     };
     availableGroups: Group[];
     availableBranches: Branch[];
+    courseTypes: CourseTypeOption[];
     filters: {
         search?: string;
         branch_id?: string;
         group_id?: string;
+        track?: string;
     };
 }
 
@@ -73,6 +82,7 @@ export default function StudentsIndex({
     students,
     availableGroups,
     availableBranches,
+    courseTypes,
     filters,
 }: Props) {
     const { auth } = usePage<any>().props;
@@ -88,20 +98,28 @@ export default function StudentsIndex({
         useState<Student | null>(null);
     const [deletingStudent, setDeletingStudent] = useState<Student | null>(null);
 
+    // Track state for filtering groups
+    const [quickTrack, setQuickTrack] = useState('');
+    const [massTrack, setMassTrack] = useState('');
+    const [transferTrack, setTransferTrack] = useState('');
+
     // Search and Filter State
     const [search, setSearch] = useState(filters.search || '');
     const [branchFilter, setBranchFilter] = useState(filters.branch_id || 'all');
     const [groupFilter, setGroupFilter] = useState(filters.group_id || 'all');
+    const [trackFilter, setTrackFilter] = useState(filters.track || 'all');
 
-    const handleFilter = (newSearch?: string, newBranch?: string, newGroup?: string) => {
+    const handleFilter = (newSearch?: string, newBranch?: string, newGroup?: string, newTrack?: string) => {
         const query: any = {};
         const s = newSearch !== undefined ? newSearch : search;
         const b = newBranch !== undefined ? newBranch : branchFilter;
         const g = newGroup !== undefined ? newGroup : groupFilter;
+        const t = newTrack !== undefined ? newTrack : trackFilter;
 
         if (s) query.search = s;
         if (b && b !== 'all') query.branch_id = b;
         if (g && g !== 'all') query.group_id = g;
+        if (t && t !== 'all') query.track = t;
 
         router.get('/students', query, {
             preserveState: true,
@@ -115,12 +133,14 @@ export default function StudentsIndex({
         name: '',
         branch_id: isAdmin ? '' : user.branch_id?.toString() || '',
         group_id: '',
+        track: '',
     });
 
     // Mass Add Form
     const massAdd = useForm({
         branch_id: isAdmin ? '' : user.branch_id?.toString() || '',
         group_id: '',
+        track: '',
         students: [
             { name: '', details: '' },
             { name: '', details: '' },
@@ -131,6 +151,7 @@ export default function StudentsIndex({
     // Edit Form
     const editForm = useForm({
         name: '',
+        track: '',
     });
 
     // Transfer Form
@@ -147,6 +168,7 @@ export default function StudentsIndex({
             onSuccess: () => {
                 setIsCreateOpen(false);
                 quickAdd.reset();
+                setQuickTrack('');
             },
         });
     };
@@ -157,6 +179,7 @@ export default function StudentsIndex({
             onSuccess: () => {
                 setIsMassAddOpen(false);
                 massAdd.reset();
+                setMassTrack('');
             },
         });
     };
@@ -195,6 +218,7 @@ export default function StudentsIndex({
             onSuccess: () => {
                 setTransferringStudent(null);
                 transferForm.reset();
+                setTransferTrack('');
             },
         });
     };
@@ -208,6 +232,20 @@ export default function StudentsIndex({
         });
     };
 
+    const filteredGroupsByTrack = () => {
+        return availableGroups;
+    };
+
+    const handleQuickTrackChange = (val: string) => {
+        setQuickTrack(val);
+        quickAdd.setData('track', val);
+    };
+
+    const handleMassTrackChange = (val: string) => {
+        setMassTrack(val);
+        massAdd.setData('track', val);
+    };
+
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Students" />
@@ -219,7 +257,10 @@ export default function StudentsIndex({
                         {/* Mass Add Button & Dialog */}
                         <Dialog
                             open={isMassAddOpen}
-                            onOpenChange={setIsMassAddOpen}
+                            onOpenChange={(open) => {
+                                setIsMassAddOpen(open);
+                                if (!open) setMassTrack('');
+                            }}
                         >
                             <DialogTrigger asChild>
                                 <Button
@@ -243,7 +284,7 @@ export default function StudentsIndex({
                                     onSubmit={submitMassAdd}
                                     className="space-y-6 pt-4"
                                 >
-                                    <div className="space-y-4 p-4 bg-secondary/30 rounded-lg border">
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 bg-secondary/30 rounded-lg border">
                                         {isAdmin && (
                                             <div className="space-y-2">
                                                 <Label htmlFor="mass-branch-id">Branch</Label>
@@ -268,6 +309,20 @@ export default function StudentsIndex({
                                             </div>
                                         )}
                                         <div className="space-y-2">
+                                            <Label>Choice Track</Label>
+                                            <Select value={massTrack} onValueChange={handleMassTrackChange}>
+                                                <SelectTrigger className="bg-background">
+                                                    <SelectValue placeholder="Choose Track" />
+                                                </SelectTrigger>
+                                                <SelectContent>
+                                                    {courseTypes.map((type) => (
+                                                        <SelectItem key={type.value} value={type.value}>{type.name}</SelectItem>
+                                                    ))}
+                                                </SelectContent>
+                                            </Select>
+                                            {massAdd.errors.track && <p className="text-xs text-destructive">{massAdd.errors.track}</p>}
+                                        </div>
+                                        <div className="space-y-2 md:col-span-2">
                                             <Label htmlFor="mass-group-id">Group Enrollment</Label>
                                             <Select
                                                 value={massAdd.data.group_id}
@@ -276,10 +331,10 @@ export default function StudentsIndex({
                                                 }
                                             >
                                                 <SelectTrigger className="bg-background">
-                                                    <SelectValue placeholder="Choose a group" />
+                                                    <SelectValue placeholder="Select group" />
                                                 </SelectTrigger>
                                                 <SelectContent>
-                                                    {availableGroups.map((group) => (
+                                                    {filteredGroupsByTrack().map((group) => (
                                                         <SelectItem key={group.id} value={group.id.toString()}>
                                                             {group.name}
                                                         </SelectItem>
@@ -345,7 +400,10 @@ export default function StudentsIndex({
                         {/* Quick Add Button & Dialog */}
                         <Dialog
                             open={isCreateOpen}
-                            onOpenChange={setIsCreateOpen}
+                            onOpenChange={(open) => {
+                                setIsCreateOpen(open);
+                                if (!open) setQuickTrack('');
+                            }}
                         >
                             <DialogTrigger asChild>
                                 <Button
@@ -389,21 +447,34 @@ export default function StudentsIndex({
                                         </div>
                                     )}
                                     <div className="space-y-2">
+                                        <Label>Choice Track</Label>
+                                        <Select value={quickTrack} onValueChange={handleQuickTrackChange}>
+                                            <SelectTrigger>
+                                                <SelectValue placeholder="Choose Track" />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                {courseTypes.map((type) => (
+                                                    <SelectItem key={type.value} value={type.value}>{type.name}</SelectItem>
+                                                ))}
+                                            </SelectContent>
+                                        </Select>
+                                        {quickAdd.errors.track && <p className="text-xs text-destructive">{quickAdd.errors.track}</p>}
+                                    </div>
+                                    <div className="space-y-2">
                                         <Label htmlFor="quick-group-id">Group</Label>
                                         <Select
                                             value={quickAdd.data.group_id}
                                             onValueChange={(val) => quickAdd.setData('group_id', val)}
                                         >
-                                            <SelectTrigger>
-                                                <SelectValue placeholder="Choose a group" />
-                                            </SelectTrigger>
-                                            <SelectContent>
-                                                {availableGroups.map((group) => (
-                                                    <SelectItem key={group.id} value={group.id.toString()}>
-                                                        {group.name}
-                                                    </SelectItem>
-                                                ))}
-                                            </SelectContent>
+                                                                                    <SelectTrigger>
+                                                                                        <SelectValue placeholder="Select group" />
+                                                                                    </SelectTrigger>                                        <SelectContent>
+                                            {filteredGroupsByTrack().map((group) => (
+                                                <SelectItem key={group.id} value={group.id.toString()}>
+                                                    {group.name}
+                                                </SelectItem>
+                                            ))}
+                                        </SelectContent>
                                         </Select>
                                         {quickAdd.errors.group_id && <p className="text-xs text-destructive">{quickAdd.errors.group_id}</p>}
                                     </div>
@@ -475,6 +546,27 @@ export default function StudentsIndex({
                                 </Select>
                             )}
 
+                            {/* Track Filter */}
+                            <Select
+                                value={trackFilter}
+                                onValueChange={(val) => {
+                                    setTrackFilter(val);
+                                    handleFilter(undefined, undefined, undefined, val);
+                                }}
+                            >
+                                <SelectTrigger className="w-full md:w-[200px] bg-white shadow-sm h-10">
+                                    <SelectValue placeholder="All Tracks" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="all">All Tracks</SelectItem>
+                                    {courseTypes.map((type) => (
+                                        <SelectItem key={type.value} value={type.value}>
+                                            {type.name}
+                                        </SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+
                             {/* Group Filter */}
                             <Select
                                 value={groupFilter}
@@ -483,7 +575,7 @@ export default function StudentsIndex({
                                     handleFilter(undefined, undefined, val);
                                 }}
                             >
-                                <SelectTrigger className="w-full md:w-[290px] bg-white shadow-sm h-10">
+                                <SelectTrigger className="w-full md:w-[250px] bg-white shadow-sm h-10">
                                     <SelectValue placeholder="All Groups" />
                                 </SelectTrigger>
                                 <SelectContent>
@@ -496,7 +588,7 @@ export default function StudentsIndex({
                                 </SelectContent>
                             </Select>
 
-                            {(search || (branchFilter && branchFilter !== 'all') || (groupFilter && groupFilter !== 'all')) && (
+                            {(search || (branchFilter && branchFilter !== 'all') || (groupFilter && groupFilter !== 'all') || (trackFilter && trackFilter !== 'all')) && (
                                 <Button
                                     variant="ghost"
                                     size="sm"
@@ -504,7 +596,8 @@ export default function StudentsIndex({
                                         setSearch('');
                                         setBranchFilter('all');
                                         setGroupFilter('all');
-                                        handleFilter('', 'all', 'all');
+                                        setTrackFilter('all');
+                                        handleFilter('', 'all', 'all', 'all');
                                     }}
                                     className="text-xs h-10 cursor-pointer text-blue-600 hover:text-blue-700 hover:bg-blue-50 font-semibold transition-colors"
                                 >
@@ -519,6 +612,7 @@ export default function StudentsIndex({
                                 <TableRow>
                                     <TableHead className="pl-6">Name</TableHead>
                                     <TableHead>Branch</TableHead>
+                                    <TableHead>Track</TableHead>
                                     <TableHead>Current Groups</TableHead>
                                     <TableHead className="text-right pr-6">Actions</TableHead>
                                 </TableRow>
@@ -535,6 +629,11 @@ export default function StudentsIndex({
                                             </Link>
                                         </TableCell>
                                         <TableCell>{student.branch?.name || '-'}</TableCell>
+                                        <TableCell>
+                                            {student.formatted_track ? (
+                                                <span className="capitalize">{student.formatted_track}</span>
+                                            ) : '-'}
+                                        </TableCell>
                                         <TableCell>
                                             <div className="flex flex-wrap gap-1">
                                                 {student.groups.map((g) => (
@@ -578,7 +677,10 @@ export default function StudentsIndex({
                                                     className="h-8 w-8 cursor-pointer text-slate-600 hover:text-slate-700 hover:bg-slate-100"
                                                     onClick={() => {
                                                         setEditingStudent(student);
-                                                        editForm.setData('name', student.name);
+                                                        editForm.setData({
+                                                            name: student.name,
+                                                            track: student.track || '',
+                                                        });
                                                     }}
                                                 >
                                                     <Pencil className="size-4" />
@@ -598,7 +700,7 @@ export default function StudentsIndex({
                                 ))}
                                 {students.data.length === 0 && (
                                     <TableRow>
-                                        <TableCell colSpan={4} className="h-24 text-center text-muted-foreground italic">No students found.</TableCell>
+                                        <TableCell colSpan={isAdmin ? 5 : 4} className="h-24 text-center text-muted-foreground italic">No students found.</TableCell>
                                     </TableRow>
                                 )}
                             </TableBody>
@@ -643,6 +745,23 @@ export default function StudentsIndex({
                                 />
                                 {editForm.errors.name && <p className="text-xs text-destructive">{editForm.errors.name}</p>}
                             </div>
+                            <div className="space-y-2">
+                                <Label htmlFor="edit-track">Track</Label>
+                                <Select
+                                    value={editForm.data.track}
+                                    onValueChange={(val) => editForm.setData('track', val)}
+                                >
+                                    <SelectTrigger id="edit-track">
+                                        <SelectValue placeholder="Select track" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        {courseTypes.map((type) => (
+                                            <SelectItem key={type.value} value={type.value}>{type.name}</SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
+                                {editForm.errors.track && <p className="text-xs text-destructive">{editForm.errors.track}</p>}
+                            </div>
                             <DialogFooter>
                                 <Button type="submit" disabled={editForm.processing} className="w-full cursor-pointer">Update Student</Button>
                             </DialogFooter>
@@ -651,7 +770,12 @@ export default function StudentsIndex({
                 </Dialog>
 
                 {/* Transfer Dialog */}
-                <Dialog open={!!transferringStudent} onOpenChange={(open) => !open && setTransferringStudent(null)}>
+                <Dialog open={!!transferringStudent} onOpenChange={(open) => {
+                    if (!open) {
+                        setTransferringStudent(null);
+                        setTransferTrack('');
+                    }
+                }}>
                     <DialogContent>
                         <DialogHeader>
                             <div className="flex items-center gap-2">
@@ -663,6 +787,19 @@ export default function StudentsIndex({
                             </DialogDescription>
                         </DialogHeader>
                         <form onSubmit={submitTransfer} className="space-y-4 pt-4">
+                            <div className="space-y-2">
+                                <Label className="text-xs font-bold text-slate-500 uppercase">Choice Track</Label>
+                                <Select value={transferTrack} onValueChange={setTransferTrack}>
+                                    <SelectTrigger>
+                                        <SelectValue placeholder="Choose Track" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        {courseTypes.map((type) => (
+                                            <SelectItem key={type.value} value={type.value}>{type.name}</SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
+                            </div>
                             <div className="grid grid-cols-2 gap-4">
                                 <div className="space-y-2">
                                     <Label htmlFor="from_group_id" className="text-xs font-bold text-slate-500 uppercase">From Group</Label>
@@ -680,11 +817,10 @@ export default function StudentsIndex({
                                 <div className="space-y-2">
                                     <Label htmlFor="to_group_id" className="text-xs font-bold text-slate-500 uppercase">To Group</Label>
                                     <Select value={transferForm.data.to_group_id} onValueChange={(val) => transferForm.setData('to_group_id', val)}>
-                                        <SelectTrigger>
-                                            <SelectValue placeholder="Target" />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            {availableGroups.filter((g) => g.id.toString() !== transferForm.data.from_group_id).map((group) => (
+                                                                            <SelectTrigger>
+                                                                                <SelectValue placeholder="Target" />
+                                                                            </SelectTrigger>                                        <SelectContent>
+                                            {filteredGroupsByTrack().filter((g) => g.id.toString() !== transferForm.data.from_group_id).map((group) => (
                                                 <SelectItem key={group.id} value={group.id.toString()}>{group.name}</SelectItem>
                                             ))}
                                         </SelectContent>

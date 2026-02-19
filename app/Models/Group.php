@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use App\Enums\CourseType;
 use App\Enums\DaysPattern;
 use App\Models\Concerns\BelongsToBranch;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -19,19 +18,17 @@ class Group extends Model
     protected $fillable = [
         'branch_id',
         'name',
-        'course_type',
         'pattern',
         'start_date',
         'max_lectures',
         'is_active',
     ];
 
-    protected $appends = ['formatted_pattern', 'formatted_course_type'];
+    protected $appends = ['formatted_pattern'];
 
     protected function casts(): array
     {
         return [
-            'course_type' => CourseType::class,
             'pattern' => DaysPattern::class,
             'start_date' => 'date',
             'is_active' => 'boolean',
@@ -41,11 +38,6 @@ class Group extends Model
     public function getFormattedPatternAttribute(): string
     {
         return $this->pattern->label();
-    }
-
-    public function getFormattedCourseTypeAttribute(): string
-    {
-        return $this->course_type->label();
     }
 
     public function branch(): BelongsTo

@@ -15,7 +15,6 @@ return new class extends Migration
             $table->id();
             $table->foreignId('branch_id')->constrained()->cascadeOnDelete();
             $table->string('name');
-            $table->string('course_type');
             $table->string('pattern');
             $table->date('start_date');
             $table->integer('max_lectures')->default(45);
