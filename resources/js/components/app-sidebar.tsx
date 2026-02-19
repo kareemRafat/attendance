@@ -1,4 +1,4 @@
-import { Link } from '@inertiajs/react';
+import { Link, usePage } from '@inertiajs/react';
 import {
     BarChart3,
     BookOpen,
@@ -30,53 +30,59 @@ import groups from '@/routes/groups';
 import branches from '@/routes/branches';
 import reports from '@/routes/reports';
 
-const mainNavItems: NavItem[] = [
-    {
-        title: 'Dashboard',
-        href: dashboard(),
-        icon: LayoutGrid,
-    },
-    {
-        title: 'Attendance',
-        href: attendance.index(),
-        icon: CalendarCheck,
-    },
-    {
-        title: 'Students',
-        href: students.index(),
-        icon: Users,
-    },
-    {
-        title: 'Groups',
-        href: groups.index(),
-        icon: Layers,
-    },
-    {
-        title: 'Branches',
-        href: branches.index(),
-        icon: Building2,
-    },
-    {
-        title: 'Reports',
-        href: reports.dashboard(),
-        icon: BarChart3,
-    },
-];
-
-const footerNavItems: NavItem[] = [
-    {
-        title: 'Repository',
-        href: 'https://github.com/laravel/react-starter-kit',
-        icon: Folder,
-    },
-    {
-        title: 'Documentation',
-        href: 'https://laravel.com/docs/starter-kits#react',
-        icon: BookOpen,
-    },
-];
-
 export function AppSidebar() {
+    const { auth } = usePage<any>().props;
+    const user = auth.user;
+    const isAdmin = user.role === 'admin';
+
+    const mainNavItems: NavItem[] = [
+        {
+            title: 'Dashboard',
+            href: dashboard(),
+            icon: LayoutGrid,
+        },
+        {
+            title: 'Attendance',
+            href: attendance.index(),
+            icon: CalendarCheck,
+        },
+        {
+            title: 'Students',
+            href: students.index(),
+            icon: Users,
+        },
+        {
+            title: 'Groups',
+            href: groups.index(),
+            icon: Layers,
+        },
+        ...(isAdmin ? [
+            {
+                title: 'Branches',
+                href: branches.index(),
+                icon: Building2,
+            }
+        ] : []),
+        {
+            title: 'Reports',
+            href: reports.dashboard(),
+            icon: BarChart3,
+        },
+    ];
+
+    const footerNavItems: NavItem[] = [
+        {
+            title: 'Repository',
+            href: 'https://github.com/laravel/react-starter-kit',
+            icon: Folder,
+        },
+        {
+            title: 'Documentation',
+            href: 'https://laravel.com/docs/starter-kits#react',
+            icon: BookOpen,
+        },
+    ];
+
     return (
         <Sidebar collapsible="icon" variant="inset">
             <SidebarHeader>

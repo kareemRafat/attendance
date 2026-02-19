@@ -12,8 +12,10 @@ class BranchController extends Controller
 {
     public function index(): Response
     {
+        $this->authorize('viewAny', Branch::class);
+
         return Inertia::render('Branches/Index', [
-            'branches' => Branch::all(),
+            'branches' => Branch::withCount(['groups', 'users'])->get(),
         ]);
     }
 
