@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\CourseType;
 use App\Enums\DaysPattern;
 use App\Http\Requests\GroupRequest;
 use App\Models\Branch;
@@ -19,22 +20,43 @@ class GroupController extends Controller
         $status = $request->input('tab', 'active');
         $isActive = $status === 'active';
 
-        $groups = Group::where('is_active', $isActive)
+        $query = Group::query()
+            ->where('is_active', $isActive)
             ->with('branch')
-            ->withCount('students')
-            ->latest()
+            ->withCount('students');
+
+        if ($request->filled('search')) {
+            $query->where('name', 'like', '%'.$request->search.'%');
+        }
+
+        if ($request->filled('branch_id')) {
+            $query->where('branch_id', $request->branch_id);
+        }
+
+        if ($request->filled('track')) {
+            $query->whereHas('students', function ($q) use ($request) {
+                $q->where('track', $request->track);
+            });
+        }
+
+        $groups = $query->latest()
             ->paginate(9)
             ->withQueryString();
 
         return Inertia::render('Groups/Index', [
             'groups' => $groups,
             'branches' => Branch::all(),
+            'courseTypes' => collect(CourseType::cases())->map(fn ($case) => [
+                'name' => $case->label(),
+                'value' => $case->value,
+            ]),
             'daysPatterns' => collect(DaysPattern::cases())->map(fn ($case) => [
                 'name' => $case->label(),
                 'value' => $case->value,
             ]),
             'canManageEverything' => Auth::user()->isAdmin(),
             'currentTab' => $status,
+            'filters' => $request->only(['search', 'branch_id', 'track']),
         ]);
     }
 
