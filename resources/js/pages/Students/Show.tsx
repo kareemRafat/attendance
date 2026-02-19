@@ -15,7 +15,6 @@ import { Button } from '@/components/ui/button';
 import {
     Card,
     CardContent,
-    CardDescription,
     CardHeader,
     CardTitle,
 } from '@/components/ui/card';
@@ -79,9 +78,20 @@ interface Props {
     };
     attendanceHistory: {
         data: AttendanceRecord[];
-        links: any[];
+        links: {
+            url: string | null;
+            label: string;
+            active: boolean;
+        }[];
     };
-    transferHistory: TransferLog[];
+    transferHistory: {
+        data: TransferLog[];
+        links: {
+            url: string | null;
+            label: string;
+            active: boolean;
+        }[];
+    };
 }
 
 export default function StudentShow({
@@ -112,18 +122,21 @@ export default function StudentShow({
                 <div className="flex items-center justify-between">
                     <div className="flex items-center gap-4">
                         <Link href="/students">
-                            <Button variant="outline" size="icon">
+                            <Button variant="outline" size="icon" className="rounded-full">
                                 <ArrowLeft className="size-4" />
                             </Button>
                         </Link>
-                        <h1 className="text-2xl font-bold">{student.name}</h1>
+                        <div>
+                            <h1 className="text-2xl font-bold text-slate-900 dark:text-white">{student.name}</h1>
+                            <p className="text-sm text-slate-500 font-medium">{student.branch?.name}</p>
+                        </div>
                     </div>
                 </div>
 
                 {/* Section 1: Student Information */}
-                <Card className="bg-slate-50/50 border-slate-200">
+                <Card className="bg-slate-50/50 border-slate-200 dark:bg-slate-900/50 dark:border-slate-800">
                     <CardHeader className="pb-3">
-                        <CardTitle className="text-lg font-semibold flex items-center gap-2">
+                        <CardTitle className="text-lg font-semibold flex items-center gap-2 dark:text-white text-slate-700">
                             <User className="size-5 text-slate-500" />
                             General Information
                         </CardTitle>
@@ -132,22 +145,22 @@ export default function StudentShow({
                         <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
                             <div>
                                 <p className="text-xs font-medium uppercase tracking-wider text-slate-500">Full Name</p>
-                                <p className="mt-1 text-sm font-semibold text-slate-900">{student.name}</p>
+                                <p className="mt-1 text-sm font-semibold text-slate-900 dark:text-slate-200">{student.name}</p>
                             </div>
                             <div>
                                 <p className="text-xs font-medium uppercase tracking-wider text-slate-500">Branch</p>
-                                <p className="mt-1 text-sm font-semibold text-slate-900">{student.branch?.name || 'N/A'}</p>
+                                <p className="mt-1 text-sm font-semibold text-slate-900 dark:text-slate-200">{student.branch?.name || 'N/A'}</p>
                             </div>
                             <div>
                                 <p className="text-xs font-medium uppercase tracking-wider text-slate-500">Track</p>
-                                <p className="mt-1 text-sm font-semibold text-slate-900 capitalize">{student.formatted_track || 'N/A'}</p>
+                                <p className="mt-1 text-sm font-semibold text-slate-900 dark:text-slate-200 capitalize">{student.formatted_track || 'N/A'}</p>
                             </div>
                             <div>
                                 <p className="text-xs font-medium uppercase tracking-wider text-slate-500">Current Groups</p>
                                 <div className="mt-1 flex flex-wrap gap-2">
                                     {currentGroups.length > 0 ? (
                                         currentGroups.map((group) => (
-                                            <span key={group.id} className="inline-flex items-center rounded bg-white px-2 py-0.5 text-xs font-medium text-slate-700 border border-slate-200 shadow-sm">
+                                            <span key={group.id} className="inline-flex items-center rounded bg-white dark:bg-slate-800 px-2 py-0.5 text-xs font-medium text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 shadow-sm">
                                                 <GraduationCap className="mr-1 size-3 text-slate-400" />
                                                 {group.name}
                                             </span>
@@ -164,75 +177,75 @@ export default function StudentShow({
                 {/* Section 2: Statistics Widgets with Light Colors */}
                 <div className="grid grid-cols-2 gap-4 md:grid-cols-5">
                     {/* Attendance Rate */}
-                    <Card className="flex flex-col justify-between bg-indigo-50/50 border-indigo-100 transition-colors hover:bg-indigo-50">
+                    <Card className="flex flex-col justify-between bg-indigo-50/50 border-indigo-100 dark:bg-indigo-950/20 dark:border-indigo-900 transition-colors hover:bg-indigo-50">
                         <CardHeader className="p-4 pb-0">
-                            <CardTitle className="text-xs font-bold uppercase tracking-wider text-indigo-600">
+                            <CardTitle className="text-xs font-bold uppercase tracking-wider text-indigo-600 dark:text-indigo-400">
                                 Attendance Rate
                             </CardTitle>
                         </CardHeader>
                         <CardContent className="p-4 pt-2">
                             <div className="flex items-end gap-2">
-                                <span className="text-3xl font-extrabold text-indigo-900">{attendanceRate}%</span>
+                                <span className="text-3xl font-extrabold text-indigo-900 dark:text-indigo-200">{attendanceRate}%</span>
                                 <TrendingUp className={`size-4 mb-1.5 ${attendanceRate >= 75 ? 'text-green-500' : 'text-orange-500'}`} />
                             </div>
                         </CardContent>
                     </Card>
 
                     {/* Total Sessions */}
-                    <Card className="flex flex-col justify-between bg-blue-50/50 border-blue-100 transition-colors hover:bg-blue-50">
+                    <Card className="flex flex-col justify-between bg-blue-50/50 border-blue-100 dark:bg-blue-950/20 dark:border-blue-900 transition-colors hover:bg-blue-50">
                         <CardHeader className="p-4 pb-0">
-                            <CardTitle className="text-xs font-bold uppercase tracking-wider text-blue-600">
+                            <CardTitle className="text-xs font-bold uppercase tracking-wider text-blue-600 dark:text-blue-400">
                                 Total Sessions
                             </CardTitle>
                         </CardHeader>
                         <CardContent className="p-4 pt-2">
                             <div className="flex items-center justify-between">
-                                <span className="text-3xl font-extrabold text-blue-900">{stats.total}</span>
+                                <span className="text-3xl font-extrabold text-blue-900 dark:text-blue-200">{stats.total}</span>
                                 <Calendar className="size-5 text-blue-400" />
                             </div>
                         </CardContent>
                     </Card>
 
                     {/* Present */}
-                    <Card className="flex flex-col justify-between bg-emerald-50/50 border-emerald-100 transition-colors hover:bg-emerald-50">
+                    <Card className="flex flex-col justify-between bg-emerald-50/50 border-emerald-100 dark:bg-emerald-950/20 dark:border-emerald-900 transition-colors hover:bg-emerald-50">
                         <CardHeader className="p-4 pb-0">
-                            <CardTitle className="text-xs font-bold uppercase tracking-wider text-emerald-600">
+                            <CardTitle className="text-xs font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400">
                                 Present
                             </CardTitle>
                         </CardHeader>
                         <CardContent className="p-4 pt-2">
                             <div className="flex items-center justify-between">
-                                <span className="text-3xl font-extrabold text-emerald-900">{stats.present}</span>
+                                <span className="text-3xl font-extrabold text-emerald-900 dark:text-emerald-200">{stats.present}</span>
                                 <CheckCircle2 className="size-5 text-emerald-400" />
                             </div>
                         </CardContent>
                     </Card>
 
                     {/* Absent */}
-                    <Card className="flex flex-col justify-between bg-rose-50/50 border-rose-100 transition-colors hover:bg-rose-50">
+                    <Card className="flex flex-col justify-between bg-rose-50/50 border-rose-100 dark:bg-rose-950/20 dark:border-rose-900 transition-colors hover:bg-rose-50">
                         <CardHeader className="p-4 pb-0">
-                            <CardTitle className="text-xs font-bold uppercase tracking-wider text-rose-600">
+                            <CardTitle className="text-xs font-bold uppercase tracking-wider text-rose-600 dark:text-rose-400">
                                 Absent
                             </CardTitle>
                         </CardHeader>
                         <CardContent className="p-4 pt-2">
                             <div className="flex items-center justify-between">
-                                <span className="text-3xl font-extrabold text-rose-900">{stats.absent}</span>
+                                <span className="text-3xl font-extrabold text-rose-900 dark:text-rose-200">{stats.absent}</span>
                                 <XCircle className="size-5 text-rose-400" />
                             </div>
                         </CardContent>
                     </Card>
 
                     {/* Excused */}
-                    <Card className="flex flex-col justify-between bg-amber-50/50 border-amber-100 transition-colors hover:bg-amber-50">
+                    <Card className="flex flex-col justify-between bg-amber-50/50 border-amber-100 dark:bg-amber-950/20 dark:border-amber-900 transition-colors hover:bg-amber-50">
                         <CardHeader className="p-4 pb-0">
-                            <CardTitle className="text-xs font-bold uppercase tracking-wider text-amber-600">
+                            <CardTitle className="text-xs font-bold uppercase tracking-wider text-amber-600 dark:text-amber-400">
                                 Excused
                             </CardTitle>
                         </CardHeader>
                         <CardContent className="p-4 pt-2">
                             <div className="flex items-center justify-between">
-                                <span className="text-3xl font-extrabold text-amber-900">{stats.excused}</span>
+                                <span className="text-3xl font-extrabold text-amber-900 dark:text-amber-200">{stats.excused}</span>
                                 <Clock className="size-5 text-amber-400" />
                             </div>
                         </CardContent>
@@ -240,18 +253,18 @@ export default function StudentShow({
                 </div>
 
                 {/* Section 3: Attendance History */}
-                <Card className="border-slate-200">
-                    <CardHeader className="pb-3 border-b border-slate-100 bg-slate-50/30">
-                        <CardTitle className="text-lg font-semibold flex items-center gap-2">
-                            <Calendar className="size-5 text-slate-500" />
+                <Card className="border-slate-200 dark:bg-slate-900 dark:border-slate-800">
+                    <CardHeader className="pb-3 border-b border-slate-100 dark:border-slate-800 bg-slate-50/30">
+                        <CardTitle className="text-lg font-bold flex items-center gap-2 dark:text-white text-slate-800">
+                            <Calendar className="size-5 text-indigo-500" />
                             Attendance History
                         </CardTitle>
                     </CardHeader>
                     <CardContent className="p-0">
                         <Table>
-                            <TableHeader className="bg-slate-50/50">
-                                <TableRow>
-                                    <TableHead className="px-6">Date</TableHead>
+                            <TableHeader className="bg-slate-50/50 dark:bg-slate-800/20">
+                                <TableRow className="dark:border-slate-800">
+                                    <TableHead className="px-6 py-4">Date</TableHead>
                                     <TableHead>Group</TableHead>
                                     <TableHead>Status</TableHead>
                                     <TableHead className="text-right px-6">Recorded At</TableHead>
@@ -259,16 +272,16 @@ export default function StudentShow({
                             </TableHeader>
                             <TableBody>
                                 {attendanceHistory.data.map((record) => (
-                                    <TableRow key={record.id} className="hover:bg-slate-50/50 transition-colors">
-                                        <TableCell className="font-medium px-6 text-slate-900">
+                                    <TableRow key={record.id} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition-colors dark:border-slate-800">
+                                        <TableCell className="font-bold px-6 text-slate-900 dark:text-slate-200">
                                             {format(new Date(record.lecture_session.date), 'PPP')}
                                         </TableCell>
-                                        <TableCell className="text-slate-600">{record.lecture_session.group.name}</TableCell>
+                                        <TableCell className="text-slate-600 dark:text-slate-400 font-medium">{record.lecture_session.group.name}</TableCell>
                                         <TableCell>
-                                            <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider border ${
-                                                record.status === 'present' ? 'bg-emerald-50 text-emerald-700 border-emerald-100' :
-                                                record.status === 'absent' ? 'bg-rose-50 text-rose-700 border-rose-100' :
-                                                'bg-amber-50 text-amber-700 border-amber-100'
+                                            <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-[10px] font-black uppercase tracking-wider border ${
+                                                record.status === 'present' ? 'bg-emerald-50 text-emerald-700 border-emerald-100 dark:bg-emerald-900/20 dark:text-emerald-400 dark:border-emerald-900' :
+                                                record.status === 'absent' ? 'bg-rose-50 text-rose-700 border-rose-100 dark:bg-rose-900/20 dark:text-rose-400 dark:border-rose-900' :
+                                                'bg-amber-50 text-amber-700 border-amber-100 dark:bg-amber-900/20 dark:text-amber-400 dark:border-amber-900'
                                             }`}>
                                                 {record.status}
                                             </span>
@@ -288,13 +301,13 @@ export default function StudentShow({
                             </TableBody>
                         </Table>
                         {attendanceHistory.links && attendanceHistory.links.length > 3 && (
-                            <div className="py-4 flex flex-wrap justify-center gap-1 border-t border-slate-100">
-                                {attendanceHistory.links.map((link: any, i: number) => (
+                            <div className="py-4 flex flex-wrap justify-center gap-1 border-t border-slate-100 dark:border-slate-800">
+                                {attendanceHistory.links.map((link, i) => (
                                     <Link key={i} href={link.url || '#'} preserveScroll>
                                         <Button
                                             variant={link.active ? 'default' : 'outline'}
                                             size="sm"
-                                            className={`h-8 px-3 ${!link.url ? 'pointer-events-none opacity-50' : ''}`}
+                                            className={`h-8 px-3 transition-all rounded-lg font-bold text-xs ${!link.url ? 'pointer-events-none opacity-50' : 'cursor-pointer'} ${link.active ? 'bg-slate-900 dark:bg-white dark:text-slate-900 border-transparent shadow-md' : 'bg-white dark:bg-slate-900 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800 border-slate-200'}`}
                                         >
                                             <span dangerouslySetInnerHTML={{ __html: link.label }} />
                                         </Button>
@@ -306,18 +319,18 @@ export default function StudentShow({
                 </Card>
 
                 {/* Section 4: Transfer History */}
-                <Card className="border-slate-200">
-                    <CardHeader className="pb-3 border-b border-slate-100 bg-slate-50/30">
-                        <CardTitle className="text-lg font-semibold flex items-center gap-2">
-                            <ArrowRightLeft className="size-5 text-slate-500" />
+                <Card className="border-slate-200 dark:bg-slate-900 dark:border-slate-800">
+                    <CardHeader className="pb-3 border-b border-slate-100 dark:border-slate-800 bg-slate-50/30">
+                        <CardTitle className="text-lg font-bold flex items-center gap-2 dark:text-white text-slate-800">
+                            <ArrowRightLeft className="size-5 text-indigo-500" />
                             Transfer History
                         </CardTitle>
                     </CardHeader>
                     <CardContent className="p-0">
                         <Table>
-                            <TableHeader className="bg-slate-50/50">
-                                <TableRow>
-                                    <TableHead className="px-6">From Group</TableHead>
+                            <TableHeader className="bg-slate-50/50 dark:bg-slate-800/20">
+                                <TableRow className="dark:border-slate-800">
+                                    <TableHead className="px-6 py-4">From Group</TableHead>
                                     <TableHead className="w-10 text-center" />
                                     <TableHead>To Group</TableHead>
                                     <TableHead>Effective Date</TableHead>
@@ -325,18 +338,18 @@ export default function StudentShow({
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
-                                {transferHistory.map((log) => (
-                                    <TableRow key={log.id} className="hover:bg-slate-50/50 transition-colors">
-                                        <TableCell className="font-semibold text-slate-900 px-6">{log.from_group.name}</TableCell>
+                                {transferHistory.data.map((log) => (
+                                    <TableRow key={log.id} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition-colors dark:border-slate-800">
+                                        <TableCell className="font-bold text-slate-900 dark:text-slate-200 px-6">{log.from_group.name}</TableCell>
                                         <TableCell className="text-center">
                                             <ArrowRightLeft className="size-4 text-slate-300 mx-auto" />
                                         </TableCell>
-                                        <TableCell className="font-semibold text-slate-900">{log.to_group.name}</TableCell>
-                                        <TableCell className="text-slate-600">{format(new Date(log.effective_date), 'PPP')}</TableCell>
-                                        <TableCell className="text-right text-slate-600 max-w-[300px] truncate px-6" title={log.reason}>{log.reason}</TableCell>
+                                        <TableCell className="font-bold text-slate-900 dark:text-slate-200">{log.to_group.name}</TableCell>
+                                        <TableCell className="text-slate-600 dark:text-slate-400 font-medium">{format(new Date(log.effective_date), 'PPP')}</TableCell>
+                                        <TableCell className="text-right text-slate-600 dark:text-slate-400 max-w-[300px] truncate px-6" title={log.reason}>{log.reason}</TableCell>
                                     </TableRow>
                                 ))}
-                                {transferHistory.length === 0 && (
+                                {transferHistory.data.length === 0 && (
                                     <TableRow>
                                         <TableCell colSpan={5} className="h-24 text-center text-slate-400 italic">
                                             No transfer records found.
@@ -345,6 +358,21 @@ export default function StudentShow({
                                 )}
                             </TableBody>
                         </Table>
+                        {transferHistory.links && transferHistory.links.length > 3 && (
+                            <div className="py-4 flex flex-wrap justify-center gap-1 border-t border-slate-100 dark:border-slate-800">
+                                {transferHistory.links.map((link, i) => (
+                                    <Link key={i} href={link.url || '#'} preserveScroll>
+                                        <Button
+                                            variant={link.active ? 'default' : 'outline'}
+                                            size="sm"
+                                            className={`h-8 px-3 transition-all rounded-lg font-bold text-xs ${!link.url ? 'pointer-events-none opacity-50' : 'cursor-pointer'} ${link.active ? 'bg-slate-900 dark:bg-white dark:text-slate-900 border-transparent shadow-md' : 'bg-white dark:bg-slate-900 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800 border-slate-200'}`}
+                                        >
+                                            <span dangerouslySetInnerHTML={{ __html: link.label }} />
+                                        </Button>
+                                    </Link>
+                                ))}
+                            </div>
+                        )}
                     </CardContent>
                 </Card>
             </div>

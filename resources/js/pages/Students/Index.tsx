@@ -1,5 +1,5 @@
 import { Head, useForm, Link, usePage, router } from '@inertiajs/react';
-import { Plus, Pencil, Trash, ArrowRightLeft, Eye, Users, UserPlus } from 'lucide-react';
+import { Plus, Pencil, Trash, ArrowRightLeft, Eye, Users, UserPlus, Search } from 'lucide-react';
 import { useState } from 'react';
 import { DeleteConfirmationDialog } from '@/components/delete-confirmation-dialog';
 import { Button } from '@/components/ui/button';
@@ -37,6 +37,7 @@ import {
     TableRow,
 } from '@/components/ui/table';
 import AppLayout from '@/layouts/app-layout';
+import { cn } from '@/lib/utils';
 
 interface Branch {
     id: number;
@@ -252,7 +253,7 @@ export default function StudentsIndex({
 
             <div className="flex flex-col gap-6 p-4">
                 <div className="flex items-center justify-between">
-                    <h1 className="text-2xl font-bold">Students</h1>
+                    <h1 className="text-2xl font-bold text-slate-900 dark:text-white">Students</h1>
                     <div className="flex gap-2">
                         {/* Mass Add Button & Dialog */}
                         <Dialog
@@ -265,7 +266,7 @@ export default function StudentsIndex({
                             <DialogTrigger asChild>
                                 <Button
                                     variant="outline"
-                                    className="gap-2 border-dashed cursor-pointer"
+                                    className="gap-2 border-dashed cursor-pointer dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800"
                                 >
                                     <Plus className="size-4" /> Add Students
                                 </Button>
@@ -284,7 +285,7 @@ export default function StudentsIndex({
                                     onSubmit={submitMassAdd}
                                     className="space-y-6 pt-4"
                                 >
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 bg-secondary/30 rounded-lg border">
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 bg-secondary/30 dark:bg-slate-800/50 rounded-lg border dark:border-slate-700">
                                         {isAdmin && (
                                             <div className="space-y-2">
                                                 <Label htmlFor="mass-branch-id">Branch</Label>
@@ -294,7 +295,7 @@ export default function StudentsIndex({
                                                         massAdd.setData('branch_id', val)
                                                     }
                                                 >
-                                                    <SelectTrigger className="bg-background">
+                                                    <SelectTrigger className="bg-background dark:bg-slate-900 dark:border-slate-700">
                                                         <SelectValue placeholder="Select branch" />
                                                     </SelectTrigger>
                                                     <SelectContent>
@@ -311,7 +312,7 @@ export default function StudentsIndex({
                                         <div className="space-y-2">
                                             <Label>Choice Track</Label>
                                             <Select value={massTrack} onValueChange={handleMassTrackChange}>
-                                                <SelectTrigger className="bg-background">
+                                                <SelectTrigger className="bg-background dark:bg-slate-900 dark:border-slate-700">
                                                     <SelectValue placeholder="Choose Track" />
                                                 </SelectTrigger>
                                                 <SelectContent>
@@ -330,7 +331,7 @@ export default function StudentsIndex({
                                                     massAdd.setData('group_id', val)
                                                 }
                                             >
-                                                <SelectTrigger className="bg-background">
+                                                <SelectTrigger className="bg-background dark:bg-slate-900 dark:border-slate-700">
                                                     <SelectValue placeholder="Select group" />
                                                 </SelectTrigger>
                                                 <SelectContent>
@@ -345,8 +346,8 @@ export default function StudentsIndex({
                                         </div>
                                     </div>
 
-                                    <div className="space-y-3">
-                                        <div className="px-1 text-xs font-bold text-muted-foreground uppercase tracking-widest">Students List</div>
+                                    <div className="space-y-4 p-4 bg-secondary/30 dark:bg-slate-800/50 rounded-lg border dark:border-slate-700">
+                                        <div className="px-1 text-xs font-bold text-muted-foreground dark:text-slate-400 uppercase tracking-widest">Students List</div>
                                         <div className="space-y-2">
                                             {massAdd.data.students.map((student, index) => (
                                                 <div key={index} className="flex gap-2 items-start">
@@ -355,6 +356,7 @@ export default function StudentsIndex({
                                                             placeholder="Student name"
                                                             value={student.name}
                                                             onChange={(e) => updateStudentRow(index, 'name', e.target.value)}
+                                                            className="dark:bg-slate-900 dark:border-slate-700 h-10"
                                                             required
                                                         />
                                                         {massAdd.errors[`students.${index}.name` as keyof typeof massAdd.errors] && (
@@ -367,7 +369,7 @@ export default function StudentsIndex({
                                                         size="icon"
                                                         disabled={massAdd.data.students.length <= 1}
                                                         onClick={() => removeStudentRow(index)}
-                                                        className="h-9 w-9 text-muted-foreground hover:text-destructive cursor-pointer"
+                                                        className="h-10 w-10 text-muted-foreground hover:text-destructive cursor-pointer dark:hover:bg-rose-900/20"
                                                     >
                                                         <Trash className="size-4" />
                                                     </Button>
@@ -376,19 +378,19 @@ export default function StudentsIndex({
                                         </div>
                                     </div>
 
-                                    <div className="flex justify-between items-center pt-4 border-t">
+                                    <div className="flex justify-between items-center pt-4 border-t dark:border-slate-700">
                                         <Button
                                             type="button"
                                             variant="outline"
                                             size="sm"
                                             onClick={addStudentRow}
-                                            className="gap-2 cursor-pointer"
+                                            className="gap-2 cursor-pointer dark:border-slate-700 dark:hover:bg-slate-800"
                                         >
                                             <Plus className="size-4" /> Add Row
                                         </Button>
                                         <div className="flex gap-2">
-                                            <Button type="button" variant="ghost" onClick={() => setIsMassAddOpen(false)} className="cursor-pointer">Cancel</Button>
-                                            <Button type="submit" disabled={massAdd.processing} className="cursor-pointer">
+                                            <Button type="button" variant="ghost" onClick={() => setIsMassAddOpen(false)} className="cursor-pointer dark:text-slate-400 dark:hover:bg-slate-800">Cancel</Button>
+                                            <Button type="submit" disabled={massAdd.processing} className="cursor-pointer bg-slate-900 dark:bg-white dark:text-slate-900 dark:hover:bg-slate-200 shadow-lg shadow-slate-500/10">
                                                 Save {massAdd.data.students.length} Students
                                             </Button>
                                         </div>
@@ -407,7 +409,7 @@ export default function StudentsIndex({
                         >
                             <DialogTrigger asChild>
                                 <Button
-                                    className="gap-2 cursor-pointer"
+                                    className="gap-2 cursor-pointer bg-slate-900 dark:bg-white dark:text-slate-900 dark:hover:bg-slate-200 shadow-lg shadow-slate-500/10"
                                     onClick={() => quickAdd.reset()}
                                 >
                                     <UserPlus className="size-4" /> Quick Add
@@ -432,7 +434,7 @@ export default function StudentsIndex({
                                                 value={quickAdd.data.branch_id}
                                                 onValueChange={(val) => quickAdd.setData('branch_id', val)}
                                             >
-                                                <SelectTrigger>
+                                                <SelectTrigger className="dark:bg-slate-900 dark:border-slate-700">
                                                     <SelectValue placeholder="Select branch" />
                                                 </SelectTrigger>
                                                 <SelectContent>
@@ -449,7 +451,7 @@ export default function StudentsIndex({
                                     <div className="space-y-2">
                                         <Label>Choice Track</Label>
                                         <Select value={quickTrack} onValueChange={handleQuickTrackChange}>
-                                            <SelectTrigger>
+                                            <SelectTrigger className="dark:bg-slate-900 dark:border-slate-700">
                                                 <SelectValue placeholder="Choose Track" />
                                             </SelectTrigger>
                                             <SelectContent>
@@ -466,15 +468,16 @@ export default function StudentsIndex({
                                             value={quickAdd.data.group_id}
                                             onValueChange={(val) => quickAdd.setData('group_id', val)}
                                         >
-                                                                                    <SelectTrigger>
-                                                                                        <SelectValue placeholder="Select group" />
-                                                                                    </SelectTrigger>                                        <SelectContent>
-                                            {filteredGroupsByTrack().map((group) => (
-                                                <SelectItem key={group.id} value={group.id.toString()}>
-                                                    {group.name}
-                                                </SelectItem>
-                                            ))}
-                                        </SelectContent>
+                                            <SelectTrigger className="dark:bg-slate-900 dark:border-slate-700">
+                                                <SelectValue placeholder="Select group" />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                {filteredGroupsByTrack().map((group) => (
+                                                    <SelectItem key={group.id} value={group.id.toString()}>
+                                                        {group.name}
+                                                    </SelectItem>
+                                                ))}
+                                            </SelectContent>
                                         </Select>
                                         {quickAdd.errors.group_id && <p className="text-xs text-destructive">{quickAdd.errors.group_id}</p>}
                                     </div>
@@ -484,12 +487,13 @@ export default function StudentsIndex({
                                             id="name"
                                             value={quickAdd.data.name}
                                             onChange={(e) => quickAdd.setData('name', e.target.value)}
+                                            className="dark:bg-slate-900 dark:border-slate-700"
                                             required
                                         />
                                         {quickAdd.errors.name && <p className="text-xs text-destructive">{quickAdd.errors.name}</p>}
                                     </div>
                                     <DialogFooter className="pt-2">
-                                        <Button type="submit" disabled={quickAdd.processing} className="w-full cursor-pointer">
+                                        <Button type="submit" disabled={quickAdd.processing} className="w-full cursor-pointer bg-slate-900 dark:bg-white dark:text-slate-900 dark:hover:bg-slate-200">
                                             Create Student
                                         </Button>
                                     </DialogFooter>
@@ -499,19 +503,20 @@ export default function StudentsIndex({
                     </div>
                 </div>
 
-                <Card>
-                    <CardHeader className="bg-slate-50/50 border-b border-slate-100 pb-4 space-y-4">
+                <Card className="dark:bg-slate-900 dark:border-slate-800 shadow-sm border-slate-200/60 overflow-hidden rounded-2xl">
+                    <CardHeader className="bg-slate-50/50 dark:bg-slate-800/30 border-b border-slate-100 dark:border-slate-800 pb-4 space-y-4">
                         <div className="flex items-center gap-2">
-                            <Users className="size-5 text-slate-400" />
+                            <Users className="size-5 text-slate-400 dark:text-slate-500" />
                             <div>
-                                <CardTitle className="text-lg">All Students</CardTitle>
-                                <CardDescription>Manage your student database and group memberships.</CardDescription>
+                                <CardTitle className="text-lg text-slate-900 dark:text-white font-bold">All Students</CardTitle>
+                                <CardDescription className="dark:text-slate-400 font-medium">Manage your student database and group memberships.</CardDescription>
                             </div>
                         </div>
 
-                        <div className="flex flex-wrap items-center gap-4 pt-4 border-t border-slate-100/50">
+                        <div className="flex flex-wrap items-center gap-4 pt-4 border-t border-slate-100/50 dark:border-slate-800">
                             {/* Search */}
                             <div className="relative w-full md:w-96">
+                                <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-slate-400" />
                                 <Input
                                     placeholder="Search students by name..."
                                     value={search}
@@ -519,7 +524,7 @@ export default function StudentsIndex({
                                         setSearch(e.target.value);
                                         handleFilter(e.target.value);
                                     }}
-                                    className="bg-white shadow-sm h-10"
+                                    className="bg-white dark:bg-slate-900 dark:border-slate-700 shadow-sm h-10 rounded-xl pl-9"
                                 />
                             </div>
 
@@ -532,7 +537,7 @@ export default function StudentsIndex({
                                         handleFilter(undefined, val);
                                     }}
                                 >
-                                    <SelectTrigger className="w-full md:w-[290px] bg-white shadow-sm h-10">
+                                    <SelectTrigger className="w-full md:w-[200px] bg-white dark:bg-slate-900 dark:border-slate-700 shadow-sm h-10 rounded-xl">
                                         <SelectValue placeholder="All Branches" />
                                     </SelectTrigger>
                                     <SelectContent>
@@ -554,7 +559,7 @@ export default function StudentsIndex({
                                     handleFilter(undefined, undefined, undefined, val);
                                 }}
                             >
-                                <SelectTrigger className="w-full md:w-[200px] bg-white shadow-sm h-10">
+                                <SelectTrigger className="w-full md:w-[180px] bg-white dark:bg-slate-900 dark:border-slate-700 shadow-sm h-10 rounded-xl">
                                     <SelectValue placeholder="All Tracks" />
                                 </SelectTrigger>
                                 <SelectContent>
@@ -575,7 +580,7 @@ export default function StudentsIndex({
                                     handleFilter(undefined, undefined, val);
                                 }}
                             >
-                                <SelectTrigger className="w-full md:w-[250px] bg-white shadow-sm h-10">
+                                <SelectTrigger className="w-full md:w-[220px] bg-white dark:bg-slate-900 dark:border-slate-700 shadow-sm h-10 rounded-xl">
                                     <SelectValue placeholder="All Groups" />
                                 </SelectTrigger>
                                 <SelectContent>
@@ -599,7 +604,7 @@ export default function StudentsIndex({
                                         setTrackFilter('all');
                                         handleFilter('', 'all', 'all', 'all');
                                     }}
-                                    className="text-xs h-10 cursor-pointer text-blue-600 hover:text-blue-700 hover:bg-blue-50 font-semibold transition-colors"
+                                    className="text-xs h-10 px-4 font-bold text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 hover:bg-indigo-50 dark:hover:bg-indigo-900/20 rounded-xl transition-all cursor-pointer"
                                 >
                                     Reset Filters
                                 </Button>
@@ -608,48 +613,50 @@ export default function StudentsIndex({
                     </CardHeader>
                     <CardContent className="p-0">
                         <Table>
-                            <TableHeader>
-                                <TableRow>
-                                    <TableHead className="pl-6">Name</TableHead>
-                                    <TableHead>Branch</TableHead>
-                                    <TableHead>Track</TableHead>
-                                    <TableHead>Current Groups</TableHead>
-                                    <TableHead className="text-right pr-6">Actions</TableHead>
+                            <TableHeader className="dark:bg-slate-800/20">
+                                <TableRow className="dark:border-slate-800">
+                                    <TableHead className="pl-6 text-slate-900 dark:text-slate-300 font-bold">Name</TableHead>
+                                    <TableHead className="text-slate-900 dark:text-slate-300 font-bold">Branch</TableHead>
+                                    <TableHead className="text-slate-900 dark:text-slate-300 font-bold">Track</TableHead>
+                                    <TableHead className="text-slate-900 dark:text-slate-300 font-bold">Current Groups</TableHead>
+                                    <TableHead className="text-right pr-6 text-slate-900 dark:text-slate-300 font-bold">Actions</TableHead>
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
                                 {students.data.map((student) => (
-                                    <TableRow key={student.id} className="even:bg-slate-50/50 hover:bg-slate-100/50 transition-colors">
-                                        <TableCell className="font-medium pl-6">
+                                    <TableRow key={student.id} className="even:bg-slate-50/50 dark:even:bg-slate-800/10 hover:bg-slate-100/50 dark:hover:bg-slate-800/30 dark:border-slate-800 transition-colors">
+                                        <TableCell className="font-bold pl-6">
                                             <Link
                                                 href={`/students/${student.id}`}
-                                                className="text-primary hover:underline transition-colors"
+                                                className="text-indigo-600 dark:text-indigo-400 hover:underline transition-colors"
                                             >
                                                 {student.name}
                                             </Link>
                                         </TableCell>
-                                        <TableCell>{student.branch?.name || '-'}</TableCell>
+                                        <TableCell className="dark:text-slate-300 font-medium">{student.branch?.name || '-'}</TableCell>
                                         <TableCell>
                                             {student.formatted_track ? (
-                                                <span className="capitalize">{student.formatted_track}</span>
+                                                <span className="capitalize px-2.5 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-[10px] font-black border dark:border-slate-700 uppercase tracking-tight">
+                                                    {student.formatted_track}
+                                                </span>
                                             ) : '-'}
                                         </TableCell>
                                         <TableCell>
                                             <div className="flex flex-wrap gap-1">
                                                 {student.groups.map((g) => (
-                                                    <span key={g.id} className="inline-flex items-center rounded-md bg-white px-2 py-0.5 text-xs font-medium text-slate-700 border shadow-sm">
+                                                    <span key={g.id} className="inline-flex items-center rounded-md bg-white dark:bg-slate-800 px-2 py-0.5 text-[10px] font-bold text-slate-700 dark:text-slate-300 border dark:border-slate-700 shadow-xs">
                                                         {g.name}
                                                     </span>
                                                 ))}
                                                 {student.groups.length === 0 && (
-                                                    <span className="text-xs text-muted-foreground italic">Not Enrolled</span>
+                                                    <span className="text-xs text-muted-foreground italic dark:text-slate-500">Not Enrolled</span>
                                                 )}
                                             </div>
                                         </TableCell>
                                         <TableCell className="text-right pr-6">
-                                            <div className="flex justify-end gap-1">
+                                            <div className="flex justify-end gap-1.5">
                                                 <Link href={`/students/${student.id}`}>
-                                                    <Button variant="ghost" size="icon" title="View Student" className="h-8 w-8 cursor-pointer text-blue-600 hover:text-blue-700 hover:bg-blue-50">
+                                                    <Button variant="ghost" size="icon" title="View Student" className="size-8 cursor-pointer text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 transition-colors rounded-lg">
                                                         <Eye className="size-4" />
                                                     </Button>
                                                 </Link>
@@ -657,7 +664,7 @@ export default function StudentsIndex({
                                                     variant="ghost"
                                                     size="icon"
                                                     title="Transfer Student"
-                                                    className="h-8 w-8 cursor-pointer text-orange-600 hover:text-orange-700 hover:bg-orange-50"
+                                                    className="size-8 cursor-pointer text-amber-600 dark:text-amber-400 hover:bg-amber-50 dark:hover:bg-amber-900/30 transition-colors rounded-lg"
                                                     onClick={() => {
                                                         setTransferringStudent(student);
                                                         transferForm.setData({
@@ -674,7 +681,7 @@ export default function StudentsIndex({
                                                     variant="ghost"
                                                     size="icon"
                                                     title="Edit Student"
-                                                    className="h-8 w-8 cursor-pointer text-slate-600 hover:text-slate-700 hover:bg-slate-100"
+                                                    className="size-8 cursor-pointer text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors rounded-lg"
                                                     onClick={() => {
                                                         setEditingStudent(student);
                                                         editForm.setData({
@@ -689,7 +696,7 @@ export default function StudentsIndex({
                                                     variant="ghost"
                                                     size="icon"
                                                     title="Delete Student"
-                                                    className="h-8 w-8 cursor-pointer text-red-600 hover:text-red-700 hover:bg-red-50"
+                                                    className="size-8 cursor-pointer text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-900/30 transition-colors rounded-lg"
                                                     onClick={() => setDeletingStudent(student)}
                                                 >
                                                     <Trash className="size-4" />
@@ -700,7 +707,7 @@ export default function StudentsIndex({
                                 ))}
                                 {students.data.length === 0 && (
                                     <TableRow>
-                                        <TableCell colSpan={isAdmin ? 5 : 4} className="h-24 text-center text-muted-foreground italic">No students found.</TableCell>
+                                        <TableCell colSpan={isAdmin ? 5 : 4} className="h-24 text-center text-muted-foreground italic dark:text-slate-500">No students found.</TableCell>
                                     </TableRow>
                                 )}
                             </TableBody>
@@ -708,13 +715,19 @@ export default function StudentsIndex({
 
                         {/* Pagination */}
                         {students.links && students.links.length > 3 && (
-                            <div className="py-4 flex flex-wrap justify-center gap-1 border-t">
+                            <div className="py-4 flex flex-wrap justify-center gap-1 border-t dark:border-slate-800">
                                 {students.links.map((link: any, i: number) => (
                                     <Link key={i} href={link.url || '#'} preserveScroll>
                                         <Button
                                             variant={link.active ? 'default' : 'outline'}
                                             size="sm"
-                                            className={`h-8 px-3 ${!link.url ? 'pointer-events-none opacity-50' : 'cursor-pointer'}`}
+                                            className={cn(
+                                                "h-8 px-3 transition-all rounded-lg font-bold text-xs",
+                                                !link.url ? "pointer-events-none opacity-50" : "cursor-pointer",
+                                                link.active
+                                                    ? "bg-slate-900 dark:bg-white dark:text-slate-900 border-transparent shadow-md"
+                                                    : "bg-white dark:bg-slate-900 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800 border-slate-200"
+                                            )}
                                         >
                                             <span dangerouslySetInnerHTML={{ __html: link.label }} />
                                         </Button>
