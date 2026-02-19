@@ -76,7 +76,7 @@ export default function BranchesIndex({ branches }: Props) {
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Branches" />
 
-            <div className="flex flex-col gap-8 p-6 max-w-7xl mx-auto w-full">
+            <div className="flex flex-col gap-8 p-6 mx-auto w-full">
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                     <div>
                         <h1 className="text-3xl font-black tracking-tight text-slate-900">Branch Management</h1>
@@ -139,9 +139,9 @@ export default function BranchesIndex({ branches }: Props) {
                                                                         <div className="bg-white p-2.5 rounded-2xl text-blue-600 shadow-sm ring-1 ring-blue-100">
                                                                             <Building2 className="size-6" />
                                                                         </div>
-                                                                        <Button 
-                                                                            variant="secondary" 
-                                                                            size="icon" 
+                                                                        <Button
+                                                                            variant="secondary"
+                                                                            size="icon"
                                                                             className="h-9 w-9 bg-white border border-blue-100 shadow-sm hover:bg-blue-50 text-slate-600 hover:text-blue-600 cursor-pointer rounded-xl"
                                                                             onClick={() => {
                                                                                 setEditingBranch(branch);

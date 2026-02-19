@@ -2,11 +2,10 @@ import { Head, Link, useForm } from '@inertiajs/react';
 import { Plus, Users, Calendar, CheckCircle, RotateCcw, Edit, Loader2 } from 'lucide-react';
 import type { FormEventHandler } from 'react';
 import { useState } from 'react';
-import { end, reactivate, store, update } from '@/actions/App/Http/Controllers/GroupController';
+import { end, reactivate, store, update, show } from '@/actions/App/Http/Controllers/GroupController';
 import { DeleteConfirmationDialog } from '@/components/delete-confirmation-dialog';
 import InputError from '@/components/input-error';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
     Dialog,
     DialogContent,
@@ -189,9 +188,9 @@ export default function GroupsIndex({ groups, branches = [], daysPatterns = [], 
 
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
                     {groups.data.map((group) => (
-                        <div 
-                            key={group.id} 
-                            className="group relative flex flex-col bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-xl hover:shadow-indigo-500/10 transition-all duration-300"
+                        <div
+                            key={group.id}
+                            className="group relative flex flex-col bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm  hover:shadow-indigo-500/10 transition-all duration-300"
                         >
                             {/* Card Header Area */}
                             <div className="p-5 pb-0">
@@ -206,7 +205,7 @@ export default function GroupsIndex({ groups, branches = [], daysPatterns = [], 
                                             </span>
                                         </div>
                                     </div>
-                                    <button 
+                                    <button
                                         onClick={() => handleEditClick(group)}
                                         className="size-8 flex items-center justify-center text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 rounded-full transition-all cursor-pointer border border-transparent hover:border-indigo-100"
                                     >
@@ -245,8 +244,8 @@ export default function GroupsIndex({ groups, branches = [], daysPatterns = [], 
                                         variant={group.is_active ? "outline" : "default"}
                                         className={cn(
                                             "flex-1 h-10 font-bold rounded-xl transition-all cursor-pointer border-2",
-                                            group.is_active 
-                                                ? "border-slate-100 text-slate-600 hover:bg-red-50 hover:text-red-600 hover:border-red-100" 
+                                            group.is_active
+                                                ? "border-slate-100 text-slate-600 hover:bg-red-50 hover:text-red-600 hover:border-red-100"
                                                 : "bg-indigo-600 hover:bg-indigo-700 text-white border-transparent shadow-lg shadow-indigo-500/20"
                                         )}
                                         onClick={() => toggleStatus(group)}
@@ -257,13 +256,13 @@ export default function GroupsIndex({ groups, branches = [], daysPatterns = [], 
                                             <><RotateCcw className="mr-2 size-4" /> Reactivate</>
                                         )}
                                     </Button>
-                                    
+
                                     {group.is_active && (
                                         <Button
                                             asChild
                                             className="h-10 px-5 font-bold rounded-xl bg-slate-900 hover:bg-slate-800 text-white shadow-lg shadow-slate-500/10 cursor-pointer transition-all"
                                         >
-                                            <Link href={`/attendance?group_id=${group.id}`}>
+                                            <Link href={show.url({ group: group.id })}>
                                                 Attendance
                                             </Link>
                                         </Button>

@@ -24,7 +24,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::post('groups/{group}/end', [GroupController::class, 'end'])->name('groups.end');
     Route::post('groups/{group}/reactivate', [GroupController::class, 'reactivate'])->name('groups.reactivate');
-    Route::resource('groups', GroupController::class)->except(['show']);
+    Route::resource('groups', GroupController::class);
 
     Route::post('students/{student}/enroll', [StudentController::class, 'enroll'])->name('students.enroll');
     Route::post('students/{student}/transfer', [StudentController::class, 'transfer'])->name('students.transfer');

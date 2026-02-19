@@ -38,6 +38,49 @@ class GroupController extends Controller
         ]);
     }
 
+    public function show(Group $group): Response
+    {
+        $this->authorize('view', $group);
+
+        $group->load('branch');
+
+        $students = $group->students()
+            ->withPivot('enrolled_at', 'ended_at')
+            ->withCount([
+                'attendances as present_count' => function ($query) use ($group) {
+                    $query->whereHas('lectureSession', function ($q) use ($group) {
+                        $q->where('group_id', $group->id);
+                    })->where('status', \App\Enums\AttendanceStatus::Present);
+                },
+                'attendances as absent_count' => function ($query) use ($group) {
+                    $query->whereHas('lectureSession', function ($q) use ($group) {
+                        $q->where('group_id', $group->id);
+                    })->where('status', \App\Enums\AttendanceStatus::Absent);
+                },
+                'attendances as excused_count' => function ($query) use ($group) {
+                    $query->whereHas('lectureSession', function ($q) use ($group) {
+                        $q->where('group_id', $group->id);
+                    })->where('status', \App\Enums\AttendanceStatus::Excused);
+                },
+            ])
+            ->get();
+
+        $sessions = $group->lectureSessions()
+            ->withCount([
+                'attendances as present_count' => fn ($q) => $q->where('status', \App\Enums\AttendanceStatus::Present),
+                'attendances as absent_count' => fn ($q) => $q->where('status', \App\Enums\AttendanceStatus::Absent),
+                'attendances as excused_count' => fn ($q) => $q->where('status', \App\Enums\AttendanceStatus::Excused),
+            ])
+            ->latest('date')
+            ->get();
+
+        return Inertia::render('Groups/Show', [
+            'group' => $group,
+            'students' => $students,
+            'sessions' => $sessions,
+        ]);
+    }
+
     public function store(GroupRequest $request): RedirectResponse
     {
         Group::create($request->validated());
