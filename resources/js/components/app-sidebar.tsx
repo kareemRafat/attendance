@@ -1,5 +1,14 @@
 import { Link } from '@inertiajs/react';
-import { BookOpen, Folder, LayoutGrid } from 'lucide-react';
+import {
+    BarChart3,
+    BookOpen,
+    Building2,
+    CalendarCheck,
+    Folder,
+    LayoutGrid,
+    Layers,
+    Users,
+} from 'lucide-react';
 import { NavFooter } from '@/components/nav-footer';
 import { NavMain } from '@/components/nav-main';
 import { NavUser } from '@/components/nav-user';
@@ -15,12 +24,42 @@ import {
 import type { NavItem } from '@/types';
 import AppLogo from './app-logo';
 import { dashboard } from '@/routes';
+import attendance from '@/routes/attendance';
+import students from '@/routes/students';
+import groups from '@/routes/groups';
+import branches from '@/routes/branches';
+import reports from '@/routes/reports';
 
 const mainNavItems: NavItem[] = [
     {
         title: 'Dashboard',
         href: dashboard(),
         icon: LayoutGrid,
+    },
+    {
+        title: 'Attendance',
+        href: attendance.index(),
+        icon: CalendarCheck,
+    },
+    {
+        title: 'Students',
+        href: students.index(),
+        icon: Users,
+    },
+    {
+        title: 'Groups',
+        href: groups.index(),
+        icon: Layers,
+    },
+    {
+        title: 'Branches',
+        href: branches.index(),
+        icon: Building2,
+    },
+    {
+        title: 'Reports',
+        href: reports.dashboard(),
+        icon: BarChart3,
     },
 ];
 
