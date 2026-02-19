@@ -1,4 +1,4 @@
-import { Head, useForm, Link, usePage } from '@inertiajs/react';
+import { Head, useForm, Link, usePage, router } from '@inertiajs/react';
 import AppLayout from '@/layouts/app-layout';
 import {
     Card,
@@ -35,7 +35,7 @@ import {
     SelectValue,
 } from '@/components/ui/select';
 import { useState } from 'react';
-import { Plus, Pencil, Trash, ArrowRightLeft, Eye } from 'lucide-react';
+import { Plus, Pencil, Trash, ArrowRightLeft, Eye, Users, UserPlus, Info } from 'lucide-react';
 import { DeleteConfirmationDialog } from '@/components/delete-confirmation-dialog';
 
 interface Branch {
@@ -62,12 +62,18 @@ interface Props {
     };
     availableGroups: Group[];
     availableBranches: Branch[];
+    filters: {
+        search?: string;
+        branch_id?: string;
+        group_id?: string;
+    };
 }
 
 export default function StudentsIndex({
     students,
     availableGroups,
     availableBranches,
+    filters,
 }: Props) {
     const { auth } = usePage<any>().props;
     const user = auth.user;
@@ -81,6 +87,28 @@ export default function StudentsIndex({
     const [transferringStudent, setTransferringStudent] =
         useState<Student | null>(null);
     const [deletingStudent, setDeletingStudent] = useState<Student | null>(null);
+
+    // Search and Filter State
+    const [search, setSearch] = useState(filters.search || '');
+    const [branchFilter, setBranchFilter] = useState(filters.branch_id || 'all');
+    const [groupFilter, setGroupFilter] = useState(filters.group_id || 'all');
+
+    const handleFilter = (newSearch?: string, newBranch?: string, newGroup?: string) => {
+        const query: any = {};
+        const s = newSearch !== undefined ? newSearch : search;
+        const b = newBranch !== undefined ? newBranch : branchFilter;
+        const g = newGroup !== undefined ? newGroup : groupFilter;
+
+        if (s) query.search = s;
+        if (b && b !== 'all') query.branch_id = b;
+        if (g && g !== 'all') query.group_id = g;
+
+        router.get('/students', query, {
+            preserveState: true,
+            preserveScroll: true,
+            replace: true,
+        });
+    };
 
     // Quick Add Form
     const quickAdd = useForm({
@@ -201,142 +229,95 @@ export default function StudentsIndex({
                                     <Plus className="size-4" /> Add Students
                                 </Button>
                             </DialogTrigger>
-                            <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto">
+                            <DialogContent className="max-w-5xl max-h-[90vh] overflow-y-auto">
                                 <DialogHeader>
-                                    <DialogTitle>Add Multiple Students</DialogTitle>
+                                    <div className="flex items-center gap-2">
+                                        <Users className="size-5 text-muted-foreground" />
+                                        <DialogTitle>Add Multiple Students</DialogTitle>
+                                    </div>
                                     <DialogDescription>
-                                        Add multiple students at once. You can
-                                        optionally enroll them in a group.
+                                        Add multiple students at once and assign them to a group.
                                     </DialogDescription>
                                 </DialogHeader>
                                 <form
                                     onSubmit={submitMassAdd}
-                                    className="space-y-6"
+                                    className="space-y-6 pt-4"
                                 >
-                                    <div className="space-y-4 p-4 bg-slate-50 rounded-lg border border-slate-200">
+                                    <div className="space-y-4 p-4 bg-secondary/30 rounded-lg border">
                                         {isAdmin && (
-                                            <div className="space-y-2 pb-4 border-b border-slate-200">
-                                                <Label htmlFor="mass-branch-id">
-                                                    Select Branch
-                                                </Label>
+                                            <div className="space-y-2">
+                                                <Label htmlFor="mass-branch-id">Branch</Label>
                                                 <Select
                                                     value={massAdd.data.branch_id}
                                                     onValueChange={(val) =>
                                                         massAdd.setData('branch_id', val)
                                                     }
                                                 >
-                                                    <SelectTrigger className="bg-white">
-                                                        <SelectValue placeholder="Choose a branch" />
+                                                    <SelectTrigger className="bg-background">
+                                                        <SelectValue placeholder="Select branch" />
                                                     </SelectTrigger>
                                                     <SelectContent>
-                                                        {availableBranches.map(
-                                                            (branch) => (
-                                                                <SelectItem
-                                                                    key={branch.id}
-                                                                    value={branch.id.toString()}
-                                                                >
-                                                                    {branch.name}
-                                                                </SelectItem>
-                                                            ),
-                                                        )}
+                                                        {availableBranches.map((branch) => (
+                                                            <SelectItem key={branch.id} value={branch.id.toString()}>
+                                                                {branch.name}
+                                                            </SelectItem>
+                                                        ))}
                                                     </SelectContent>
                                                 </Select>
-                                                {massAdd.errors.branch_id && (
-                                                    <p className="text-sm text-red-500">
-                                                        {massAdd.errors.branch_id}
-                                                    </p>
-                                                )}
+                                                {massAdd.errors.branch_id && <p className="text-xs text-destructive">{massAdd.errors.branch_id}</p>}
                                             </div>
                                         )}
                                         <div className="space-y-2">
-                                            <Label htmlFor="mass-group-id">
-                                                Enroll in Group
-                                            </Label>
+                                            <Label htmlFor="mass-group-id">Group Enrollment</Label>
                                             <Select
                                                 value={massAdd.data.group_id}
                                                 onValueChange={(val) =>
                                                     massAdd.setData('group_id', val)
                                                 }
                                             >
-                                                <SelectTrigger className="bg-white">
-                                                    <SelectValue placeholder="Choose a group for all students" />
+                                                <SelectTrigger className="bg-background">
+                                                    <SelectValue placeholder="Choose a group" />
                                                 </SelectTrigger>
                                                 <SelectContent>
-                                                    {availableGroups.map(
-                                                        (group) => (
-                                                            <SelectItem
-                                                                key={group.id}
-                                                                value={group.id.toString()}
-                                                            >
-                                                                {group.name}
-                                                            </SelectItem>
-                                                        ),
-                                                    )}
+                                                    {availableGroups.map((group) => (
+                                                        <SelectItem key={group.id} value={group.id.toString()}>
+                                                            {group.name}
+                                                        </SelectItem>
+                                                    ))}
                                                 </SelectContent>
                                             </Select>
-                                            {massAdd.errors.group_id && (
-                                                <p className="text-sm text-red-500">
-                                                    {massAdd.errors.group_id}
-                                                </p>
-                                            )}
+                                            {massAdd.errors.group_id && <p className="text-xs text-destructive">{massAdd.errors.group_id}</p>}
                                         </div>
                                     </div>
 
-                                    <div className="space-y-4">
-                                        <div className="grid grid-cols-12 gap-4 px-2 text-xs font-semibold text-slate-500 uppercase tracking-wider">
-                                            <div className="col-span-11">Name</div>
-                                            <div className="col-span-1" />
-                                        </div>
-                                        <div className="space-y-3">
-                                            {massAdd.data.students.map(
-                                                (student, index) => (
-                                                    <div
-                                                        key={index}
-                                                        className="grid grid-cols-12 gap-4 items-start"
-                                                    >
-                                                        <div className="col-span-11">
-                                                            <Input
-                                                                placeholder="Student name"
-                                                                value={student.name}
-                                                                onChange={(e) =>
-                                                                    updateStudentRow(
-                                                                        index,
-                                                                        'name',
-                                                                        e.target
-                                                                            .value,
-                                                                    )
-                                                                }
-                                                                required
-                                                            />
-                                                            {massAdd.errors[`students.${index}.name` as keyof typeof massAdd.errors] && (
-                                                                <p className="text-[10px] text-red-500 mt-1">
-                                                                    {massAdd.errors[`students.${index}.name` as keyof typeof massAdd.errors]}
-                                                                </p>
-                                                            )}
-                                                        </div>
-                                                        <div className="col-span-1 pt-1">
-                                                            <Button
-                                                                type="button"
-                                                                variant="ghost"
-                                                                size="icon"
-                                                                disabled={
-                                                                    massAdd.data.students
-                                                                        .length <=
-                                                                    1
-                                                                }
-                                                                onClick={() =>
-                                                                    removeStudentRow(
-                                                                        index,
-                                                                    )
-                                                                }
-                                                                className="hover:text-red-500 cursor-pointer"
-                                                            >
-                                                                <Trash className="size-4" />
-                                                            </Button>
-                                                        </div>
+                                    <div className="space-y-3">
+                                        <div className="px-1 text-xs font-bold text-muted-foreground uppercase tracking-widest">Students List</div>
+                                        <div className="space-y-2">
+                                            {massAdd.data.students.map((student, index) => (
+                                                <div key={index} className="flex gap-2 items-start">
+                                                    <div className="flex-1">
+                                                        <Input
+                                                            placeholder="Student name"
+                                                            value={student.name}
+                                                            onChange={(e) => updateStudentRow(index, 'name', e.target.value)}
+                                                            required
+                                                        />
+                                                        {massAdd.errors[`students.${index}.name` as keyof typeof massAdd.errors] && (
+                                                            <p className="text-[10px] text-destructive mt-1">{massAdd.errors[`students.${index}.name` as keyof typeof massAdd.errors]}</p>
+                                                        )}
                                                     </div>
-                                                ),
-                                            )}
+                                                    <Button
+                                                        type="button"
+                                                        variant="ghost"
+                                                        size="icon"
+                                                        disabled={massAdd.data.students.length <= 1}
+                                                        onClick={() => removeStudentRow(index)}
+                                                        className="h-9 w-9 text-muted-foreground hover:text-destructive cursor-pointer"
+                                                    >
+                                                        <Trash className="size-4" />
+                                                    </Button>
+                                                </div>
+                                            ))}
                                         </div>
                                     </div>
 
@@ -348,21 +329,14 @@ export default function StudentsIndex({
                                             onClick={addStudentRow}
                                             className="gap-2 cursor-pointer"
                                         >
-                                            <Plus className="size-3" /> Add More
+                                            <Plus className="size-4" /> Add Row
                                         </Button>
-                                        <DialogFooter>
-                                            <Button
-                                                type="submit"
-                                                disabled={massAdd.processing}
-                                                className="cursor-pointer"
-                                            >
-                                                Create {massAdd.data.students.length}{' '}
-                                                Student
-                                                {massAdd.data.students.length !== 1
-                                                    ? 's'
-                                                    : ''}
+                                        <div className="flex gap-2">
+                                            <Button type="button" variant="ghost" onClick={() => setIsMassAddOpen(false)} className="cursor-pointer">Cancel</Button>
+                                            <Button type="submit" disabled={massAdd.processing} className="cursor-pointer">
+                                                Save {massAdd.data.students.length} Students
                                             </Button>
-                                        </DialogFooter>
+                                        </div>
                                     </div>
                                 </form>
                             </DialogContent>
@@ -374,109 +348,77 @@ export default function StudentsIndex({
                             onOpenChange={setIsCreateOpen}
                         >
                             <DialogTrigger asChild>
-                                <Button className="gap-2 cursor-pointer" onClick={() => quickAdd.reset()}>
-                                    <Plus className="size-4" /> Quick Add
+                                <Button
+                                    className="gap-2 cursor-pointer"
+                                    onClick={() => quickAdd.reset()}
+                                >
+                                    <UserPlus className="size-4" /> Quick Add
                                 </Button>
                             </DialogTrigger>
                             <DialogContent>
                                 <DialogHeader>
-                                    <DialogTitle>Add New Student</DialogTitle>
-                                    <DialogDescription>
-                                        Create a new student record.
-                                    </DialogDescription>
+                                    <div className="flex items-center gap-2">
+                                        <UserPlus className="size-5 text-muted-foreground" />
+                                        <DialogTitle>Quick Add Student</DialogTitle>
+                                    </div>
+                                    <DialogDescription>Create a single student record instantly.</DialogDescription>
                                 </DialogHeader>
                                 <form
                                     onSubmit={submitQuickAdd}
-                                    className="space-y-4"
+                                    className="space-y-4 pt-4"
                                 >
                                     {isAdmin && (
                                         <div className="space-y-2">
-                                            <Label htmlFor="branch_id">
-                                                Branch
-                                            </Label>
+                                            <Label htmlFor="branch_id">Branch</Label>
                                             <Select
                                                 value={quickAdd.data.branch_id}
-                                                onValueChange={(val) =>
-                                                    quickAdd.setData('branch_id', val)
-                                                }
+                                                onValueChange={(val) => quickAdd.setData('branch_id', val)}
                                             >
                                                 <SelectTrigger>
-                                                    <SelectValue placeholder="Choose a branch" />
+                                                    <SelectValue placeholder="Select branch" />
                                                 </SelectTrigger>
                                                 <SelectContent>
-                                                    {availableBranches.map(
-                                                        (branch) => (
-                                                            <SelectItem
-                                                                key={branch.id}
-                                                                value={branch.id.toString()}
-                                                            >
-                                                                {branch.name}
-                                                            </SelectItem>
-                                                        ),
-                                                    )}
+                                                    {availableBranches.map((branch) => (
+                                                        <SelectItem key={branch.id} value={branch.id.toString()}>
+                                                            {branch.name}
+                                                        </SelectItem>
+                                                    ))}
                                                 </SelectContent>
                                             </Select>
-                                            {quickAdd.errors.branch_id && (
-                                                <p className="text-sm text-red-500">
-                                                    {quickAdd.errors.branch_id}
-                                                </p>
-                                            )}
+                                            {quickAdd.errors.branch_id && <p className="text-xs text-destructive">{quickAdd.errors.branch_id}</p>}
                                         </div>
                                     )}
                                     <div className="space-y-2">
-                                        <Label htmlFor="quick-group-id">
-                                            Enroll in Group
-                                        </Label>
+                                        <Label htmlFor="quick-group-id">Group</Label>
                                         <Select
                                             value={quickAdd.data.group_id}
-                                            onValueChange={(val) =>
-                                                quickAdd.setData('group_id', val)
-                                            }
+                                            onValueChange={(val) => quickAdd.setData('group_id', val)}
                                         >
                                             <SelectTrigger>
                                                 <SelectValue placeholder="Choose a group" />
                                             </SelectTrigger>
                                             <SelectContent>
-                                                {availableGroups.map(
-                                                    (group) => (
-                                                        <SelectItem
-                                                            key={group.id}
-                                                            value={group.id.toString()}
-                                                        >
-                                                            {group.name}
-                                                        </SelectItem>
-                                                    ),
-                                                )}
+                                                {availableGroups.map((group) => (
+                                                    <SelectItem key={group.id} value={group.id.toString()}>
+                                                        {group.name}
+                                                    </SelectItem>
+                                                ))}
                                             </SelectContent>
                                         </Select>
-                                        {quickAdd.errors.group_id && (
-                                            <p className="text-sm text-red-500">
-                                                {quickAdd.errors.group_id}
-                                            </p>
-                                        )}
+                                        {quickAdd.errors.group_id && <p className="text-xs text-destructive">{quickAdd.errors.group_id}</p>}
                                     </div>
                                     <div className="space-y-2">
                                         <Label htmlFor="name">Name</Label>
                                         <Input
                                             id="name"
                                             value={quickAdd.data.name}
-                                            onChange={(e) =>
-                                                quickAdd.setData('name', e.target.value)
-                                            }
+                                            onChange={(e) => quickAdd.setData('name', e.target.value)}
                                             required
                                         />
-                                        {quickAdd.errors.name && (
-                                            <p className="text-sm text-red-500">
-                                                {quickAdd.errors.name}
-                                            </p>
-                                        )}
+                                        {quickAdd.errors.name && <p className="text-xs text-destructive">{quickAdd.errors.name}</p>}
                                     </div>
-                                    <DialogFooter>
-                                        <Button
-                                            type="submit"
-                                            disabled={quickAdd.processing}
-                                            className="cursor-pointer"
-                                        >
+                                    <DialogFooter className="pt-2">
+                                        <Button type="submit" disabled={quickAdd.processing} className="w-full cursor-pointer">
                                             Create Student
                                         </Button>
                                     </DialogFooter>
@@ -487,27 +429,107 @@ export default function StudentsIndex({
                 </div>
 
                 <Card>
-                    <CardHeader>
-                        <CardTitle>All Students</CardTitle>
-                        <CardDescription>Manage students and their transfers.</CardDescription>
+                    <CardHeader className="bg-slate-50/50 border-b border-slate-100 pb-4 space-y-4">
+                        <div className="flex items-center gap-2">
+                            <Users className="size-5 text-slate-400" />
+                            <div>
+                                <CardTitle className="text-lg">All Students</CardTitle>
+                                <CardDescription>Manage your student database and group memberships.</CardDescription>
+                            </div>
+                        </div>
+
+                        <div className="flex flex-wrap items-center gap-4 pt-4 border-t border-slate-100/50">
+                            {/* Search */}
+                            <div className="relative w-full md:w-96">
+                                <Input
+                                    placeholder="Search students by name..."
+                                    value={search}
+                                    onChange={(e) => {
+                                        setSearch(e.target.value);
+                                        handleFilter(e.target.value);
+                                    }}
+                                    className="bg-white shadow-sm h-10"
+                                />
+                            </div>
+
+                            {/* Branch Filter */}
+                            {isAdmin && (
+                                <Select
+                                    value={branchFilter}
+                                    onValueChange={(val) => {
+                                        setBranchFilter(val);
+                                        handleFilter(undefined, val);
+                                    }}
+                                >
+                                    <SelectTrigger className="w-full md:w-[290px] bg-white shadow-sm h-10">
+                                        <SelectValue placeholder="All Branches" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="all">All Branches</SelectItem>
+                                        {availableBranches.map((branch) => (
+                                            <SelectItem key={branch.id} value={branch.id.toString()}>
+                                                {branch.name}
+                                            </SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
+                            )}
+
+                            {/* Group Filter */}
+                            <Select
+                                value={groupFilter}
+                                onValueChange={(val) => {
+                                    setGroupFilter(val);
+                                    handleFilter(undefined, undefined, val);
+                                }}
+                            >
+                                <SelectTrigger className="w-full md:w-[290px] bg-white shadow-sm h-10">
+                                    <SelectValue placeholder="All Groups" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="all">All Groups</SelectItem>
+                                    {availableGroups.map((group) => (
+                                        <SelectItem key={group.id} value={group.id.toString()}>
+                                            {group.name}
+                                        </SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+
+                            {(search || (branchFilter && branchFilter !== 'all') || (groupFilter && groupFilter !== 'all')) && (
+                                <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    onClick={() => {
+                                        setSearch('');
+                                        setBranchFilter('all');
+                                        setGroupFilter('all');
+                                        handleFilter('', 'all', 'all');
+                                    }}
+                                    className="text-xs h-10 cursor-pointer text-blue-600 hover:text-blue-700 hover:bg-blue-50 font-semibold transition-colors"
+                                >
+                                    Reset Filters
+                                </Button>
+                            )}
+                        </div>
                     </CardHeader>
-                    <CardContent>
+                    <CardContent className="p-0">
                         <Table>
                             <TableHeader>
                                 <TableRow>
-                                    <TableHead>Name</TableHead>
+                                    <TableHead className="pl-6">Name</TableHead>
                                     <TableHead>Branch</TableHead>
                                     <TableHead>Current Groups</TableHead>
-                                    <TableHead className="text-right">Actions</TableHead>
+                                    <TableHead className="text-right pr-6">Actions</TableHead>
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
                                 {students.data.map((student) => (
-                                    <TableRow key={student.id}>
-                                        <TableCell className="font-medium">
+                                    <TableRow key={student.id} className="even:bg-slate-50/50 hover:bg-slate-100/50 transition-colors">
+                                        <TableCell className="font-medium pl-6">
                                             <Link
                                                 href={`/students/${student.id}`}
-                                                className="text-blue-600 hover:text-blue-800 hover:underline transition-colors"
+                                                className="text-primary hover:underline transition-colors"
                                             >
                                                 {student.name}
                                             </Link>
@@ -516,19 +538,19 @@ export default function StudentsIndex({
                                         <TableCell>
                                             <div className="flex flex-wrap gap-1">
                                                 {student.groups.map((g) => (
-                                                    <span key={g.id} className="inline-flex items-center rounded-md bg-blue-50 px-2 py-1 text-xs font-medium text-blue-700 ring-1 ring-blue-700/10 ring-inset">
+                                                    <span key={g.id} className="inline-flex items-center rounded-md bg-white px-2 py-0.5 text-xs font-medium text-slate-700 border shadow-sm">
                                                         {g.name}
                                                     </span>
                                                 ))}
                                                 {student.groups.length === 0 && (
-                                                    <span className="text-xs text-muted-foreground">Not Enrolled</span>
+                                                    <span className="text-xs text-muted-foreground italic">Not Enrolled</span>
                                                 )}
                                             </div>
                                         </TableCell>
-                                        <TableCell className="text-right">
-                                            <div className="flex justify-end gap-2">
+                                        <TableCell className="text-right pr-6">
+                                            <div className="flex justify-end gap-1">
                                                 <Link href={`/students/${student.id}`}>
-                                                    <Button variant="ghost" size="icon" title="View Student" className="cursor-pointer hover:bg-slate-100 transition-colors">
+                                                    <Button variant="ghost" size="icon" title="View Student" className="h-8 w-8 cursor-pointer text-blue-600 hover:text-blue-700 hover:bg-blue-50">
                                                         <Eye className="size-4" />
                                                     </Button>
                                                 </Link>
@@ -536,7 +558,7 @@ export default function StudentsIndex({
                                                     variant="ghost"
                                                     size="icon"
                                                     title="Transfer Student"
-                                                    className="cursor-pointer hover:bg-orange-50 hover:text-orange-600 transition-colors"
+                                                    className="h-8 w-8 cursor-pointer text-orange-600 hover:text-orange-700 hover:bg-orange-50"
                                                     onClick={() => {
                                                         setTransferringStudent(student);
                                                         transferForm.setData({
@@ -547,12 +569,13 @@ export default function StudentsIndex({
                                                         });
                                                     }}
                                                 >
-                                                    <ArrowRightLeft className="size-4 text-orange-600" />
+                                                    <ArrowRightLeft className="size-4" />
                                                 </Button>
                                                 <Button
                                                     variant="ghost"
                                                     size="icon"
-                                                    className="cursor-pointer hover:bg-blue-50 hover:text-blue-600 transition-colors"
+                                                    title="Edit Student"
+                                                    className="h-8 w-8 cursor-pointer text-slate-600 hover:text-slate-700 hover:bg-slate-100"
                                                     onClick={() => {
                                                         setEditingStudent(student);
                                                         editForm.setData('name', student.name);
@@ -563,10 +586,11 @@ export default function StudentsIndex({
                                                 <Button
                                                     variant="ghost"
                                                     size="icon"
-                                                    className="cursor-pointer hover:bg-red-50 hover:text-red-600 transition-colors"
+                                                    title="Delete Student"
+                                                    className="h-8 w-8 cursor-pointer text-red-600 hover:text-red-700 hover:bg-red-50"
                                                     onClick={() => setDeletingStudent(student)}
                                                 >
-                                                    <Trash className="size-4 text-red-500" />
+                                                    <Trash className="size-4" />
                                                 </Button>
                                             </div>
                                         </TableCell>
@@ -574,7 +598,7 @@ export default function StudentsIndex({
                                 ))}
                                 {students.data.length === 0 && (
                                     <TableRow>
-                                        <TableCell colSpan={4} className="h-24 text-center text-muted-foreground">No students found.</TableCell>
+                                        <TableCell colSpan={4} className="h-24 text-center text-muted-foreground italic">No students found.</TableCell>
                                     </TableRow>
                                 )}
                             </TableBody>
@@ -582,13 +606,13 @@ export default function StudentsIndex({
 
                         {/* Pagination */}
                         {students.links && students.links.length > 3 && (
-                            <div className="mt-4 flex flex-wrap justify-center gap-1">
+                            <div className="py-4 flex flex-wrap justify-center gap-1 border-t">
                                 {students.links.map((link: any, i: number) => (
                                     <Link key={i} href={link.url || '#'} preserveScroll>
                                         <Button
                                             variant={link.active ? 'default' : 'outline'}
                                             size="sm"
-                                            className={!link.url ? 'pointer-events-none opacity-50' : 'cursor-pointer'}
+                                            className={`h-8 px-3 ${!link.url ? 'pointer-events-none opacity-50' : 'cursor-pointer'}`}
                                         >
                                             <span dangerouslySetInnerHTML={{ __html: link.label }} />
                                         </Button>
@@ -603,9 +627,12 @@ export default function StudentsIndex({
                 <Dialog open={!!editingStudent} onOpenChange={(open) => !open && setEditingStudent(null)}>
                     <DialogContent>
                         <DialogHeader>
-                            <DialogTitle>Edit Student</DialogTitle>
+                            <div className="flex items-center gap-2">
+                                <Pencil className="size-5 text-muted-foreground" />
+                                <DialogTitle>Edit Student</DialogTitle>
+                            </div>
                         </DialogHeader>
-                        <form onSubmit={submitEdit} className="space-y-4">
+                        <form onSubmit={submitEdit} className="space-y-4 pt-4">
                             <div className="space-y-2">
                                 <Label htmlFor="edit-name">Name</Label>
                                 <Input
@@ -614,10 +641,10 @@ export default function StudentsIndex({
                                     onChange={(e) => editForm.setData('name', e.target.value)}
                                     required
                                 />
-                                {editForm.errors.name && <p className="text-sm text-red-500">{editForm.errors.name}</p>}
+                                {editForm.errors.name && <p className="text-xs text-destructive">{editForm.errors.name}</p>}
                             </div>
                             <DialogFooter>
-                                <Button type="submit" disabled={editForm.processing} className="cursor-pointer">Update Student</Button>
+                                <Button type="submit" disabled={editForm.processing} className="w-full cursor-pointer">Update Student</Button>
                             </DialogFooter>
                         </form>
                     </DialogContent>
@@ -627,16 +654,21 @@ export default function StudentsIndex({
                 <Dialog open={!!transferringStudent} onOpenChange={(open) => !open && setTransferringStudent(null)}>
                     <DialogContent>
                         <DialogHeader>
-                            <DialogTitle>Transfer Student</DialogTitle>
-                            <DialogDescription>Transfer {transferringStudent?.name} to another group.</DialogDescription>
+                            <div className="flex items-center gap-2">
+                                <ArrowRightLeft className="size-5 text-orange-500" />
+                                <DialogTitle className="text-orange-900 font-bold">Transfer Student</DialogTitle>
+                            </div>
+                            <DialogDescription>
+                                Move <span className="font-bold text-orange-600 px-1.5 py-0.5 bg-orange-50 rounded-md border border-orange-100">{transferringStudent?.name}</span> to a different group.
+                            </DialogDescription>
                         </DialogHeader>
-                        <form onSubmit={submitTransfer} className="space-y-4">
+                        <form onSubmit={submitTransfer} className="space-y-4 pt-4">
                             <div className="grid grid-cols-2 gap-4">
                                 <div className="space-y-2">
-                                    <Label htmlFor="from_group_id">From Group</Label>
+                                    <Label htmlFor="from_group_id" className="text-xs font-bold text-slate-500 uppercase">From Group</Label>
                                     <Select value={transferForm.data.from_group_id} onValueChange={(val) => transferForm.setData('from_group_id', val)}>
                                         <SelectTrigger>
-                                            <SelectValue placeholder="Current Group" />
+                                            <SelectValue placeholder="Current" />
                                         </SelectTrigger>
                                         <SelectContent>
                                             {transferringStudent?.groups.map((group) => (
@@ -646,10 +678,10 @@ export default function StudentsIndex({
                                     </Select>
                                 </div>
                                 <div className="space-y-2">
-                                    <Label htmlFor="to_group_id">To Group</Label>
+                                    <Label htmlFor="to_group_id" className="text-xs font-bold text-slate-500 uppercase">To Group</Label>
                                     <Select value={transferForm.data.to_group_id} onValueChange={(val) => transferForm.setData('to_group_id', val)}>
                                         <SelectTrigger>
-                                            <SelectValue placeholder="Target Group" />
+                                            <SelectValue placeholder="Target" />
                                         </SelectTrigger>
                                         <SelectContent>
                                             {availableGroups.filter((g) => g.id.toString() !== transferForm.data.from_group_id).map((group) => (
@@ -660,7 +692,7 @@ export default function StudentsIndex({
                                 </div>
                             </div>
                             <div className="space-y-2">
-                                <Label htmlFor="effective_date">Effective Date</Label>
+                                <Label htmlFor="effective_date" className="text-xs font-bold text-slate-500 uppercase">Effective Date</Label>
                                 <Input
                                     id="effective_date"
                                     type="date"
@@ -668,27 +700,30 @@ export default function StudentsIndex({
                                     onChange={(e) => transferForm.setData('effective_date', e.target.value)}
                                     required
                                 />
-                                {transferForm.errors.effective_date && <p className="text-sm text-red-500">{transferForm.errors.effective_date}</p>}
                             </div>
                             <div className="space-y-2">
-                                <Label htmlFor="reason">Reason for Transfer</Label>
+                                <Label htmlFor="reason" className="text-xs font-bold text-slate-500 uppercase">Reason</Label>
                                 <Input
                                     id="reason"
-                                    placeholder="Enter reason for transfer"
+                                    placeholder="Enter reason"
                                     value={transferForm.data.reason}
                                     onChange={(e) => transferForm.setData('reason', e.target.value)}
                                     required
                                 />
-                                {transferForm.errors.reason && <p className="text-sm text-red-500">{transferForm.errors.reason}</p>}
                             </div>
-                            <DialogFooter>
-                                <Button type="submit" disabled={transferForm.processing} className="cursor-pointer">Transfer Student</Button>
+                            <DialogFooter className="pt-2">
+                                <Button
+                                    type="submit"
+                                    disabled={transferForm.processing}
+                                    className="w-full bg-orange-600 hover:bg-orange-700 text-white cursor-pointer shadow-sm transition-all active:scale-95"
+                                >
+                                    Complete Transfer
+                                </Button>
                             </DialogFooter>
                         </form>
                     </DialogContent>
                 </Dialog>
 
-                {/* Delete Confirmation */}
                 <DeleteConfirmationDialog
                     isOpen={!!deletingStudent}
                     onClose={() => setDeletingStudent(null)}

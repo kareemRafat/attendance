@@ -17,14 +17,33 @@ class StudentController extends Controller
 {
     use AuthorizesRequests;
 
-    public function index(): Response
+    public function index(Request $request): Response
     {
-        return Inertia::render('Students/Index', [
-            'students' => Student::with(['branch', 'groups' => function ($query) {
+        $query = Student::query()
+            ->with(['branch', 'groups' => function ($query) {
                 $query->whereNull('enrollments.ended_at');
-            }])->latest()->paginate(10),
+            }]);
+
+        if ($request->filled('search')) {
+            $query->where('name', 'like', '%' . $request->search . '%');
+        }
+
+        if ($request->filled('branch_id')) {
+            $query->where('branch_id', $request->branch_id);
+        }
+
+        if ($request->filled('group_id')) {
+            $query->whereHas('groups', function ($q) use ($request) {
+                $q->where('groups.id', $request->group_id)
+                  ->whereNull('enrollments.ended_at');
+            });
+        }
+
+        return Inertia::render('Students/Index', [
+            'students' => $query->latest()->paginate(10)->withQueryString(),
             'availableGroups' => Group::where('is_active', true)->get(),
             'availableBranches' => \App\Models\Branch::all(),
+            'filters' => $request->only(['search', 'branch_id', 'group_id']),
         ]);
     }
 
