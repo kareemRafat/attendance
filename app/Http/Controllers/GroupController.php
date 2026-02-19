@@ -94,7 +94,8 @@ class GroupController extends Controller
                 'attendances as excused_count' => fn ($q) => $q->where('status', \App\Enums\AttendanceStatus::Excused),
             ])
             ->latest('date')
-            ->get();
+            ->paginate(10)
+            ->withQueryString();
 
         return Inertia::render('Groups/Show', [
             'group' => $group,
