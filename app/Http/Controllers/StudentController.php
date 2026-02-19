@@ -22,8 +22,9 @@ class StudentController extends Controller
         return Inertia::render('Students/Index', [
             'students' => Student::with(['branch', 'groups' => function ($query) {
                 $query->whereNull('enrollments.ended_at');
-            }])->paginate(10),
+            }])->latest()->paginate(10),
             'availableGroups' => Group::where('is_active', true)->get(),
+            'availableBranches' => \App\Models\Branch::all(),
         ]);
     }
 
@@ -68,9 +69,46 @@ class StudentController extends Controller
 
     public function store(StudentRequest $request): RedirectResponse
     {
-        Student::create($request->validated());
+        $validated = $request->validated();
+        $branchId = $validated['branch_id'];
 
-        return redirect()->route('students.index')->with('success', 'Student created successfully.');
+        if ($request->has('students')) {
+            DB::transaction(function () use ($validated, $branchId) {
+                foreach ($validated['students'] as $studentData) {
+                    $student = Student::create([
+                        'name' => $studentData['name'],
+                        'details' => $studentData['details'] ?? null,
+                        'branch_id' => $branchId,
+                    ]);
+
+                    if (!empty($validated['group_id'])) {
+                        $student->enrollments()->create([
+                            'group_id' => $validated['group_id'],
+                            'enrolled_at' => now(),
+                        ]);
+                    }
+                }
+            });
+
+            return redirect()->route('students.index')->with('success', 'Students created successfully.');
+        }
+
+        DB::transaction(function () use ($validated, $branchId) {
+            $student = Student::create([
+                'name' => $validated['name'],
+                'details' => $validated['details'] ?? null,
+                'branch_id' => $branchId,
+            ]);
+
+            if (!empty($validated['group_id'])) {
+                $student->enrollments()->create([
+                    'group_id' => $validated['group_id'],
+                    'enrolled_at' => now(),
+                ]);
+            }
+        });
+
+        return redirect()->route('students.index')->with('success', 'Student created and enrolled successfully.');
     }
 
     public function update(StudentRequest $request, Student $student): RedirectResponse
@@ -109,6 +147,7 @@ class StudentController extends Controller
             'from_group_id' => ['required', 'exists:groups,id'],
             'to_group_id' => ['required', 'exists:groups,id', 'different:from_group_id'],
             'effective_date' => ['required', 'date', 'after_or_equal:today'],
+            'reason' => ['required', 'string'],
         ]);
 
         DB::transaction(function () use ($request, $student) {
@@ -119,6 +158,7 @@ class StudentController extends Controller
                 'to_group_id' => $request->to_group_id,
                 'transferred_at' => now(),
                 'effective_date' => $request->effective_date,
+                'reason' => $request->reason,
             ]);
 
             // End previous enrollment

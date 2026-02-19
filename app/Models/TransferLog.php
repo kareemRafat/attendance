@@ -17,6 +17,7 @@ class TransferLog extends Model
         'to_group_id',
         'transferred_at',
         'effective_date',
+        'reason',
     ];
 
     protected function casts(): array

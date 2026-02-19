@@ -33,10 +33,23 @@ class StudentRequest extends FormRequest
      */
     public function rules(): array
     {
-        return [
+        $rules = [
             'branch_id' => ['required', 'exists:branches,id'],
+        ];
+
+        if ($this->has('students')) {
+            return array_merge($rules, [
+                'students' => ['required', 'array', 'min:1'],
+                'students.*.name' => ['required', 'string', 'max:255'],
+                'students.*.details' => ['nullable', 'string'],
+                'group_id' => ['required', 'exists:groups,id'],
+            ]);
+        }
+
+        return array_merge($rules, [
             'name' => ['required', 'string', 'max:255'],
             'details' => ['nullable', 'string'],
-        ];
+            'group_id' => ['required', 'exists:groups,id'],
+        ]);
     }
 }

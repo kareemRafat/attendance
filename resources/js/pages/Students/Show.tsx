@@ -64,6 +64,7 @@ interface TransferLog {
     to_group: { name: string };
     transferred_at: string;
     effective_date: string;
+    reason: string;
 }
 
 interface Props {
@@ -314,7 +315,7 @@ export default function StudentShow({
                                     <TableHead className="w-10 text-center" />
                                     <TableHead>To Group</TableHead>
                                     <TableHead>Effective Date</TableHead>
-                                    <TableHead className="text-right px-6">Logged At</TableHead>
+                                    <TableHead className="text-right px-6">Reason</TableHead>
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
@@ -326,9 +327,7 @@ export default function StudentShow({
                                         </TableCell>
                                         <TableCell className="font-semibold text-slate-900">{log.to_group.name}</TableCell>
                                         <TableCell className="text-slate-600">{format(new Date(log.effective_date), 'PPP')}</TableCell>
-                                        <TableCell className="text-right text-slate-400 text-xs px-6">
-                                            {format(new Date(log.transferred_at), 'PPp')}
-                                        </TableCell>
+                                        <TableCell className="text-right text-slate-600 max-w-[300px] truncate px-6" title={log.reason}>{log.reason}</TableCell>
                                     </TableRow>
                                 ))}
                                 {transferHistory.length === 0 && (
