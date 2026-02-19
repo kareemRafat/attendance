@@ -85,7 +85,8 @@ class GroupController extends Controller
                     })->where('status', \App\Enums\AttendanceStatus::Excused);
                 },
             ])
-            ->get();
+            ->paginate(10, ['*'], 'students_page')
+            ->withQueryString();
 
         $sessions = $group->lectureSessions()
             ->withCount([
@@ -94,7 +95,7 @@ class GroupController extends Controller
                 'attendances as excused_count' => fn ($q) => $q->where('status', \App\Enums\AttendanceStatus::Excused),
             ])
             ->latest('date')
-            ->paginate(10)
+            ->paginate(10, ['*'], 'sessions_page')
             ->withQueryString();
 
         return Inertia::render('Groups/Show', [

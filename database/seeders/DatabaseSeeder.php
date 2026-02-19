@@ -40,7 +40,7 @@ class DatabaseSeeder extends Seeder
             ]);
 
             // Create some active groups
-            $activeGroups = Group::factory(2)->create([
+            $activeGroups = Group::factory(10)->create([
                 'branch_id' => $branch->id,
                 'is_active' => true,
             ]);
@@ -55,7 +55,7 @@ class DatabaseSeeder extends Seeder
 
             foreach ($allGroups as $group) {
                 // Create Students for each group
-                $students = Student::factory(8)->create(['branch_id' => $branch->id]);
+                $students = Student::factory(30)->create(['branch_id' => $branch->id]);
                 foreach ($students as $student) {
                     $student->enrollments()->create([
                         'group_id' => $group->id,
@@ -65,7 +65,7 @@ class DatabaseSeeder extends Seeder
                 }
 
                 // Create some past sessions and attendance
-                for ($i = 1; $i <= 5; $i++) {
+                for ($i = 1; $i <= 20; $i++) {
                     $session = LectureSession::factory()->create([
                         'group_id' => $group->id,
                         'lecture_number' => $i,

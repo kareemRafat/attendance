@@ -162,7 +162,7 @@ export default function GroupShow({
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
-                                {students.map((student) => {
+                                {students.data.map((student) => {
                                     const totalStudentSessions = student.present_count + student.absent_count + student.excused_count;
                                     const rate = totalStudentSessions > 0 
                                         ? Math.round(((student.present_count + student.excused_count) / totalStudentSessions) * 100) 
@@ -200,7 +200,7 @@ export default function GroupShow({
                                                 </span>
                                             </TableCell>
                                             <TableCell className="text-center">
-                                                <span className="inline-flex items-center justify-center size-7 rounded-lg bg-amber-50 dark:bg-amber-950/30 text-amber-700 dark:text-amber-400 font-bold text-xs border border-amber-100 dark:border-amber-900">
+                                                <span className="inline-flex items-center justify-center size-7 rounded-lg bg-amber-50 dark:bg-emerald-950/30 text-amber-700 dark:text-amber-400 font-bold text-xs border border-amber-100 dark:border-amber-900">
                                                     {student.excused_count}
                                                 </span>
                                             </TableCell>
@@ -214,7 +214,7 @@ export default function GroupShow({
                                         </TableRow>
                                     );
                                 })}
-                                {students.length === 0 && (
+                                {students.data.length === 0 && (
                                     <TableRow>
                                         <TableCell colSpan={7} className="h-24 text-center text-slate-400 italic">
                                             No students found in this group.
@@ -223,6 +223,27 @@ export default function GroupShow({
                                 )}
                             </TableBody>
                         </Table>
+                        {students.links && students.links.length > 3 && (
+                            <div className="py-4 flex flex-wrap justify-center gap-1 border-t border-slate-100 dark:border-slate-800">
+                                {students.links.map((link, i) => (
+                                    <Link key={i} href={link.url || '#'} preserveScroll>
+                                        <Button
+                                            variant={link.active ? 'default' : 'outline'}
+                                            size="sm"
+                                            className={cn(
+                                                "h-8 px-3 transition-all rounded-lg font-bold text-xs",
+                                                !link.url ? "pointer-events-none opacity-50" : "cursor-pointer",
+                                                link.active 
+                                                    ? "bg-slate-900 dark:bg-white dark:text-slate-900 border-transparent shadow-md" 
+                                                    : "bg-white dark:bg-slate-900 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800 border-slate-200"
+                                            )}
+                                        >
+                                            <span dangerouslySetInnerHTML={{ __html: link.label }} />
+                                        </Button>
+                                    </Link>
+                                ))}
+                            </div>
+                        )}
                     </CardContent>
                 </Card>
 
