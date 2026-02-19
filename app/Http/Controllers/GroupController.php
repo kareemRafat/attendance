@@ -9,12 +9,25 @@ use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 use Inertia\Response;
 
+use App\Models\Branch;
+use App\Enums\CourseType;
+use App\Enums\DaysPattern;
+
 class GroupController extends Controller
 {
     public function index(): Response
     {
         return Inertia::render('Groups/Index', [
             'groups' => Group::with('branch')->withCount('students')->get(),
+            'branches' => Branch::all(),
+            'courseTypes' => collect(CourseType::cases())->map(fn($case) => [
+                'name' => $case->label(),
+                'value' => $case->value,
+            ]),
+            'daysPatterns' => collect(DaysPattern::cases())->map(fn($case) => [
+                'name' => $case->label(),
+                'value' => $case->value,
+            ]),
             'canManageEverything' => Auth::user()->isAdmin(),
         ]);
     }
@@ -49,5 +62,14 @@ class GroupController extends Controller
         $group->update(['is_active' => false]);
 
         return redirect()->route('groups.index')->with('success', 'Group ended successfully.');
+    }
+
+    public function reactivate(Group $group): RedirectResponse
+    {
+        $this->authorize('update', $group);
+
+        $group->update(['is_active' => true]);
+
+        return redirect()->route('groups.index')->with('success', 'Group reactivated successfully.');
     }
 }

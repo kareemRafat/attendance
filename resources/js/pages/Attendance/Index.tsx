@@ -1,5 +1,8 @@
 import { Head, useForm, router } from '@inertiajs/react';
-import AppLayout from '@/layouts/app-layout';
+import { CheckCircle2, XCircle, Clock, Save, User } from 'lucide-react';
+import { useState, useMemo, useEffect } from 'react';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import {
     Card,
     CardContent,
@@ -7,11 +10,8 @@ import {
     CardHeader,
     CardTitle,
 } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
-import { Badge } from '@/components/ui/badge';
-import { useState, useMemo, useEffect } from 'react';
-import { CheckCircle2, XCircle, Clock, Save, User } from 'lucide-react';
+import AppLayout from '@/layouts/app-layout';
 
 interface Student {
     id: number;

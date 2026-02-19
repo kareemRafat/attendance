@@ -21,14 +21,14 @@ import {
     SidebarMenuButton,
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
-import type { NavItem } from '@/types';
-import AppLogo from './app-logo';
 import { dashboard } from '@/routes';
 import attendance from '@/routes/attendance';
-import students from '@/routes/students';
-import groups from '@/routes/groups';
 import branches from '@/routes/branches';
+import groups from '@/routes/groups';
 import reports from '@/routes/reports';
+import students from '@/routes/students';
+import type { NavItem } from '@/types';
+import AppLogo from './app-logo';
 
 export function AppSidebar() {
     const { auth } = usePage<any>().props;

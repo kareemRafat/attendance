@@ -26,6 +26,8 @@ class Group extends Model
         'is_active',
     ];
 
+    protected $appends = ['formatted_pattern', 'formatted_course_type'];
+
     protected function casts(): array
     {
         return [
@@ -34,6 +36,16 @@ class Group extends Model
             'start_date' => 'date',
             'is_active' => 'boolean',
         ];
+    }
+
+    public function getFormattedPatternAttribute(): string
+    {
+        return $this->pattern->label();
+    }
+
+    public function getFormattedCourseTypeAttribute(): string
+    {
+        return $this->course_type->label();
     }
 
     public function branch(): BelongsTo

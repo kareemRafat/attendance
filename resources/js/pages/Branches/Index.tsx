@@ -1,5 +1,7 @@
 import { Head, useForm, router, Link } from '@inertiajs/react';
-import AppLayout from '@/layouts/app-layout';
+import { Plus, Pencil, Building2, MapPin, Users, Library, Settings2 } from 'lucide-react';
+import { useState } from 'react';
+import { Button } from '@/components/ui/button';
 import {
     Card,
     CardContent,
@@ -7,9 +9,6 @@ import {
     CardHeader,
     CardTitle,
 } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import {
     Dialog,
     DialogContent,
@@ -19,8 +18,9 @@ import {
     DialogTitle,
     DialogTrigger,
 } from '@/components/ui/dialog';
-import { useState } from 'react';
-import { Plus, Pencil, Building2, MapPin, Users, Library, Settings2 } from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import AppLayout from '@/layouts/app-layout';
 
 
 interface Branch {

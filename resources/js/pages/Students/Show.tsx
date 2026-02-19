@@ -1,5 +1,17 @@
 import { Head, Link } from '@inertiajs/react';
-import AppLayout from '@/layouts/app-layout';
+import { format } from 'date-fns';
+import {
+    CheckCircle2,
+    XCircle,
+    Clock,
+    ArrowLeft,
+    User,
+    ArrowRightLeft,
+    Calendar,
+    GraduationCap,
+    TrendingUp,
+} from 'lucide-react';
+import { Button } from '@/components/ui/button';
 import {
     Card,
     CardContent,
@@ -15,19 +27,7 @@ import {
     TableHeader,
     TableRow,
 } from '@/components/ui/table';
-import {
-    CheckCircle2,
-    XCircle,
-    Clock,
-    ArrowLeft,
-    User,
-    ArrowRightLeft,
-    Calendar,
-    GraduationCap,
-    TrendingUp,
-} from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { format } from 'date-fns';
+import AppLayout from '@/layouts/app-layout';
 
 interface Group {
     id: number;
