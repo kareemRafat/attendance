@@ -27,7 +27,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::post('students/{student}/enroll', [StudentController::class, 'enroll'])->name('students.enroll');
     Route::post('students/{student}/transfer', [StudentController::class, 'transfer'])->name('students.transfer');
-    Route::resource('students', StudentController::class)->except(['show']);
+    Route::resource('students', StudentController::class);
 
     Route::get('attendance', [AttendanceController::class, 'index'])->name('attendance.index');
     Route::post('attendance', [AttendanceController::class, 'store'])->name('attendance.store');

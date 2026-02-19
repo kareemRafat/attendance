@@ -18,8 +18,9 @@ class DatabaseSeeder extends Seeder
     {
         // Create Admin
         User::factory()->admin()->create([
-            'name' => 'Admin User',
-            'email' => 'admin@example.com',
+            'name' => 'kareem',
+            'email' => 'admin@admin.com',
+            'password' => encrypt('12345678')
         ]);
 
         // Create Branches

@@ -35,7 +35,9 @@ import {
     SelectValue,
 } from '@/components/ui/select';
 import { useState } from 'react';
-import { Plus, Pencil, Trash, ArrowRightLeft, UserPlus } from 'lucide-react';
+import { Plus, Pencil, Trash, ArrowRightLeft, UserPlus, Eye } from 'lucide-react';
+import { Link } from '@inertiajs/react';
+import { DeleteConfirmationDialog } from '@/components/delete-confirmation-dialog';
 
 interface Group {
     id: number;
@@ -50,7 +52,10 @@ interface Student {
 }
 
 interface Props {
-    students: Student[];
+    students: {
+        data: Student[];
+        links: any[];
+    };
     availableGroups: Group[];
 }
 
@@ -59,11 +64,9 @@ export default function StudentsIndex({ students, availableGroups }: Props) {
 
     const [isCreateOpen, setIsCreateOpen] = useState(false);
     const [editingStudent, setEditingStudent] = useState<Student | null>(null);
-    const [enrollingStudent, setEnrollingStudent] = useState<Student | null>(
-        null,
-    );
     const [transferringStudent, setTransferringStudent] =
         useState<Student | null>(null);
+    const [deletingStudent, setDeletingStudent] = useState<Student | null>(null);
 
     const {
         data,
@@ -76,7 +79,6 @@ export default function StudentsIndex({ students, availableGroups }: Props) {
         errors,
     } = useForm({
         name: '',
-        group_id: '',
         from_group_id: '',
         to_group_id: '',
         effective_date: new Date().toISOString().split('T')[0],
@@ -103,17 +105,6 @@ export default function StudentsIndex({ students, availableGroups }: Props) {
         });
     };
 
-    const submitEnroll = (e: React.FormEvent) => {
-        e.preventDefault();
-        if (!enrollingStudent) return;
-        post(`/students/${enrollingStudent.id}/enroll`, {
-            onSuccess: () => {
-                setEnrollingStudent(null);
-                reset();
-            },
-        });
-    };
-
     const submitTransfer = (e: React.FormEvent) => {
         e.preventDefault();
         if (!transferringStudent) return;
@@ -121,6 +112,15 @@ export default function StudentsIndex({ students, availableGroups }: Props) {
             onSuccess: () => {
                 setTransferringStudent(null);
                 reset();
+            },
+        });
+    };
+
+    const confirmDelete = () => {
+        if (!deletingStudent) return;
+        destroy(`/students/${deletingStudent.id}`, {
+            onSuccess: () => {
+                setDeletingStudent(null);
             },
         });
     };
@@ -182,7 +182,7 @@ export default function StudentsIndex({ students, availableGroups }: Props) {
                     <CardHeader>
                         <CardTitle>All Students</CardTitle>
                         <CardDescription>
-                            Manage students, enrollments, and transfers.
+                            Manage students and their transfers.
                         </CardDescription>
                     </CardHeader>
                     <CardContent>
@@ -198,7 +198,7 @@ export default function StudentsIndex({ students, availableGroups }: Props) {
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
-                                {students.map((student) => (
+                                {students.data.map((student) => (
                                     <TableRow key={student.id}>
                                         <TableCell className="font-medium">
                                             {student.name}
@@ -226,34 +226,38 @@ export default function StudentsIndex({ students, availableGroups }: Props) {
                                         </TableCell>
                                         <TableCell className="text-right">
                                             <div className="flex justify-end gap-2">
-                                                <Button
-                                                    variant="ghost"
-                                                    size="icon"
-                                                    title="Enroll in Group"
-                                                    onClick={() => {
-                                                        setEnrollingStudent(
-                                                            student,
-                                                        );
-                                                        setData(
-                                                            'name',
-                                                            student.name,
-                                                        );
-                                                    }}
+                                                <Link
+                                                    href={`/students/${student.id}`}
                                                 >
-                                                    <UserPlus className="size-4 text-green-600" />
-                                                </Button>
+                                                    <Button
+                                                        variant="ghost"
+                                                        size="icon"
+                                                        title="View Student"
+                                                        className="cursor-pointer hover:bg-slate-100 hover:text-slate-900 transition-colors"
+                                                    >
+                                                        <Eye className="size-4" />
+                                                    </Button>
+                                                </Link>
                                                 <Button
                                                     variant="ghost"
                                                     size="icon"
                                                     title="Transfer Student"
+                                                    className="cursor-pointer hover:bg-orange-50 hover:text-orange-600 transition-colors"
                                                     onClick={() => {
                                                         setTransferringStudent(
                                                             student,
                                                         );
-                                                        setData(
-                                                            'name',
-                                                            student.name,
-                                                        );
+                                                        setData({
+                                                            ...data,
+                                                            name: student.name,
+                                                            from_group_id:
+                                                                student.groups
+                                                                    .length ===
+                                                                1
+                                                                    ? student.groups[0].id.toString()
+                                                                    : '',
+                                                            to_group_id: '',
+                                                        });
                                                     }}
                                                 >
                                                     <ArrowRightLeft className="size-4 text-orange-600" />
@@ -261,6 +265,7 @@ export default function StudentsIndex({ students, availableGroups }: Props) {
                                                 <Button
                                                     variant="ghost"
                                                     size="icon"
+                                                    className="cursor-pointer hover:bg-blue-50 hover:text-blue-600 transition-colors"
                                                     onClick={() => {
                                                         setEditingStudent(
                                                             student,
@@ -276,8 +281,9 @@ export default function StudentsIndex({ students, availableGroups }: Props) {
                                                 <Button
                                                     variant="ghost"
                                                     size="icon"
+                                                    className="cursor-pointer hover:bg-red-50 hover:text-red-600 transition-colors"
                                                     onClick={() =>
-                                                        deleteStudent(student)
+                                                        setDeletingStudent(student)
                                                     }
                                                 >
                                                     <Trash className="size-4 text-red-500" />
@@ -286,7 +292,7 @@ export default function StudentsIndex({ students, availableGroups }: Props) {
                                         </TableCell>
                                     </TableRow>
                                 ))}
-                                {students.length === 0 && (
+                                {students.data.length === 0 && (
                                     <TableRow>
                                         <TableCell
                                             colSpan={4}
@@ -298,6 +304,39 @@ export default function StudentsIndex({ students, availableGroups }: Props) {
                                 )}
                             </TableBody>
                         </Table>
+
+                        {/* Pagination */}
+                        {students.links && students.links.length > 3 && (
+                            <div className="mt-4 flex flex-wrap justify-center gap-1">
+                                {students.links.map((link: any, i: number) => (
+                                    <Link
+                                        key={i}
+                                        href={link.url || '#'}
+                                        preserveScroll
+                                    >
+                                        <Button
+                                            variant={
+                                                link.active
+                                                    ? 'default'
+                                                    : 'outline'
+                                            }
+                                            size="sm"
+                                            className={
+                                                !link.url
+                                                    ? 'pointer-events-none opacity-50'
+                                                    : 'cursor-pointer'
+                                            }
+                                        >
+                                            <span
+                                                dangerouslySetInnerHTML={{
+                                                    __html: link.label,
+                                                }}
+                                            />
+                                        </Button>
+                                    </Link>
+                                ))}
+                            </div>
+                        )}
                     </CardContent>
                 </Card>
 
@@ -336,55 +375,6 @@ export default function StudentsIndex({ students, availableGroups }: Props) {
                     </DialogContent>
                 </Dialog>
 
-                {/* Enroll Dialog */}
-                <Dialog
-                    open={!!enrollingStudent}
-                    onOpenChange={(open) => !open && setEnrollingStudent(null)}
-                >
-                    <DialogContent>
-                        <DialogHeader>
-                            <DialogTitle>Enroll Student</DialogTitle>
-                            <DialogDescription>
-                                Add {enrollingStudent?.name} to a group.
-                            </DialogDescription>
-                        </DialogHeader>
-                        <form onSubmit={submitEnroll} className="space-y-4">
-                            <div className="space-y-2">
-                                <Label htmlFor="group_id">Select Group</Label>
-                                <Select
-                                    onValueChange={(val) =>
-                                        setData('group_id', val)
-                                    }
-                                >
-                                    <SelectTrigger>
-                                        <SelectValue placeholder="Select a group" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        {availableGroups.map((group) => (
-                                            <SelectItem
-                                                key={group.id}
-                                                value={group.id.toString()}
-                                            >
-                                                {group.name}
-                                            </SelectItem>
-                                        ))}
-                                    </SelectContent>
-                                </Select>
-                                {errors.group_id && (
-                                    <p className="text-sm text-red-500">
-                                        {errors.group_id}
-                                    </p>
-                                )}
-                            </div>
-                            <DialogFooter>
-                                <Button type="submit" disabled={processing}>
-                                    Enroll
-                                </Button>
-                            </DialogFooter>
-                        </form>
-                    </DialogContent>
-                </Dialog>
-
                 {/* Transfer Dialog */}
                 <Dialog
                     open={!!transferringStudent}
@@ -407,6 +397,7 @@ export default function StudentsIndex({ students, availableGroups }: Props) {
                                         From Group
                                     </Label>
                                     <Select
+                                        value={data.from_group_id}
                                         onValueChange={(val) =>
                                             setData('from_group_id', val)
                                         }
@@ -438,6 +429,7 @@ export default function StudentsIndex({ students, availableGroups }: Props) {
                                         To Group
                                     </Label>
                                     <Select
+                                        value={data.to_group_id}
                                         onValueChange={(val) =>
                                             setData('to_group_id', val)
                                         }
@@ -499,6 +491,15 @@ export default function StudentsIndex({ students, availableGroups }: Props) {
                         </form>
                     </DialogContent>
                 </Dialog>
+
+                <DeleteConfirmationDialog
+                    isOpen={!!deletingStudent}
+                    onClose={() => setDeletingStudent(null)}
+                    onConfirm={confirmDelete}
+                    processing={processing}
+                    title="Delete Student"
+                    description={`Are you sure you want to delete ${deletingStudent?.name}? This action cannot be undone.`}
+                />
             </div>
         </AppLayout>
     );
