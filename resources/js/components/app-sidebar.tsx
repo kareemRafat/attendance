@@ -1,9 +1,7 @@
 import { Link, usePage } from '@inertiajs/react';
 import {
-    BookOpen,
     Building2,
     CalendarCheck,
-    Folder,
     LayoutGrid,
     Layers,
     Users,
@@ -25,39 +23,39 @@ import attendance from '@/routes/attendance';
 import branches from '@/routes/branches';
 import groups from '@/routes/groups';
 import students from '@/routes/students';
-import type { NavItem } from '@/types';
+import type { NavItem, User } from '@/types';
 import AppLogo from './app-logo';
 
 export function AppSidebar() {
-    const { auth } = usePage<any>().props;
+    const { auth } = usePage<{ auth: { user: User } }>().props;
     const user = auth.user;
     const isAdmin = user.role === 'admin';
 
     const mainNavItems: NavItem[] = [
         {
             title: 'Dashboard',
-            href: dashboard(),
+            href: dashboard.url(),
             icon: LayoutGrid,
         },
         {
             title: 'Attendance',
-            href: attendance.index(),
+            href: attendance.index.url(),
             icon: CalendarCheck,
         },
         {
             title: 'Students',
-            href: students.index(),
+            href: students.index.url(),
             icon: Users,
         },
         {
             title: 'Groups',
-            href: groups.index(),
+            href: groups.index.url(),
             icon: Layers,
         },
         ...(isAdmin ? [
             {
                 title: 'Branches',
-                href: branches.index(),
+                href: branches.index.url(),
                 icon: Building2,
             }
         ] : []),
@@ -73,7 +71,7 @@ export function AppSidebar() {
                 <SidebarMenu>
                     <SidebarMenuItem>
                         <SidebarMenuButton size="lg" asChild>
-                            <Link href={dashboard()} prefetch>
+                            <Link href="/dashboard" prefetch>
                                 <AppLogo />
                             </Link>
                         </SidebarMenuButton>

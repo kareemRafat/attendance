@@ -30,7 +30,7 @@ export function UserMenuContent({ user }: Props) {
         <>
             <DropdownMenuLabel className="p-0 font-normal">
                 <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
-                    <UserInfo user={user} showEmail={true} />
+                    <UserInfo user={user} />
                 </div>
             </DropdownMenuLabel>
             {isAdmin && (
@@ -40,7 +40,7 @@ export function UserMenuContent({ user }: Props) {
                         <DropdownMenuItem asChild>
                             <Link
                                 className="block w-full cursor-pointer"
-                                href={edit()}
+                                href={edit.url()}
                                 prefetch
                                 onClick={cleanup}
                             >
@@ -55,7 +55,8 @@ export function UserMenuContent({ user }: Props) {
             <DropdownMenuItem asChild>
                 <Link
                     className="block w-full cursor-pointer"
-                    href={logout()}
+                    href={logout.url()}
+                    method="post"
                     as="button"
                     onClick={handleLogout}
                     data-test="logout-button"

@@ -2,8 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-
 use App\Models\Branch;
 use App\Models\Group;
 use App\Models\Student;
@@ -14,8 +12,6 @@ class DashboardController extends Controller
 {
     public function index(): Response
     {
-        $this->authorize('viewAny', Branch::class);
-
         $stats = [
             'total_branches' => Branch::count(),
             'total_groups' => Group::where('is_active', true)->count(),

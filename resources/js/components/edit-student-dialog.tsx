@@ -1,5 +1,6 @@
 import { useForm, usePage } from '@inertiajs/react';
 import { Pencil, Loader2 } from 'lucide-react';
+import { useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import {
     Dialog,
@@ -17,7 +18,6 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select';
-import { useEffect } from 'react';
 
 interface Student {
     id: number;
@@ -57,7 +57,7 @@ export function EditStudentDialog({ student, isOpen, onClose, courseTypes, avail
                 branch_id: student.branch_id?.toString() || '',
             });
         }
-    }, [student]);
+    }, [student, setData]);
 
     const submit = (e: React.FormEvent) => {
         e.preventDefault();

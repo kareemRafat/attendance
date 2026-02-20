@@ -1,6 +1,6 @@
-import { Head, useForm, router } from '@inertiajs/react';
+import { Head, router } from '@inertiajs/react';
 import { CheckCircle2, XCircle, Clock, Save, User } from 'lucide-react';
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect, useCallback } from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
@@ -49,28 +49,30 @@ export default function AttendanceIndex({ groups, selectedDate }: Props) {
     );
     const [isSaving, setIsSaving] = useState(false);
 
-    // Local state for attendance to make it "Ultra-Fast"
-    const [localAttendances, setLocalAttendances] = useState<
-        Record<number, Record<number, string>>
-    >({});
-
-    useEffect(() => {
-        // Initialize local state from server data
-        const initialState: Record<number, Record<number, string>> = {};
-        groups.forEach((group) => {
-            initialState[group.id] = {};
-
-            // Default everyone to absent if no session exists, or use existing data
+    // Initial state calculation helper
+    const calculateInitialState = (groupsList: Group[]) => {
+        const state: Record<number, Record<number, string>> = {};
+        groupsList.forEach((group) => {
+            state[group.id] = {};
             group.students.forEach((student) => {
                 const existing = group.lecture_session?.attendances.find(
                     (a) => a.student_id === student.id,
                 );
-                initialState[group.id][student.id] = existing
+                state[group.id][student.id] = existing
                     ? existing.status
                     : 'absent';
             });
         });
-        setLocalAttendances(initialState);
+        return state;
+    };
+
+    // Local state for attendance to make it "Ultra-Fast"
+    const [localAttendances, setLocalAttendances] = useState<
+        Record<number, Record<number, string>>
+    >(() => calculateInitialState(groups));
+
+    useEffect(() => {
+        setLocalAttendances(calculateInitialState(groups));
 
         // Focus first student by default
         if (groups.length > 0 && groups[0].students.length > 0) {
@@ -95,7 +97,7 @@ export default function AttendanceIndex({ groups, selectedDate }: Props) {
         }));
     };
 
-    const saveAttendance = (groupId: number) => {
+    const saveAttendance = useCallback((groupId: number) => {
         const attendancesForGroup = Object.entries(
             localAttendances[groupId] || {},
         ).map(([studentId, status]) => ({
@@ -116,7 +118,7 @@ export default function AttendanceIndex({ groups, selectedDate }: Props) {
                 onFinish: () => setIsSaving(false),
             },
         );
-    };
+    }, [localAttendances, selectedDate]);
 
     // Keyboard shortcuts
     useEffect(() => {
@@ -171,7 +173,7 @@ export default function AttendanceIndex({ groups, selectedDate }: Props) {
 
         window.addEventListener('keydown', handleKeyDown);
         return () => window.removeEventListener('keydown', handleKeyDown);
-    }, [activeGroup, focusedStudentId, localAttendances]);
+    }, [activeGroup, focusedStudentId, saveAttendance]);
 
     const counters = useMemo(() => {
         if (!activeGroupId || !localAttendances[activeGroupId])

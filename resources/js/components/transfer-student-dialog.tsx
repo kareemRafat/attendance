@@ -28,6 +28,7 @@ interface Group {
 interface Student {
     id: number;
     name: string;
+    track: string;
     groups: Group[];
 }
 
@@ -53,8 +54,9 @@ export function TransferStudentDialog({ student, isOpen, onClose, availableGroup
     useEffect(() => {
         if (student) {
             setData('from_group_id', student.groups?.[0]?.id.toString() || '');
+            setTransferTrack(student.track || '');
         }
-    }, [student]);
+    }, [student, setData]);
 
     const filteredAvailableGroups = useMemo(() => {
         return availableGroups

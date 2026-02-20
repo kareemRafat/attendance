@@ -380,7 +380,7 @@ export default function GroupsIndex({ groups, branches = [], daysPatterns = [], 
                                             asChild
                                             className="h-10 px-5 font-bold rounded-xl bg-slate-900 hover:bg-slate-800 text-white shadow-lg shadow-slate-500/10 cursor-pointer transition-all"
                                         >
-                                            <Link href={show.url({ group: group.id })}>
+                                            <Link href={`/groups/${group.id}`}>
                                                 Attendance
                                             </Link>
                                         </Button>

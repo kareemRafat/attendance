@@ -14,6 +14,9 @@ import {
     Trash,
 } from 'lucide-react';
 import { useState } from 'react';
+import { DeleteConfirmationDialog } from '@/components/delete-confirmation-dialog';
+import { EditStudentDialog } from '@/components/edit-student-dialog';
+import { TransferStudentDialog } from '@/components/transfer-student-dialog';
 import { Button } from '@/components/ui/button';
 import {
     Card,
@@ -30,9 +33,6 @@ import {
     TableRow,
 } from '@/components/ui/table';
 import AppLayout from '@/layouts/app-layout';
-import { DeleteConfirmationDialog } from '@/components/delete-confirmation-dialog';
-import { EditStudentDialog } from '@/components/edit-student-dialog';
-import { TransferStudentDialog } from '@/components/transfer-student-dialog';
 import { cn } from '@/lib/utils';
 
 interface Group {

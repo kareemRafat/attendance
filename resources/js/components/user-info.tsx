@@ -4,29 +4,27 @@ import type { User } from '@/types';
 
 export function UserInfo({
     user,
-    showEmail = false,
 }: {
     user: User;
-    showEmail?: boolean;
 }) {
     const getInitials = useInitials();
+    const isAdmin = user.role === 'admin';
+    const subText = isAdmin ? 'Admin' : user.branch?.name || 'Employee';
 
     return (
-        <>
-            <Avatar className="h-8 w-8 overflow-hidden rounded-full">
+        <div className="flex items-center gap-3">
+            <Avatar className="h-9 w-9 overflow-hidden rounded-lg border dark:border-slate-800">
                 <AvatarImage src={user.avatar} alt={user.name} />
-                <AvatarFallback className="rounded-lg bg-neutral-200 text-black dark:bg-neutral-700 dark:text-white">
+                <AvatarFallback className="rounded-lg bg-slate-100 text-slate-900 font-bold dark:bg-slate-800 dark:text-white">
                     {getInitials(user.name)}
                 </AvatarFallback>
             </Avatar>
-            <div className="grid flex-1 text-left text-sm leading-tight">
-                <span className="truncate font-medium">{user.name}</span>
-                {showEmail && (
-                    <span className="truncate text-xs text-muted-foreground">
-                        {user.email}
-                    </span>
-                )}
+            <div className="grid flex-1 text-left leading-tight">
+                <span className="truncate font-bold text-slate-900 dark:text-white">{user.name}</span>
+                <span className="truncate text-xs font-semibold text-blue-600 dark:text-blue-400">
+                    {subText}
+                </span>
             </div>
-        </>
+        </div>
     );
 }
