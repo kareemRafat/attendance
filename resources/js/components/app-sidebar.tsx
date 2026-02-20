@@ -52,18 +52,18 @@ export function AppSidebar() {
             href: groups.index.url(),
             icon: Layers,
         },
-        ...(isAdmin ? [
-            {
-                title: 'Branches',
-                href: branches.index.url(),
-                icon: Building2,
-            }
-        ] : []),
+        ...(isAdmin
+            ? [
+                  {
+                      title: 'Branches',
+                      href: branches.index.url(),
+                      icon: Building2,
+                  },
+              ]
+            : []),
     ];
 
-    const footerNavItems: NavItem[] = [
-       
-    ];
+    const footerNavItems: NavItem[] = [];
 
     return (
         <Sidebar collapsible="icon" variant="inset">

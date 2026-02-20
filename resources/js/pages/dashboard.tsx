@@ -34,68 +34,86 @@ export default function Dashboard({ stats, branches }: Props) {
 
             <div className="flex flex-col gap-6 p-4">
                 <div className="flex items-center justify-between">
-                    <h1 className="text-2xl font-bold text-slate-900 dark:text-white">Dashboard Overview</h1>
+                    <h1 className="text-2xl font-bold text-slate-900 dark:text-white">
+                        Dashboard Overview
+                    </h1>
                 </div>
 
                 {/* Stats Summary */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <Card className="bg-blue-50/50 border-blue-100 dark:bg-blue-950/20 dark:border-blue-900 shadow-sm">
+                <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+                    <Card className="border-blue-100 bg-blue-50/50 shadow-sm dark:border-blue-900 dark:bg-blue-950/20">
                         <CardHeader className="p-4 pb-2">
-                            <CardTitle className="text-xs font-bold uppercase tracking-wider text-blue-600 dark:text-blue-400 flex items-center gap-2">
-                                <Building2 className="size-3.5" /> Total Branches
+                            <CardTitle className="flex items-center gap-2 text-xs font-bold tracking-wider text-blue-600 uppercase dark:text-blue-400">
+                                <Building2 className="size-3.5" /> Total
+                                Branches
                             </CardTitle>
                         </CardHeader>
                         <CardContent className="p-4 pt-0">
-                            <p className="text-3xl font-black text-blue-900 dark:text-blue-200">{stats.total_branches}</p>
+                            <p className="text-3xl font-black text-blue-900 dark:text-blue-200">
+                                {stats.total_branches}
+                            </p>
                         </CardContent>
                     </Card>
 
-                    <Card className="bg-indigo-50/50 border-indigo-100 shadow-sm dark:bg-indigo-950/20 dark:border-indigo-900">
+                    <Card className="border-indigo-100 bg-indigo-50/50 shadow-sm dark:border-indigo-900 dark:bg-indigo-950/20">
                         <CardHeader className="p-4 pb-2">
-                            <CardTitle className="text-xs font-bold uppercase tracking-wider text-indigo-600 dark:text-indigo-400 flex items-center gap-2">
+                            <CardTitle className="flex items-center gap-2 text-xs font-bold tracking-wider text-indigo-600 uppercase dark:text-indigo-400">
                                 <Layers className="size-3.5" /> Active Groups
                             </CardTitle>
                         </CardHeader>
                         <CardContent className="p-4 pt-0">
-                            <p className="text-3xl font-black text-indigo-900 dark:text-indigo-200">{stats.total_groups}</p>
+                            <p className="text-3xl font-black text-indigo-900 dark:text-indigo-200">
+                                {stats.total_groups}
+                            </p>
                         </CardContent>
                     </Card>
 
-                    <Card className="bg-emerald-50/50 border-emerald-100 shadow-sm dark:bg-emerald-950/20 dark:border-emerald-900">
+                    <Card className="border-emerald-100 bg-emerald-50/50 shadow-sm dark:border-emerald-900 dark:bg-emerald-950/20">
                         <CardHeader className="p-4 pb-2">
-                            <CardTitle className="text-xs font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400 flex items-center gap-2">
+                            <CardTitle className="flex items-center gap-2 text-xs font-bold tracking-wider text-emerald-600 uppercase dark:text-emerald-400">
                                 <Users className="size-3.5" /> Total Students
                             </CardTitle>
                         </CardHeader>
                         <CardContent className="p-4 pt-0">
-                            <p className="text-3xl font-black text-emerald-900 dark:text-emerald-200">{stats.total_students}</p>
+                            <p className="text-3xl font-black text-emerald-900 dark:text-emerald-200">
+                                {stats.total_students}
+                            </p>
                         </CardContent>
                     </Card>
                 </div>
 
                 {/* Branch Breakdown */}
-                <Card className="border-slate-200 dark:bg-slate-900 dark:border-slate-800 shadow-sm overflow-hidden rounded-2xl">
-                    <CardHeader className="pb-3 border-b border-slate-100 dark:border-slate-800 bg-slate-50/30 dark:bg-slate-800/30">
-                        <CardTitle className="text-lg font-bold flex items-center gap-2 text-slate-800 dark:text-white">
+                <Card className="overflow-hidden rounded-2xl border-slate-200 shadow-sm dark:border-slate-800 dark:bg-slate-900">
+                    <CardHeader className="border-b border-slate-100 bg-slate-50/30 pb-3 dark:border-slate-800 dark:bg-slate-800/30">
+                        <CardTitle className="flex items-center gap-2 text-lg font-bold text-slate-800 dark:text-white">
                             <TrendingUp className="size-5 text-indigo-500" />
                             Branch Performance Breakdown
                         </CardTitle>
                     </CardHeader>
                     <CardContent className="p-0">
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-0 divide-x divide-y md:divide-y-0 divide-slate-100 dark:divide-slate-800">
+                        <div className="grid grid-cols-1 gap-0 divide-x divide-y divide-slate-100 md:grid-cols-2 md:divide-y-0 lg:grid-cols-3 dark:divide-slate-800">
                             {branches.map((branch) => (
-                                <div key={branch.id} className="p-6 hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition-colors">
-                                    <h3 className="font-black text-slate-900 dark:text-white mb-4">{branch.name}</h3>
+                                <div
+                                    key={branch.id}
+                                    className="p-6 transition-colors hover:bg-slate-50/50 dark:hover:bg-slate-800/30"
+                                >
+                                    <h3 className="mb-4 font-black text-slate-900 dark:text-white">
+                                        {branch.name}
+                                    </h3>
                                     <div className="space-y-3">
                                         <div className="flex items-center justify-between">
-                                            <span className="text-xs font-medium text-slate-500 uppercase tracking-wider">Active Groups</span>
-                                            <span className="px-2 py-0.5 rounded-lg bg-indigo-50 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-400 font-bold text-sm">
+                                            <span className="text-xs font-medium tracking-wider text-slate-500 uppercase">
+                                                Active Groups
+                                            </span>
+                                            <span className="rounded-lg bg-indigo-50 px-2 py-0.5 text-sm font-bold text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-400">
                                                 {branch.groups_count}
                                             </span>
                                         </div>
                                         <div className="flex items-center justify-between">
-                                            <span className="text-xs font-medium text-slate-500 uppercase tracking-wider">Assigned Staff</span>
-                                            <span className="px-2 py-0.5 rounded-lg bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 font-bold text-sm">
+                                            <span className="text-xs font-medium tracking-wider text-slate-500 uppercase">
+                                                Assigned Staff
+                                            </span>
+                                            <span className="rounded-lg bg-blue-50 px-2 py-0.5 text-sm font-bold text-blue-700 dark:bg-blue-900/30 dark:text-blue-400">
                                                 {branch.users_count}
                                             </span>
                                         </div>

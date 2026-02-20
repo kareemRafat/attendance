@@ -18,7 +18,13 @@ interface DeleteConfirmationDialogProps {
     description: string;
     processing?: boolean;
     confirmText?: string;
-    confirmVariant?: 'default' | 'destructive' | 'outline' | 'secondary' | 'ghost' | 'link';
+    confirmVariant?:
+        | 'default'
+        | 'destructive'
+        | 'outline'
+        | 'secondary'
+        | 'ghost'
+        | 'link';
     confirmSize?: 'default' | 'sm' | 'lg' | 'icon';
 }
 
@@ -37,13 +43,25 @@ export function DeleteConfirmationDialog({
         <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
             <DialogContent className="sm:max-w-[425px]">
                 <DialogHeader>
-                    <div className={cn("flex items-center gap-2 mb-2", confirmVariant === 'destructive' ? "text-red-600" : "text-primary")}>
+                    <div
+                        className={cn(
+                            'mb-2 flex items-center gap-2',
+                            confirmVariant === 'destructive'
+                                ? 'text-red-600'
+                                : 'text-primary',
+                        )}
+                    >
                         <AlertTriangle className="size-5" />
-                        <DialogTitle className={cn(confirmVariant === 'destructive' && "text-red-600")}>{title}</DialogTitle>
+                        <DialogTitle
+                            className={cn(
+                                confirmVariant === 'destructive' &&
+                                    'text-red-600',
+                            )}
+                        >
+                            {title}
+                        </DialogTitle>
                     </div>
-                    <DialogDescription>
-                        {description}
-                    </DialogDescription>
+                    <DialogDescription>{description}</DialogDescription>
                 </DialogHeader>
                 <DialogFooter className="mt-4 gap-2 sm:gap-0">
                     <Button
@@ -65,7 +83,9 @@ export function DeleteConfirmationDialog({
                         {processing ? (
                             <>
                                 <Loader2 className="mr-2 size-4 animate-spin" />
-                                {confirmVariant === 'destructive' ? 'Deleting...' : 'Processing...'}
+                                {confirmVariant === 'destructive'
+                                    ? 'Deleting...'
+                                    : 'Processing...'}
                             </>
                         ) : (
                             confirmText

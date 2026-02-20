@@ -97,28 +97,31 @@ export default function AttendanceIndex({ groups, selectedDate }: Props) {
         }));
     };
 
-    const saveAttendance = useCallback((groupId: number) => {
-        const attendancesForGroup = Object.entries(
-            localAttendances[groupId] || {},
-        ).map(([studentId, status]) => ({
-            student_id: parseInt(studentId),
-            status,
-        }));
+    const saveAttendance = useCallback(
+        (groupId: number) => {
+            const attendancesForGroup = Object.entries(
+                localAttendances[groupId] || {},
+            ).map(([studentId, status]) => ({
+                student_id: parseInt(studentId),
+                status,
+            }));
 
-        setIsSaving(true);
-        router.post(
-            '/attendance',
-            {
-                group_id: groupId,
-                date: selectedDate,
-                attendances: attendancesForGroup,
-            },
-            {
-                preserveScroll: true,
-                onFinish: () => setIsSaving(false),
-            },
-        );
-    }, [localAttendances, selectedDate]);
+            setIsSaving(true);
+            router.post(
+                '/attendance',
+                {
+                    group_id: groupId,
+                    date: selectedDate,
+                    attendances: attendancesForGroup,
+                },
+                {
+                    preserveScroll: true,
+                    onFinish: () => setIsSaving(false),
+                },
+            );
+        },
+        [localAttendances, selectedDate],
+    );
 
     // Keyboard shortcuts
     useEffect(() => {

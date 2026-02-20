@@ -1,8 +1,23 @@
 import { Head, Link, useForm, usePage, router } from '@inertiajs/react';
-import { Plus, Users, Calendar, CheckCircle, RotateCcw, Edit, Loader2, Search } from 'lucide-react';
+import {
+    Plus,
+    Users,
+    Calendar,
+    CheckCircle,
+    RotateCcw,
+    Edit,
+    Loader2,
+    Search,
+} from 'lucide-react';
 import type { FormEventHandler } from 'react';
 import { useState } from 'react';
-import { end, reactivate, store, update, show } from '@/actions/App/Http/Controllers/GroupController';
+import {
+    end,
+    reactivate,
+    store,
+    update,
+    show,
+} from '@/actions/App/Http/Controllers/GroupController';
 import { DeleteConfirmationDialog } from '@/components/delete-confirmation-dialog';
 import InputError from '@/components/input-error';
 import { Button } from '@/components/ui/button';
@@ -79,7 +94,14 @@ interface Props {
     };
 }
 
-export default function GroupsIndex({ groups, branches = [], daysPatterns = [], courseTypes = [], currentTab, filters }: Props) {
+export default function GroupsIndex({
+    groups,
+    branches = [],
+    daysPatterns = [],
+    courseTypes = [],
+    currentTab,
+    filters,
+}: Props) {
     const { auth } = usePage<any>().props;
     const user = auth.user;
     const isAdmin = user.role === 'admin';
@@ -88,14 +110,22 @@ export default function GroupsIndex({ groups, branches = [], daysPatterns = [], 
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
     const [editingGroup, setEditingGroup] = useState<Group | null>(null);
     const [finishingGroup, setFinishingGroup] = useState<Group | null>(null);
-    const [reactivatingGroup, setReactivatingGroup] = useState<Group | null>(null);
+    const [reactivatingGroup, setReactivatingGroup] = useState<Group | null>(
+        null,
+    );
 
     // Search and Filter State
     const [search, setSearch] = useState(filters.search || '');
-    const [branchFilter, setBranchFilter] = useState(filters.branch_id || 'all');
+    const [branchFilter, setBranchFilter] = useState(
+        filters.branch_id || 'all',
+    );
     const [trackFilter, setTrackFilter] = useState(filters.track || 'all');
 
-    const handleFilter = (newSearch?: string, newBranch?: string, newTrack?: string) => {
+    const handleFilter = (
+        newSearch?: string,
+        newBranch?: string,
+        newTrack?: string,
+    ) => {
         const query: any = { tab: currentTab };
         const s = newSearch !== undefined ? newSearch : search;
         const b = newBranch !== undefined ? newBranch : branchFilter;
@@ -193,20 +223,27 @@ export default function GroupsIndex({ groups, branches = [], daysPatterns = [], 
             <div className="flex flex-col gap-6 p-4">
                 <div className="flex items-center justify-between">
                     <div>
-                        <h1 className="text-2xl font-bold">Groups Management</h1>
-                        <p className="text-sm text-muted-foreground">Manage your course groups and their status.</p>
+                        <h1 className="text-2xl font-bold">
+                            Groups Management
+                        </h1>
+                        <p className="text-sm text-muted-foreground">
+                            Manage your course groups and their status.
+                        </p>
                     </div>
-                    <Button className="gap-2 cursor-pointer" onClick={() => setIsCreateModalOpen(true)}>
+                    <Button
+                        className="cursor-pointer gap-2"
+                        onClick={() => setIsCreateModalOpen(true)}
+                    >
                         <Plus className="size-4" /> New Group
                     </Button>
                 </div>
 
                 <div className="flex flex-wrap items-center justify-between gap-4">
-                    <div className="inline-flex gap-1 rounded-lg bg-neutral-100 p-1 dark:bg-neutral-800 self-start">
+                    <div className="inline-flex gap-1 self-start rounded-lg bg-neutral-100 p-1 dark:bg-neutral-800">
                         <Link
                             href={`/groups?tab=active${branchFilter !== 'all' ? `&branch_id=${branchFilter}` : ''}${trackFilter !== 'all' ? `&track=${trackFilter}` : ''}${search ? `&search=${search}` : ''}`}
                             className={cn(
-                                'flex items-center rounded-md px-4 py-2 transition-colors text-sm font-medium cursor-pointer',
+                                'flex cursor-pointer items-center rounded-md px-4 py-2 text-sm font-medium transition-colors',
                                 currentTab === 'active'
                                     ? 'bg-white shadow-xs dark:bg-neutral-700 dark:text-neutral-100'
                                     : 'text-neutral-500 hover:bg-neutral-200/60 hover:text-black dark:text-neutral-400 dark:hover:bg-neutral-700/60',
@@ -217,7 +254,7 @@ export default function GroupsIndex({ groups, branches = [], daysPatterns = [], 
                         <Link
                             href={`/groups?tab=closed${branchFilter !== 'all' ? `&branch_id=${branchFilter}` : ''}${trackFilter !== 'all' ? `&track=${trackFilter}` : ''}${search ? `&search=${search}` : ''}`}
                             className={cn(
-                                'flex items-center rounded-md px-4 py-2 transition-colors text-sm font-medium cursor-pointer',
+                                'flex cursor-pointer items-center rounded-md px-4 py-2 text-sm font-medium transition-colors',
                                 currentTab === 'closed'
                                     ? 'bg-white shadow-xs dark:bg-neutral-700 dark:text-neutral-100'
                                     : 'text-neutral-500 hover:bg-neutral-200/60 hover:text-black dark:text-neutral-400 dark:hover:bg-neutral-700/60',
@@ -230,7 +267,7 @@ export default function GroupsIndex({ groups, branches = [], daysPatterns = [], 
                     <div className="flex flex-wrap items-center gap-3">
                         {/* Search */}
                         <div className="relative w-full sm:w-64">
-                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-slate-400" />
+                            <Search className="absolute top-1/2 left-3 size-4 -translate-y-1/2 text-slate-400" />
                             <Input
                                 placeholder="Search groups..."
                                 value={search}
@@ -238,7 +275,7 @@ export default function GroupsIndex({ groups, branches = [], daysPatterns = [], 
                                     setSearch(e.target.value);
                                     handleFilter(e.target.value);
                                 }}
-                                className="pl-9 bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 h-10 rounded-xl"
+                                className="h-10 rounded-xl border-slate-200 bg-white pl-9 dark:border-slate-800 dark:bg-slate-900"
                             />
                         </div>
 
@@ -251,13 +288,18 @@ export default function GroupsIndex({ groups, branches = [], daysPatterns = [], 
                                     handleFilter(undefined, val);
                                 }}
                             >
-                                <SelectTrigger className="w-full sm:w-48 bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 h-10 rounded-xl">
+                                <SelectTrigger className="h-10 w-full rounded-xl border-slate-200 bg-white sm:w-48 dark:border-slate-800 dark:bg-slate-900">
                                     <SelectValue placeholder="All Branches" />
                                 </SelectTrigger>
                                 <SelectContent>
-                                    <SelectItem value="all">All Branches</SelectItem>
+                                    <SelectItem value="all">
+                                        All Branches
+                                    </SelectItem>
                                     {branches.map((branch) => (
-                                        <SelectItem key={branch.id} value={branch.id.toString()}>
+                                        <SelectItem
+                                            key={branch.id}
+                                            value={branch.id.toString()}
+                                        >
                                             {branch.name}
                                         </SelectItem>
                                     ))}
@@ -273,20 +315,25 @@ export default function GroupsIndex({ groups, branches = [], daysPatterns = [], 
                                 handleFilter(undefined, undefined, val);
                             }}
                         >
-                            <SelectTrigger className="w-full sm:w-48 bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 h-10 rounded-xl">
+                            <SelectTrigger className="h-10 w-full rounded-xl border-slate-200 bg-white sm:w-48 dark:border-slate-800 dark:bg-slate-900">
                                 <SelectValue placeholder="All Tracks" />
                             </SelectTrigger>
                             <SelectContent>
                                 <SelectItem value="all">All Tracks</SelectItem>
                                 {courseTypes.map((type) => (
-                                    <SelectItem key={type.value} value={type.value}>
+                                    <SelectItem
+                                        key={type.value}
+                                        value={type.value}
+                                    >
                                         {type.name}
                                     </SelectItem>
                                 ))}
                             </SelectContent>
                         </Select>
 
-                        {(search || (branchFilter && branchFilter !== 'all') || (trackFilter && trackFilter !== 'all')) && (
+                        {(search ||
+                            (branchFilter && branchFilter !== 'all') ||
+                            (trackFilter && trackFilter !== 'all')) && (
                             <Button
                                 variant="ghost"
                                 size="sm"
@@ -296,7 +343,7 @@ export default function GroupsIndex({ groups, branches = [], daysPatterns = [], 
                                     setTrackFilter('all');
                                     handleFilter('', 'all', 'all');
                                 }}
-                                className="text-xs h-10 px-4 font-bold text-indigo-600 hover:text-indigo-700 hover:bg-indigo-50 dark:hover:bg-indigo-900/20 rounded-xl transition-all cursor-pointer"
+                                className="h-10 cursor-pointer rounded-xl px-4 text-xs font-bold text-indigo-600 transition-all hover:bg-indigo-50 hover:text-indigo-700 dark:hover:bg-indigo-900/20"
                             >
                                 Reset
                             </Button>
@@ -308,24 +355,24 @@ export default function GroupsIndex({ groups, branches = [], daysPatterns = [], 
                     {groups.data.map((group) => (
                         <div
                             key={group.id}
-                            className="group relative flex flex-col bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm  hover:shadow-indigo-500/10 transition-all duration-300"
+                            className="group relative flex flex-col rounded-2xl border border-slate-200 bg-white shadow-sm transition-all duration-300 hover:shadow-indigo-500/10 dark:border-slate-800 dark:bg-slate-900"
                         >
                             {/* Card Header Area */}
                             <div className="p-5 pb-0">
                                 <div className="flex items-start justify-between gap-4">
                                     <div className="min-w-0">
-                                        <h3 className="text-lg font-extrabold text-slate-900 dark:text-white leading-tight truncate group-hover:text-indigo-600 transition-colors">
+                                        <h3 className="truncate text-lg leading-tight font-extrabold text-slate-900 transition-colors group-hover:text-indigo-600 dark:text-white">
                                             {group.name}
                                         </h3>
                                         <div className="mt-1 flex items-center gap-1.5">
-                                            <span className="inline-flex items-center rounded-full bg-slate-100 dark:bg-slate-800 px-2 py-0.5 text-[10px] font-bold text-slate-500 uppercase tracking-wider">
+                                            <span className="inline-flex items-center rounded-full bg-slate-100 px-2 py-0.5 text-[10px] font-bold tracking-wider text-slate-500 uppercase dark:bg-slate-800">
                                                 {group.branch?.name}
                                             </span>
                                         </div>
                                     </div>
                                     <button
                                         onClick={() => handleEditClick(group)}
-                                        className="size-8 flex items-center justify-center text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 rounded-full transition-all cursor-pointer border border-transparent hover:border-indigo-100"
+                                        className="flex size-8 cursor-pointer items-center justify-center rounded-full border border-transparent text-slate-400 transition-all hover:border-indigo-100 hover:bg-indigo-50 hover:text-indigo-600 dark:hover:bg-indigo-900/30"
                                     >
                                         <Edit className="size-4" />
                                     </button>
@@ -335,23 +382,32 @@ export default function GroupsIndex({ groups, branches = [], daysPatterns = [], 
                             {/* Card Body Area */}
                             <div className="p-5">
                                 <div className="grid grid-cols-1 gap-3">
-                                    <div className="flex items-center gap-3 text-sm font-medium text-slate-600 dark:text-slate-400 bg-slate-50 dark:bg-slate-800/50 p-3 rounded-xl border border-slate-100 dark:border-slate-800/50">
-                                        <div className="size-8 flex items-center justify-center rounded-lg bg-white dark:bg-slate-800 shadow-sm text-amber-500">
+                                    <div className="flex items-center gap-3 rounded-xl border border-slate-100 bg-slate-50 p-3 text-sm font-medium text-slate-600 dark:border-slate-800/50 dark:bg-slate-800/50 dark:text-slate-400">
+                                        <div className="flex size-8 items-center justify-center rounded-lg bg-white text-amber-500 shadow-sm dark:bg-slate-800">
                                             <Calendar className="size-4" />
                                         </div>
                                         <div className="flex flex-col">
-                                            <span className="text-[10px] text-slate-400 uppercase font-bold tracking-tight">Schedule</span>
-                                            <span className="text-slate-900 dark:text-slate-200">{group.formatted_pattern}</span>
+                                            <span className="text-[10px] font-bold tracking-tight text-slate-400 uppercase">
+                                                Schedule
+                                            </span>
+                                            <span className="text-slate-900 dark:text-slate-200">
+                                                {group.formatted_pattern}
+                                            </span>
                                         </div>
                                     </div>
 
-                                    <div className="flex items-center gap-3 text-sm font-medium text-slate-600 dark:text-slate-400 bg-slate-50 dark:bg-slate-800/50 p-3 rounded-xl border border-slate-100 dark:border-slate-800/50">
-                                        <div className="size-8 flex items-center justify-center rounded-lg bg-white dark:bg-slate-800 shadow-sm text-emerald-500">
+                                    <div className="flex items-center gap-3 rounded-xl border border-slate-100 bg-slate-50 p-3 text-sm font-medium text-slate-600 dark:border-slate-800/50 dark:bg-slate-800/50 dark:text-slate-400">
+                                        <div className="flex size-8 items-center justify-center rounded-lg bg-white text-emerald-500 shadow-sm dark:bg-slate-800">
                                             <Users className="size-4" />
                                         </div>
                                         <div className="flex flex-col">
-                                            <span className="text-[10px] text-slate-400 uppercase font-bold tracking-tight">Enrolled</span>
-                                            <span className="text-slate-900 dark:text-slate-200">{group.students_count || 0} Students</span>
+                                            <span className="text-[10px] font-bold tracking-tight text-slate-400 uppercase">
+                                                Enrolled
+                                            </span>
+                                            <span className="text-slate-900 dark:text-slate-200">
+                                                {group.students_count || 0}{' '}
+                                                Students
+                                            </span>
                                         </div>
                                     </div>
                                 </div>
@@ -359,26 +415,36 @@ export default function GroupsIndex({ groups, branches = [], daysPatterns = [], 
                                 {/* Actions Area */}
                                 <div className="mt-6 flex items-center gap-3">
                                     <Button
-                                        variant={group.is_active ? "outline" : "default"}
-                                        className={cn(
-                                            "flex-1 h-10 font-bold rounded-xl transition-all cursor-pointer border-2",
+                                        variant={
                                             group.is_active
-                                                ? "border-slate-100 text-slate-600 hover:bg-red-50 hover:text-red-600 hover:border-red-100"
-                                                : "bg-indigo-600 hover:bg-indigo-700 text-white border-transparent shadow-lg shadow-indigo-500/20"
+                                                ? 'outline'
+                                                : 'default'
+                                        }
+                                        className={cn(
+                                            'h-10 flex-1 cursor-pointer rounded-xl border-2 font-bold transition-all',
+                                            group.is_active
+                                                ? 'border-slate-100 text-slate-600 hover:border-red-100 hover:bg-red-50 hover:text-red-600'
+                                                : 'border-transparent bg-indigo-600 text-white shadow-lg shadow-indigo-500/20 hover:bg-indigo-700',
                                         )}
                                         onClick={() => toggleStatus(group)}
                                     >
                                         {group.is_active ? (
-                                            <><CheckCircle className="mr-2 size-4" /> Finish Group</>
+                                            <>
+                                                <CheckCircle className="mr-2 size-4" />{' '}
+                                                Finish Group
+                                            </>
                                         ) : (
-                                            <><RotateCcw className="mr-2 size-4" /> Reactivate</>
+                                            <>
+                                                <RotateCcw className="mr-2 size-4" />{' '}
+                                                Reactivate
+                                            </>
                                         )}
                                     </Button>
 
                                     {group.is_active && (
                                         <Button
                                             asChild
-                                            className="h-10 px-5 font-bold rounded-xl bg-slate-900 hover:bg-slate-800 text-white shadow-lg shadow-slate-500/10 cursor-pointer transition-all"
+                                            className="h-10 cursor-pointer rounded-xl bg-slate-900 px-5 font-bold text-white shadow-lg shadow-slate-500/10 transition-all hover:bg-slate-800"
                                         >
                                             <Link href={`/groups/${group.id}`}>
                                                 Attendance
@@ -401,25 +467,45 @@ export default function GroupsIndex({ groups, branches = [], daysPatterns = [], 
 
                 {/* Pagination */}
                 {groups.links && groups.links.length > 3 && (
-                    <div className="py-4 px-6 flex items-center justify-between border-t border-slate-100 dark:border-slate-800 bg-slate-50/30 dark:bg-slate-800/10 rounded-xl">
-                        <div className="text-sm font-bold text-slate-500 dark:text-slate-400 uppercase tracking-tight">
-                            Showing <span className="text-slate-900 dark:text-white">{groups.from}-{groups.to}</span> of <span className="text-slate-900 dark:text-white">{groups.total}</span> groups
+                    <div className="flex items-center justify-between rounded-xl border-t border-slate-100 bg-slate-50/30 px-6 py-4 dark:border-slate-800 dark:bg-slate-800/10">
+                        <div className="text-sm font-bold tracking-tight text-slate-500 uppercase dark:text-slate-400">
+                            Showing{' '}
+                            <span className="text-slate-900 dark:text-white">
+                                {groups.from}-{groups.to}
+                            </span>{' '}
+                            of{' '}
+                            <span className="text-slate-900 dark:text-white">
+                                {groups.total}
+                            </span>{' '}
+                            groups
                         </div>
                         <div className="flex flex-wrap justify-center gap-1">
                             {groups.links.map((link, i) => (
-                                <Link key={i} href={link.url || '#'} preserveScroll>
+                                <Link
+                                    key={i}
+                                    href={link.url || '#'}
+                                    preserveScroll
+                                >
                                     <Button
-                                        variant={link.active ? 'default' : 'outline'}
+                                        variant={
+                                            link.active ? 'default' : 'outline'
+                                        }
                                         size="sm"
                                         className={cn(
-                                            "h-8 px-3 transition-all rounded-lg font-bold text-xs",
-                                            !link.url ? "pointer-events-none opacity-50" : "cursor-pointer",
-                                            link.active 
-                                                ? "bg-slate-900 dark:bg-white dark:text-slate-900 border-transparent shadow-md" 
-                                                : "bg-white dark:bg-slate-900 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800 border-slate-200"
+                                            'h-8 rounded-lg px-3 text-xs font-bold transition-all',
+                                            !link.url
+                                                ? 'pointer-events-none opacity-50'
+                                                : 'cursor-pointer',
+                                            link.active
+                                                ? 'border-transparent bg-slate-900 shadow-md dark:bg-white dark:text-slate-900'
+                                                : 'border-slate-200 bg-white dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300 dark:hover:bg-slate-800',
                                         )}
                                     >
-                                        <span dangerouslySetInnerHTML={{ __html: link.label }} />
+                                        <span
+                                            dangerouslySetInnerHTML={{
+                                                __html: link.label,
+                                            }}
+                                        />
                                     </Button>
                                 </Link>
                             ))}
@@ -429,7 +515,10 @@ export default function GroupsIndex({ groups, branches = [], daysPatterns = [], 
             </div>
 
             {/* Create Group Modal */}
-            <Dialog open={isCreateModalOpen} onOpenChange={setIsCreateModalOpen}>
+            <Dialog
+                open={isCreateModalOpen}
+                onOpenChange={setIsCreateModalOpen}
+            >
                 <DialogContent>
                     <form onSubmit={handleCreateSubmit}>
                         <DialogHeader>
@@ -443,20 +532,30 @@ export default function GroupsIndex({ groups, branches = [], daysPatterns = [], 
                                 <Label htmlFor="create-branch">Branch</Label>
                                 <Select
                                     value={createForm.data.branch_id.toString()}
-                                    onValueChange={(v) => createForm.setData('branch_id', parseInt(v))}
+                                    onValueChange={(v) =>
+                                        createForm.setData(
+                                            'branch_id',
+                                            parseInt(v),
+                                        )
+                                    }
                                 >
                                     <SelectTrigger id="create-branch">
                                         <SelectValue placeholder="Select branch" />
                                     </SelectTrigger>
                                     <SelectContent>
                                         {(branches || []).map((branch) => (
-                                            <SelectItem key={branch.id} value={branch.id.toString()}>
+                                            <SelectItem
+                                                key={branch.id}
+                                                value={branch.id.toString()}
+                                            >
                                                 {branch.name}
                                             </SelectItem>
                                         ))}
                                     </SelectContent>
                                 </Select>
-                                <InputError message={createForm.errors.branch_id} />
+                                <InputError
+                                    message={createForm.errors.branch_id}
+                                />
                             </div>
 
                             <div className="grid gap-2">
@@ -464,61 +563,102 @@ export default function GroupsIndex({ groups, branches = [], daysPatterns = [], 
                                 <Input
                                     id="create-name"
                                     value={createForm.data.name}
-                                    onChange={(e) => createForm.setData('name', e.target.value)}
+                                    onChange={(e) =>
+                                        createForm.setData(
+                                            'name',
+                                            e.target.value,
+                                        )
+                                    }
                                     placeholder="e.g. Frontend G1"
                                 />
                                 <InputError message={createForm.errors.name} />
                             </div>
 
                             <div className="grid gap-2">
-                                <Label htmlFor="create-pattern">Days Pattern</Label>
+                                <Label htmlFor="create-pattern">
+                                    Days Pattern
+                                </Label>
                                 <Select
                                     value={createForm.data.pattern}
-                                    onValueChange={(v) => createForm.setData('pattern', v)}
+                                    onValueChange={(v) =>
+                                        createForm.setData('pattern', v)
+                                    }
                                 >
                                     <SelectTrigger id="create-pattern">
                                         <SelectValue placeholder="Select pattern" />
                                     </SelectTrigger>
                                     <SelectContent>
                                         {(daysPatterns || []).map((pattern) => (
-                                            <SelectItem key={pattern.value} value={pattern.value}>
+                                            <SelectItem
+                                                key={pattern.value}
+                                                value={pattern.value}
+                                            >
                                                 {pattern.name}
                                             </SelectItem>
                                         ))}
                                     </SelectContent>
                                 </Select>
-                                <InputError message={createForm.errors.pattern} />
+                                <InputError
+                                    message={createForm.errors.pattern}
+                                />
                             </div>
 
                             <div className="grid grid-cols-2 gap-4">
                                 <div className="grid gap-2">
-                                    <Label htmlFor="create-start-date">Start Date</Label>
+                                    <Label htmlFor="create-start-date">
+                                        Start Date
+                                    </Label>
                                     <Input
                                         id="create-start-date"
                                         type="date"
                                         value={createForm.data.start_date}
-                                        onChange={(e) => createForm.setData('start_date', e.target.value)}
+                                        onChange={(e) =>
+                                            createForm.setData(
+                                                'start_date',
+                                                e.target.value,
+                                            )
+                                        }
                                     />
-                                    <InputError message={createForm.errors.start_date} />
+                                    <InputError
+                                        message={createForm.errors.start_date}
+                                    />
                                 </div>
                                 <div className="grid gap-2">
-                                    <Label htmlFor="create-max-lectures">Max Lectures</Label>
+                                    <Label htmlFor="create-max-lectures">
+                                        Max Lectures
+                                    </Label>
                                     <Input
                                         id="create-max-lectures"
                                         type="number"
                                         value={createForm.data.max_lectures}
-                                        onChange={(e) => createForm.setData('max_lectures', parseInt(e.target.value))}
+                                        onChange={(e) =>
+                                            createForm.setData(
+                                                'max_lectures',
+                                                parseInt(e.target.value),
+                                            )
+                                        }
                                     />
-                                    <InputError message={createForm.errors.max_lectures} />
+                                    <InputError
+                                        message={createForm.errors.max_lectures}
+                                    />
                                 </div>
                             </div>
                         </div>
                         <DialogFooter>
-                            <Button type="button" variant="outline" onClick={() => setIsCreateModalOpen(false)}>
+                            <Button
+                                type="button"
+                                variant="outline"
+                                onClick={() => setIsCreateModalOpen(false)}
+                            >
                                 Cancel
                             </Button>
-                            <Button type="submit" disabled={createForm.processing}>
-                                {createForm.processing && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                            <Button
+                                type="submit"
+                                disabled={createForm.processing}
+                            >
+                                {createForm.processing && (
+                                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                )}
                                 Create Group
                             </Button>
                         </DialogFooter>
@@ -527,7 +667,10 @@ export default function GroupsIndex({ groups, branches = [], daysPatterns = [], 
             </Dialog>
 
             {/* Edit Group Modal */}
-            <Dialog open={!!editingGroup} onOpenChange={(open) => !open && setEditingGroup(null)}>
+            <Dialog
+                open={!!editingGroup}
+                onOpenChange={(open) => !open && setEditingGroup(null)}
+            >
                 <DialogContent>
                     <form onSubmit={handleEditSubmit}>
                         <DialogHeader>
@@ -541,20 +684,30 @@ export default function GroupsIndex({ groups, branches = [], daysPatterns = [], 
                                 <Label htmlFor="edit-branch">Branch</Label>
                                 <Select
                                     value={editForm.data.branch_id.toString()}
-                                    onValueChange={(v) => editForm.setData('branch_id', parseInt(v))}
+                                    onValueChange={(v) =>
+                                        editForm.setData(
+                                            'branch_id',
+                                            parseInt(v),
+                                        )
+                                    }
                                 >
                                     <SelectTrigger id="edit-branch">
                                         <SelectValue placeholder="Select branch" />
                                     </SelectTrigger>
                                     <SelectContent>
                                         {(branches || []).map((branch) => (
-                                            <SelectItem key={branch.id} value={branch.id.toString()}>
+                                            <SelectItem
+                                                key={branch.id}
+                                                value={branch.id.toString()}
+                                            >
                                                 {branch.name}
                                             </SelectItem>
                                         ))}
                                     </SelectContent>
                                 </Select>
-                                <InputError message={editForm.errors.branch_id} />
+                                <InputError
+                                    message={editForm.errors.branch_id}
+                                />
                             </div>
 
                             <div className="grid gap-2">
@@ -562,23 +715,32 @@ export default function GroupsIndex({ groups, branches = [], daysPatterns = [], 
                                 <Input
                                     id="edit-name"
                                     value={editForm.data.name}
-                                    onChange={(e) => editForm.setData('name', e.target.value)}
+                                    onChange={(e) =>
+                                        editForm.setData('name', e.target.value)
+                                    }
                                 />
                                 <InputError message={editForm.errors.name} />
                             </div>
 
                             <div className="grid gap-2">
-                                <Label htmlFor="edit-pattern">Days Pattern</Label>
+                                <Label htmlFor="edit-pattern">
+                                    Days Pattern
+                                </Label>
                                 <Select
                                     value={editForm.data.pattern}
-                                    onValueChange={(v) => editForm.setData('pattern', v)}
+                                    onValueChange={(v) =>
+                                        editForm.setData('pattern', v)
+                                    }
                                 >
                                     <SelectTrigger id="edit-pattern">
                                         <SelectValue placeholder="Select pattern" />
                                     </SelectTrigger>
                                     <SelectContent>
                                         {(daysPatterns || []).map((pattern) => (
-                                            <SelectItem key={pattern.value} value={pattern.value}>
+                                            <SelectItem
+                                                key={pattern.value}
+                                                value={pattern.value}
+                                            >
                                                 {pattern.name}
                                             </SelectItem>
                                         ))}
@@ -589,33 +751,60 @@ export default function GroupsIndex({ groups, branches = [], daysPatterns = [], 
 
                             <div className="grid grid-cols-2 gap-4">
                                 <div className="grid gap-2">
-                                    <Label htmlFor="edit-start-date">Start Date</Label>
+                                    <Label htmlFor="edit-start-date">
+                                        Start Date
+                                    </Label>
                                     <Input
                                         id="edit-start-date"
                                         type="date"
                                         value={editForm.data.start_date}
-                                        onChange={(e) => editForm.setData('start_date', e.target.value)}
+                                        onChange={(e) =>
+                                            editForm.setData(
+                                                'start_date',
+                                                e.target.value,
+                                            )
+                                        }
                                     />
-                                    <InputError message={editForm.errors.start_date} />
+                                    <InputError
+                                        message={editForm.errors.start_date}
+                                    />
                                 </div>
                                 <div className="grid gap-2">
-                                    <Label htmlFor="edit-max-lectures">Max Lectures</Label>
+                                    <Label htmlFor="edit-max-lectures">
+                                        Max Lectures
+                                    </Label>
                                     <Input
                                         id="edit-max-lectures"
                                         type="number"
                                         value={editForm.data.max_lectures}
-                                        onChange={(e) => editForm.setData('max_lectures', parseInt(e.target.value))}
+                                        onChange={(e) =>
+                                            editForm.setData(
+                                                'max_lectures',
+                                                parseInt(e.target.value),
+                                            )
+                                        }
                                     />
-                                    <InputError message={editForm.errors.max_lectures} />
+                                    <InputError
+                                        message={editForm.errors.max_lectures}
+                                    />
                                 </div>
                             </div>
                         </div>
                         <DialogFooter>
-                            <Button type="button" variant="outline" onClick={() => setEditingGroup(null)}>
+                            <Button
+                                type="button"
+                                variant="outline"
+                                onClick={() => setEditingGroup(null)}
+                            >
                                 Cancel
                             </Button>
-                            <Button type="submit" disabled={editForm.processing}>
-                                {editForm.processing && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                            <Button
+                                type="submit"
+                                disabled={editForm.processing}
+                            >
+                                {editForm.processing && (
+                                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                )}
                                 Save Changes
                             </Button>
                         </DialogFooter>

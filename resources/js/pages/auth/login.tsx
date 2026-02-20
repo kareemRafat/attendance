@@ -14,10 +14,7 @@ type Props = {
     canResetPassword: boolean;
 };
 
-export default function Login({
-    status,
-    canResetPassword,
-}: Props) {
+export default function Login({ status, canResetPassword }: Props) {
     const { data, setData, post, processing, errors, reset } = useForm({
         name: '',
         password: '',
@@ -58,23 +55,26 @@ export default function Login({
                     </div>
 
                     <div className="grid gap-2">
-                                                    <div className="flex items-center">
-                                                        <Label htmlFor="password">Password</Label>
-                                                        {canResetPassword && (
-                                                            <TextLink
-                                                                href="/forgot-password"
-                                                                className="ml-auto text-sm"
-                                                                tabIndex={5}
-                                                            >
-                                                                Forgot password?
-                                                            </TextLink>
-                                                        )}
-                                                    </div>                        <Input
+                        <div className="flex items-center">
+                            <Label htmlFor="password">Password</Label>
+                            {canResetPassword && (
+                                <TextLink
+                                    href="/forgot-password"
+                                    className="ml-auto text-sm"
+                                    tabIndex={5}
+                                >
+                                    Forgot password?
+                                </TextLink>
+                            )}
+                        </div>{' '}
+                        <Input
                             id="password"
                             type="password"
                             name="password"
                             value={data.password}
-                            onChange={(e) => setData('password', e.target.value)}
+                            onChange={(e) =>
+                                setData('password', e.target.value)
+                            }
                             required
                             tabIndex={2}
                             autoComplete="current-password"
@@ -88,7 +88,9 @@ export default function Login({
                             id="remember"
                             name="remember"
                             checked={data.remember}
-                            onCheckedChange={(checked) => setData('remember', !!checked)}
+                            onCheckedChange={(checked) =>
+                                setData('remember', !!checked)
+                            }
                             tabIndex={3}
                         />
                         <Label htmlFor="remember">Remember me</Label>

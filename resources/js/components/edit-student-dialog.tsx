@@ -39,7 +39,13 @@ interface Props {
     availableBranches?: Branch[];
 }
 
-export function EditStudentDialog({ student, isOpen, onClose, courseTypes, availableBranches = [] }: Props) {
+export function EditStudentDialog({
+    student,
+    isOpen,
+    onClose,
+    courseTypes,
+    availableBranches = [],
+}: Props) {
     const { auth } = usePage<any>().props;
     const isAdmin = auth.user.role === 'admin';
 
@@ -62,7 +68,7 @@ export function EditStudentDialog({ student, isOpen, onClose, courseTypes, avail
     const submit = (e: React.FormEvent) => {
         e.preventDefault();
         if (!student) return;
-        
+
         put(`/students/${student.id}`, {
             onSuccess: () => {
                 onClose();
@@ -86,20 +92,29 @@ export function EditStudentDialog({ student, isOpen, onClose, courseTypes, avail
                             <Label htmlFor="edit-branch">Branch</Label>
                             <Select
                                 value={data.branch_id}
-                                onValueChange={(val) => setData('branch_id', val)}
+                                onValueChange={(val) =>
+                                    setData('branch_id', val)
+                                }
                             >
                                 <SelectTrigger id="edit-branch">
                                     <SelectValue placeholder="Select branch" />
                                 </SelectTrigger>
                                 <SelectContent>
                                     {availableBranches.map((branch) => (
-                                        <SelectItem key={branch.id} value={branch.id.toString()}>
+                                        <SelectItem
+                                            key={branch.id}
+                                            value={branch.id.toString()}
+                                        >
                                             {branch.name}
                                         </SelectItem>
                                     ))}
                                 </SelectContent>
                             </Select>
-                            {errors.branch_id && <p className="text-xs text-destructive">{errors.branch_id}</p>}
+                            {errors.branch_id && (
+                                <p className="text-xs text-destructive">
+                                    {errors.branch_id}
+                                </p>
+                            )}
                         </div>
                     )}
                     <div className="space-y-2">
@@ -110,7 +125,11 @@ export function EditStudentDialog({ student, isOpen, onClose, courseTypes, avail
                             onChange={(e) => setData('name', e.target.value)}
                             required
                         />
-                        {errors.name && <p className="text-xs text-destructive">{errors.name}</p>}
+                        {errors.name && (
+                            <p className="text-xs text-destructive">
+                                {errors.name}
+                            </p>
+                        )}
                     </div>
                     <div className="space-y-2">
                         <Label htmlFor="edit-track">Track</Label>
@@ -123,14 +142,27 @@ export function EditStudentDialog({ student, isOpen, onClose, courseTypes, avail
                             </SelectTrigger>
                             <SelectContent>
                                 {courseTypes.map((type) => (
-                                    <SelectItem key={type.value} value={type.value}>{type.name}</SelectItem>
+                                    <SelectItem
+                                        key={type.value}
+                                        value={type.value}
+                                    >
+                                        {type.name}
+                                    </SelectItem>
                                 ))}
                             </SelectContent>
                         </Select>
-                        {errors.track && <p className="text-xs text-destructive">{errors.track}</p>}
+                        {errors.track && (
+                            <p className="text-xs text-destructive">
+                                {errors.track}
+                            </p>
+                        )}
                     </div>
                     <DialogFooter>
-                        <Button type="submit" disabled={processing} className="w-full cursor-pointer">
+                        <Button
+                            type="submit"
+                            disabled={processing}
+                            className="w-full cursor-pointer"
+                        >
                             {processing ? (
                                 <>
                                     <Loader2 className="mr-2 size-4 animate-spin" />
