@@ -75,22 +75,29 @@ class StudentController extends Controller
         $attendanceHistory = $student->attendances()
             ->with(['lectureSession.group'])
             ->latest()
-            ->paginate(10, ['*'], 'attendance_page')
+            ->paginate(5, ['*'], 'attendance_page')
             ->withQueryString();
 
         $transferHistory = $student->transferLogs()
             ->with(['fromGroup', 'toGroup'])
             ->latest()
-            ->paginate(10, ['*'], 'transfer_page')
+            ->paginate(5, ['*'], 'transfer_page')
             ->withQueryString();
+
+        $totalLectures = $student->attendances()->count();
+        $presentCount = $student->attendances()->where('status', \App\Enums\AttendanceStatus::Present)->count();
+        $excusedCount = $student->attendances()->where('status', \App\Enums\AttendanceStatus::Excused)->count();
+
+        $compliance = $totalLectures > 0 ? round((($presentCount + $excusedCount) / $totalLectures) * 100, 2) : 100;
 
         return Inertia::render('Students/Show', [
             'student' => $student,
             'stats' => [
-                'present' => $attendanceStats->get('present', 0),
-                'absent' => $attendanceStats->get('absent', 0),
-                'excused' => $attendanceStats->get('excused', 0),
-                'total' => $attendanceStats->sum(),
+                'compliance' => $compliance,
+                'present' => $presentCount,
+                'excused' => $excusedCount,
+                'absent' => $totalLectures - ($presentCount + $excusedCount),
+                'total' => $totalLectures,
             ],
             'attendanceHistory' => $attendanceHistory,
             'transferHistory' => $transferHistory,

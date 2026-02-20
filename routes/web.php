@@ -2,8 +2,8 @@
 
 use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\BranchController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\GroupController;
-use App\Http\Controllers\ReportController;
 use App\Http\Controllers\StudentController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -16,9 +16,7 @@ Route::get('/', function () {
 })->name('home');
 
 Route::middleware(['auth', 'verified'])->group(function () {
-    Route::get('dashboard', function () {
-        return Inertia::render('dashboard');
-    })->name('dashboard');
+    Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
     Route::resource('branches', BranchController::class)->except(['show']);
 
@@ -32,10 +30,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::get('attendance', [AttendanceController::class, 'index'])->name('attendance.index');
     Route::post('attendance', [AttendanceController::class, 'store'])->name('attendance.store');
-
-    Route::get('reports/dashboard', [ReportController::class, 'dashboard'])->name('reports.dashboard');
-    Route::get('reports/student/{student}', [ReportController::class, 'student'])->name('reports.student');
-    Route::get('reports/search', [ReportController::class, 'search'])->name('reports.search');
 });
 
 require __DIR__.'/settings.php';

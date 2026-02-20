@@ -1,6 +1,5 @@
 import { Link, usePage } from '@inertiajs/react';
 import {
-    BarChart3,
     BookOpen,
     Building2,
     CalendarCheck,
@@ -25,7 +24,6 @@ import { dashboard } from '@/routes';
 import attendance from '@/routes/attendance';
 import branches from '@/routes/branches';
 import groups from '@/routes/groups';
-import reports from '@/routes/reports';
 import students from '@/routes/students';
 import type { NavItem } from '@/types';
 import AppLogo from './app-logo';
@@ -63,11 +61,6 @@ export function AppSidebar() {
                 icon: Building2,
             }
         ] : []),
-        {
-            title: 'Reports',
-            href: reports.dashboard(),
-            icon: BarChart3,
-        },
     ];
 
     const footerNavItems: NavItem[] = [
