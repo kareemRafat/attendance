@@ -58,7 +58,17 @@ interface Session {
 
 interface Props {
     group: Group;
-    students: Student[];
+    students: {
+        data: Student[];
+        links: {
+            url: string | null;
+            label: string;
+            active: boolean;
+        }[];
+        from: number;
+        to: number;
+        total: number;
+    };
     sessions: {
         data: Session[];
         links: {
@@ -66,6 +76,8 @@ interface Props {
             label: string;
             active: boolean;
         }[];
+        from: number;
+        to: number;
         total: number;
     };
 }
@@ -122,7 +134,7 @@ export default function GroupShow({
                             </CardTitle>
                         </CardHeader>
                         <CardContent className="p-4 pt-0">
-                            <p className="text-lg font-bold text-emerald-900 dark:text-emerald-200">{students.length} Students</p>
+                            <p className="text-lg font-bold text-emerald-900 dark:text-emerald-200">{students.total} Students</p>
                             <p className="text-xs text-emerald-600/70 font-medium">Active in this group</p>
                         </CardContent>
                     </Card>
@@ -224,24 +236,29 @@ export default function GroupShow({
                             </TableBody>
                         </Table>
                         {students.links && students.links.length > 3 && (
-                            <div className="py-4 flex flex-wrap justify-center gap-1 border-t border-slate-100 dark:border-slate-800">
-                                {students.links.map((link, i) => (
-                                    <Link key={i} href={link.url || '#'} preserveScroll>
-                                        <Button
-                                            variant={link.active ? 'default' : 'outline'}
-                                            size="sm"
-                                            className={cn(
-                                                "h-8 px-3 transition-all rounded-lg font-bold text-xs",
-                                                !link.url ? "pointer-events-none opacity-50" : "cursor-pointer",
-                                                link.active 
-                                                    ? "bg-slate-900 dark:bg-white dark:text-slate-900 border-transparent shadow-md" 
-                                                    : "bg-white dark:bg-slate-900 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800 border-slate-200"
-                                            )}
-                                        >
-                                            <span dangerouslySetInnerHTML={{ __html: link.label }} />
-                                        </Button>
-                                    </Link>
-                                ))}
+                            <div className="py-4 px-6 flex items-center justify-between border-t border-slate-100 dark:border-slate-800 bg-slate-50/30 dark:bg-slate-800/10">
+                                <div className="text-sm font-bold text-slate-500 dark:text-slate-400 uppercase tracking-tight">
+                                    Showing <span className="text-slate-900 dark:text-white">{students.from}-{students.to}</span> of <span className="text-slate-900 dark:text-white">{students.total}</span> students
+                                </div>
+                                <div className="flex flex-wrap justify-center gap-1">
+                                    {students.links.map((link, i) => (
+                                        <Link key={i} href={link.url || '#'} preserveScroll>
+                                            <Button
+                                                variant={link.active ? 'default' : 'outline'}
+                                                size="sm"
+                                                className={cn(
+                                                    "h-8 px-3 transition-all rounded-lg font-bold text-xs",
+                                                    !link.url ? "pointer-events-none opacity-50" : "cursor-pointer",
+                                                    link.active 
+                                                        ? "bg-slate-900 dark:bg-white dark:text-slate-900 border-transparent shadow-md" 
+                                                        : "bg-white dark:bg-slate-900 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800 border-slate-200"
+                                                )}
+                                            >
+                                                <span dangerouslySetInnerHTML={{ __html: link.label }} />
+                                            </Button>
+                                        </Link>
+                                    ))}
+                                </div>
                             </div>
                         )}
                     </CardContent>
@@ -305,24 +322,29 @@ export default function GroupShow({
                             </TableBody>
                         </Table>
                         {sessions.links && sessions.links.length > 3 && (
-                            <div className="py-4 flex flex-wrap justify-center gap-1 border-t border-slate-100 dark:border-slate-800">
-                                {sessions.links.map((link, i) => (
-                                    <Link key={i} href={link.url || '#'} preserveScroll>
-                                        <Button
-                                            variant={link.active ? 'default' : 'outline'}
-                                            size="sm"
-                                            className={cn(
-                                                "h-8 px-3 transition-all rounded-lg font-bold text-xs",
-                                                !link.url ? "pointer-events-none opacity-50" : "cursor-pointer",
-                                                link.active 
-                                                    ? "bg-slate-900 dark:bg-white dark:text-slate-900 border-transparent shadow-md" 
-                                                    : "bg-white dark:bg-slate-900 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800 border-slate-200"
-                                            )}
-                                        >
-                                            <span dangerouslySetInnerHTML={{ __html: link.label }} />
-                                        </Button>
-                                    </Link>
-                                ))}
+                            <div className="py-4 px-6 flex items-center justify-between border-t border-slate-100 dark:border-slate-800 bg-slate-50/30 dark:bg-slate-800/10">
+                                <div className="text-sm font-bold text-slate-500 dark:text-slate-400 uppercase tracking-tight">
+                                    Showing <span className="text-slate-900 dark:text-white">{sessions.from}-{sessions.to}</span> of <span className="text-slate-900 dark:text-white">{sessions.total}</span> sessions
+                                </div>
+                                <div className="flex flex-wrap justify-center gap-1">
+                                    {sessions.links.map((link, i) => (
+                                        <Link key={i} href={link.url || '#'} preserveScroll>
+                                            <Button
+                                                variant={link.active ? 'default' : 'outline'}
+                                                size="sm"
+                                                className={cn(
+                                                    "h-8 px-3 transition-all rounded-lg font-bold text-xs",
+                                                    !link.url ? "pointer-events-none opacity-50" : "cursor-pointer",
+                                                    link.active 
+                                                        ? "bg-slate-900 dark:bg-white dark:text-slate-900 border-transparent shadow-md" 
+                                                        : "bg-white dark:bg-slate-900 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800 border-slate-200"
+                                                )}
+                                            >
+                                                <span dangerouslySetInnerHTML={{ __html: link.label }} />
+                                            </Button>
+                                        </Link>
+                                    ))}
+                                </div>
                             </div>
                         )}
                     </CardContent>

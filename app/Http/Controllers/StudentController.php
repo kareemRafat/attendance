@@ -62,6 +62,8 @@ class StudentController extends Controller
 
         $student->load(['branch', 'enrollments' => function ($query) {
             $query->whereNull('ended_at')->with('group');
+        }, 'groups' => function ($query) {
+            $query->whereNull('enrollments.ended_at');
         }]);
 
         $attendanceStats = $student->attendances()
@@ -92,6 +94,11 @@ class StudentController extends Controller
 
         return Inertia::render('Students/Show', [
             'student' => $student,
+            'availableGroups' => Group::where('is_active', true)->get(),
+            'courseTypes' => collect(CourseType::cases())->map(fn ($case) => [
+                'name' => $case->label(),
+                'value' => $case->value,
+            ]),
             'stats' => [
                 'compliance' => $compliance,
                 'present' => $presentCount,

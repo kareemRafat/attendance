@@ -1,7 +1,9 @@
 import { Head, useForm, Link, usePage, router } from '@inertiajs/react';
-import { Plus, Pencil, Trash, ArrowRightLeft, Eye, Users, UserPlus, Search } from 'lucide-react';
+import { Plus, Trash, ArrowRightLeft, Eye, Users, UserPlus, Search, Pencil } from 'lucide-react';
 import { useState } from 'react';
 import { DeleteConfirmationDialog } from '@/components/delete-confirmation-dialog';
+import { EditStudentDialog } from '@/components/edit-student-dialog';
+import { TransferStudentDialog } from '@/components/transfer-student-dialog';
 import { Button } from '@/components/ui/button';
 import {
     Card,
@@ -102,7 +104,6 @@ export default function StudentsIndex({
     // Track state for filtering groups
     const [quickTrack, setQuickTrack] = useState('');
     const [massTrack, setMassTrack] = useState('');
-    const [transferTrack, setTransferTrack] = useState('');
 
     // Search and Filter State
     const [search, setSearch] = useState(filters.search || '');
@@ -149,20 +150,6 @@ export default function StudentsIndex({
         ],
     });
 
-    // Edit Form
-    const editForm = useForm({
-        name: '',
-        track: '',
-    });
-
-    // Transfer Form
-    const transferForm = useForm({
-        from_group_id: '',
-        to_group_id: '',
-        effective_date: new Date().toISOString().split('T')[0],
-        reason: '',
-    });
-
     const submitQuickAdd = (e: React.FormEvent) => {
         e.preventDefault();
         quickAdd.post('/students', {
@@ -199,29 +186,6 @@ export default function StudentsIndex({
         const newStudents = [...massAdd.data.students];
         newStudents[index] = { ...newStudents[index], [field]: value };
         massAdd.setData('students', newStudents);
-    };
-
-    const submitEdit = (e: React.FormEvent) => {
-        e.preventDefault();
-        if (!editingStudent) return;
-        editForm.put(`/students/${editingStudent.id}`, {
-            onSuccess: () => {
-                setEditingStudent(null);
-                editForm.reset();
-            },
-        });
-    };
-
-    const submitTransfer = (e: React.FormEvent) => {
-        e.preventDefault();
-        if (!transferringStudent) return;
-        transferForm.post(`/students/${transferringStudent.id}/transfer`, {
-            onSuccess: () => {
-                setTransferringStudent(null);
-                transferForm.reset();
-                setTransferTrack('');
-            },
-        });
     };
 
     const confirmDelete = () => {
@@ -665,15 +629,7 @@ export default function StudentsIndex({
                                                     size="icon"
                                                     title="Transfer Student"
                                                     className="size-8 cursor-pointer text-amber-600 dark:text-amber-400 hover:bg-amber-50 dark:hover:bg-amber-900/30 transition-colors rounded-lg"
-                                                    onClick={() => {
-                                                        setTransferringStudent(student);
-                                                        transferForm.setData({
-                                                            from_group_id: student.groups.length === 1 ? student.groups[0].id.toString() : '',
-                                                            to_group_id: '',
-                                                            effective_date: new Date().toISOString().split('T')[0],
-                                                            reason: '',
-                                                        });
-                                                    }}
+                                                    onClick={() => setTransferringStudent(student)}
                                                 >
                                                     <ArrowRightLeft className="size-4" />
                                                 </Button>
@@ -682,13 +638,7 @@ export default function StudentsIndex({
                                                     size="icon"
                                                     title="Edit Student"
                                                     className="size-8 cursor-pointer text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors rounded-lg"
-                                                    onClick={() => {
-                                                        setEditingStudent(student);
-                                                        editForm.setData({
-                                                            name: student.name,
-                                                            track: student.track || '',
-                                                        });
-                                                    }}
+                                                    onClick={() => setEditingStudent(student)}
                                                 >
                                                     <Pencil className="size-4" />
                                                 </Button>
@@ -715,163 +665,48 @@ export default function StudentsIndex({
 
                         {/* Pagination */}
                         {students.links && students.links.length > 3 && (
-                            <div className="py-4 flex flex-wrap justify-center gap-1 border-t dark:border-slate-800">
-                                {students.links.map((link: any, i: number) => (
-                                    <Link key={i} href={link.url || '#'} preserveScroll>
-                                        <Button
-                                            variant={link.active ? 'default' : 'outline'}
-                                            size="sm"
-                                            className={cn(
-                                                "h-8 px-3 transition-all rounded-lg font-bold text-xs",
-                                                !link.url ? "pointer-events-none opacity-50" : "cursor-pointer",
-                                                link.active
-                                                    ? "bg-slate-900 dark:bg-white dark:text-slate-900 border-transparent shadow-md"
-                                                    : "bg-white dark:bg-slate-900 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800 border-slate-200"
-                                            )}
-                                        >
-                                            <span dangerouslySetInnerHTML={{ __html: link.label }} />
-                                        </Button>
-                                    </Link>
-                                ))}
+                            <div className="py-4 px-6 flex items-center justify-between border-t border-slate-100 dark:border-slate-800 bg-slate-50/30 dark:bg-slate-800/10">
+                                <div className="text-sm font-bold text-slate-500 dark:text-slate-400 uppercase tracking-tight">
+                                    Showing <span className="text-slate-900 dark:text-white">{students.from}-{students.to}</span> of <span className="text-slate-900 dark:text-white">{students.total}</span> students
+                                </div>
+                                <div className="flex flex-wrap justify-center gap-1">
+                                    {students.links.map((link: any, i: number) => (
+                                        <Link key={i} href={link.url || '#'} preserveScroll>
+                                            <Button
+                                                variant={link.active ? 'default' : 'outline'}
+                                                size="sm"
+                                                className={cn(
+                                                    "h-8 px-3 transition-all rounded-lg font-bold text-xs",
+                                                    !link.url ? "pointer-events-none opacity-50" : "cursor-pointer",
+                                                    link.active
+                                                        ? "bg-slate-900 dark:bg-white dark:text-slate-900 border-transparent shadow-md"
+                                                        : "bg-white dark:bg-slate-900 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800 border-slate-200"
+                                                )}
+                                            >
+                                                <span dangerouslySetInnerHTML={{ __html: link.label }} />
+                                            </Button>
+                                        </Link>
+                                    ))}
+                                </div>
                             </div>
                         )}
                     </CardContent>
                 </Card>
 
-                {/* Edit Dialog */}
-                <Dialog open={!!editingStudent} onOpenChange={(open) => !open && setEditingStudent(null)}>
-                    <DialogContent>
-                        <DialogHeader>
-                            <div className="flex items-center gap-2">
-                                <Pencil className="size-5 text-muted-foreground" />
-                                <DialogTitle>Edit Student</DialogTitle>
-                            </div>
-                        </DialogHeader>
-                        <form onSubmit={submitEdit} className="space-y-4 pt-4">
-                            <div className="space-y-2">
-                                <Label htmlFor="edit-name">Name</Label>
-                                <Input
-                                    id="edit-name"
-                                    value={editForm.data.name}
-                                    onChange={(e) => editForm.setData('name', e.target.value)}
-                                    required
-                                />
-                                {editForm.errors.name && <p className="text-xs text-destructive">{editForm.errors.name}</p>}
-                            </div>
-                            <div className="space-y-2">
-                                <Label htmlFor="edit-track">Track</Label>
-                                <Select
-                                    value={editForm.data.track}
-                                    onValueChange={(val) => editForm.setData('track', val)}
-                                >
-                                    <SelectTrigger id="edit-track">
-                                        <SelectValue placeholder="Select track" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        {courseTypes.map((type) => (
-                                            <SelectItem key={type.value} value={type.value}>{type.name}</SelectItem>
-                                        ))}
-                                    </SelectContent>
-                                </Select>
-                                {editForm.errors.track && <p className="text-xs text-destructive">{editForm.errors.track}</p>}
-                            </div>
-                            <DialogFooter>
-                                <Button type="submit" disabled={editForm.processing} className="w-full cursor-pointer">Update Student</Button>
-                            </DialogFooter>
-                        </form>
-                    </DialogContent>
-                </Dialog>
+                <EditStudentDialog
+                    student={editingStudent}
+                    isOpen={!!editingStudent}
+                    onClose={() => setEditingStudent(null)}
+                    courseTypes={courseTypes}
+                />
 
-                {/* Transfer Dialog */}
-                <Dialog open={!!transferringStudent} onOpenChange={(open) => {
-                    if (!open) {
-                        setTransferringStudent(null);
-                        setTransferTrack('');
-                    }
-                }}>
-                    <DialogContent>
-                        <DialogHeader>
-                            <div className="flex items-center gap-2">
-                                <ArrowRightLeft className="size-5 text-orange-500" />
-                                <DialogTitle className="text-orange-900 font-bold">Transfer Student</DialogTitle>
-                            </div>
-                            <DialogDescription>
-                                Move <span className="font-bold text-orange-600 px-1.5 py-0.5 bg-orange-50 rounded-md border border-orange-100">{transferringStudent?.name}</span> to a different group.
-                            </DialogDescription>
-                        </DialogHeader>
-                        <form onSubmit={submitTransfer} className="space-y-4 pt-4">
-                            <div className="space-y-2">
-                                <Label className="text-xs font-bold text-slate-500 uppercase">Choice Track</Label>
-                                <Select value={transferTrack} onValueChange={setTransferTrack}>
-                                    <SelectTrigger>
-                                        <SelectValue placeholder="Choose Track" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        {courseTypes.map((type) => (
-                                            <SelectItem key={type.value} value={type.value}>{type.name}</SelectItem>
-                                        ))}
-                                    </SelectContent>
-                                </Select>
-                            </div>
-                            <div className="grid grid-cols-2 gap-4">
-                                <div className="space-y-2">
-                                    <Label htmlFor="from_group_id" className="text-xs font-bold text-slate-500 uppercase">From Group</Label>
-                                    <Select value={transferForm.data.from_group_id} onValueChange={(val) => transferForm.setData('from_group_id', val)}>
-                                        <SelectTrigger>
-                                            <SelectValue placeholder="Current" />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            {transferringStudent?.groups.map((group) => (
-                                                <SelectItem key={group.id} value={group.id.toString()}>{group.name}</SelectItem>
-                                            ))}
-                                        </SelectContent>
-                                    </Select>
-                                </div>
-                                <div className="space-y-2">
-                                    <Label htmlFor="to_group_id" className="text-xs font-bold text-slate-500 uppercase">To Group</Label>
-                                    <Select value={transferForm.data.to_group_id} onValueChange={(val) => transferForm.setData('to_group_id', val)}>
-                                                                            <SelectTrigger>
-                                                                                <SelectValue placeholder="Target" />
-                                                                            </SelectTrigger>                                        <SelectContent>
-                                            {filteredGroupsByTrack().filter((g) => g.id.toString() !== transferForm.data.from_group_id).map((group) => (
-                                                <SelectItem key={group.id} value={group.id.toString()}>{group.name}</SelectItem>
-                                            ))}
-                                        </SelectContent>
-                                    </Select>
-                                </div>
-                            </div>
-                            <div className="space-y-2">
-                                <Label htmlFor="effective_date" className="text-xs font-bold text-slate-500 uppercase">Effective Date</Label>
-                                <Input
-                                    id="effective_date"
-                                    type="date"
-                                    value={transferForm.data.effective_date}
-                                    onChange={(e) => transferForm.setData('effective_date', e.target.value)}
-                                    required
-                                />
-                            </div>
-                            <div className="space-y-2">
-                                <Label htmlFor="reason" className="text-xs font-bold text-slate-500 uppercase">Reason</Label>
-                                <Input
-                                    id="reason"
-                                    placeholder="Enter reason"
-                                    value={transferForm.data.reason}
-                                    onChange={(e) => transferForm.setData('reason', e.target.value)}
-                                    required
-                                />
-                            </div>
-                            <DialogFooter className="pt-2">
-                                <Button
-                                    type="submit"
-                                    disabled={transferForm.processing}
-                                    className="w-full bg-orange-600 hover:bg-orange-700 text-white cursor-pointer shadow-sm transition-all active:scale-95"
-                                >
-                                    Complete Transfer
-                                </Button>
-                            </DialogFooter>
-                        </form>
-                    </DialogContent>
-                </Dialog>
+                <TransferStudentDialog
+                    student={transferringStudent}
+                    isOpen={!!transferringStudent}
+                    onClose={() => setTransferringStudent(null)}
+                    availableGroups={availableGroups}
+                    courseTypes={courseTypes}
+                />
 
                 <DeleteConfirmationDialog
                     isOpen={!!deletingStudent}

@@ -1,4 +1,4 @@
-import { Head, Link } from '@inertiajs/react';
+import { Head, Link, router } from '@inertiajs/react';
 import { format } from 'date-fns';
 import {
     CheckCircle2,
@@ -10,7 +10,10 @@ import {
     Calendar,
     GraduationCap,
     TrendingUp,
+    Pencil,
+    Trash,
 } from 'lucide-react';
+import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import {
     Card,
@@ -27,6 +30,9 @@ import {
     TableRow,
 } from '@/components/ui/table';
 import AppLayout from '@/layouts/app-layout';
+import { DeleteConfirmationDialog } from '@/components/delete-confirmation-dialog';
+import { EditStudentDialog } from '@/components/edit-student-dialog';
+import { TransferStudentDialog } from '@/components/transfer-student-dialog';
 import { cn } from '@/lib/utils';
 
 interface Group {
@@ -45,8 +51,9 @@ interface Student {
     name: string;
     track: string;
     formatted_track: string;
-    branch?: { name: string };
+    branch?: { name: string; id: number };
     enrollments: Enrollment[];
+    groups: Group[];
 }
 
 interface AttendanceRecord {
@@ -71,10 +78,13 @@ interface TransferLog {
 
 interface Props {
     student: Student;
+    availableGroups: Group[];
+    courseTypes: { name: string; value: string }[];
     stats: {
+        compliance: number;
         present: number;
-        absent: number;
         excused: number;
+        absent: number;
         total: number;
     };
     attendanceHistory: {
@@ -97,6 +107,8 @@ interface Props {
 
 export default function StudentShow({
     student,
+    availableGroups,
+    courseTypes,
     stats,
     attendanceHistory,
     transferHistory,
@@ -105,6 +117,14 @@ export default function StudentShow({
         { title: 'Students', href: '/students' },
         { title: student.name, href: `/students/${student.id}` },
     ];
+
+    const [isEditOpen, setIsEditOpen] = useState(false);
+    const [isTransferOpen, setIsTransferOpen] = useState(false);
+    const [isDeleteOpen, setIsDeleteOpen] = useState(false);
+
+    const confirmDelete = () => {
+        router.delete(`/students/${student.id}`);
+    };
 
     const attendanceRate =
         stats.total > 0
@@ -131,6 +151,29 @@ export default function StudentShow({
                             <h1 className="text-2xl font-bold text-slate-900 dark:text-white">{student.name}</h1>
                             <p className="text-sm text-slate-500 font-medium">{student.branch?.name}</p>
                         </div>
+                    </div>
+                    <div className="flex gap-2">
+                        <Button 
+                            variant="outline" 
+                            className="gap-2 rounded-xl cursor-pointer dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800"
+                            onClick={() => setIsTransferOpen(true)}
+                        >
+                            <ArrowRightLeft className="size-4" /> Transfer
+                        </Button>
+                        <Button 
+                            variant="outline" 
+                            className="gap-2 rounded-xl cursor-pointer dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800"
+                            onClick={() => setIsEditOpen(true)}
+                        >
+                            <Pencil className="size-4" /> Edit
+                        </Button>
+                        <Button 
+                            variant="destructive" 
+                            className="gap-2 rounded-xl cursor-pointer shadow-lg shadow-rose-500/20"
+                            onClick={() => setIsDeleteOpen(true)}
+                        >
+                            <Trash className="size-4" /> Delete
+                        </Button>
                     </div>
                 </div>
 
@@ -175,9 +218,8 @@ export default function StudentShow({
                     </CardContent>
                 </Card>
 
-                {/* Section 2: Statistics Widgets with Light Colors */}
+                {/* Section 2: Statistics Widgets */}
                 <div className="grid grid-cols-2 gap-4 md:grid-cols-5">
-                    {/* Attendance Rate */}
                     <Card className="flex flex-col justify-between bg-indigo-50/50 border-indigo-100 dark:bg-indigo-950/20 dark:border-indigo-900 transition-colors hover:bg-indigo-50">
                         <CardHeader className="p-4 pb-0">
                             <CardTitle className="text-xs font-bold uppercase tracking-wider text-indigo-600 dark:text-indigo-400">
@@ -186,13 +228,12 @@ export default function StudentShow({
                         </CardHeader>
                         <CardContent className="p-4 pt-2">
                             <div className="flex items-end gap-2">
-                                <span className="text-3xl font-extrabold text-indigo-900 dark:text-indigo-200">{attendanceRate}%</span>
-                                <TrendingUp className={`size-4 mb-1.5 ${attendanceRate >= 75 ? 'text-green-500' : 'text-orange-500'}`} />
+                                <span className="text-3xl font-extrabold text-indigo-900 dark:text-indigo-200">{stats.compliance}%</span>
+                                <TrendingUp className={`size-4 mb-1.5 ${stats.compliance >= 75 ? 'text-green-500' : 'text-orange-500'}`} />
                             </div>
                         </CardContent>
                     </Card>
 
-                    {/* Total Sessions */}
                     <Card className="flex flex-col justify-between bg-blue-50/50 border-blue-100 dark:bg-blue-950/20 dark:border-blue-900 transition-colors hover:bg-blue-50">
                         <CardHeader className="p-4 pb-0">
                             <CardTitle className="text-xs font-bold uppercase tracking-wider text-blue-600 dark:text-blue-400">
@@ -298,7 +339,7 @@ export default function StudentShow({
                                         ))}
                                         {attendanceHistory.data.length === 0 && (
                                             <TableRow>
-                                                <TableCell colSpan={3} className="h-24 text-center text-slate-400 italic">
+                                                <TableCell colSpan={4} className="h-24 text-center text-slate-400 italic">
                                                     No attendance records found.
                                                 </TableCell>
                                             </TableRow>
@@ -344,8 +385,8 @@ export default function StudentShow({
                                     <TableHeader className="bg-slate-50/50 dark:bg-slate-800/20">
                                         <TableRow className="dark:border-slate-800">
                                             <TableHead className="px-6 py-4 text-slate-900 dark:text-slate-300 font-bold">From/To</TableHead>
-                                            <TableHead>Date</TableHead>
-                                            <TableHead className="text-right pr-6">Reason</TableHead>
+                                            <TableHead className="text-slate-900 dark:text-slate-300 font-bold">Date</TableHead>
+                                            <TableHead className="text-right px-6 text-slate-900 dark:text-slate-300 font-bold">Reason</TableHead>
                                         </TableRow>
                                     </TableHeader>
                                     <TableBody>
@@ -400,6 +441,30 @@ export default function StudentShow({
                         </CardContent>
                     </Card>
                 </div>
+
+                <EditStudentDialog
+                    student={student}
+                    isOpen={isEditOpen}
+                    onClose={() => setIsEditOpen(false)}
+                    courseTypes={courseTypes}
+                />
+
+                <TransferStudentDialog
+                    student={student}
+                    isOpen={isTransferOpen}
+                    onClose={() => setIsTransferOpen(false)}
+                    availableGroups={availableGroups}
+                    courseTypes={courseTypes}
+                />
+
+                <DeleteConfirmationDialog
+                    isOpen={isDeleteOpen}
+                    onClose={() => setIsDeleteOpen(false)}
+                    onConfirm={confirmDelete}
+                    processing={false}
+                    title="Delete Student"
+                    description={`Are you sure you want to delete ${student.name}? This action cannot be undone.`}
+                />
             </div>
         </AppLayout>
     );

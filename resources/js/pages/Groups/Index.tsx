@@ -64,6 +64,9 @@ interface Props {
             label: string;
             active: boolean;
         }[];
+        from: number;
+        to: number;
+        total: number;
     };
     branches: Branch[];
     daysPatterns: DaysPatternOption[];
@@ -398,18 +401,29 @@ export default function GroupsIndex({ groups, branches = [], daysPatterns = [], 
 
                 {/* Pagination */}
                 {groups.links && groups.links.length > 3 && (
-                    <div className="py-4 flex flex-wrap justify-center gap-1">
-                        {groups.links.map((link, i) => (
-                            <Link key={i} href={link.url || '#'} preserveScroll>
-                                <Button
-                                    variant={link.active ? 'default' : 'outline'}
-                                    size="sm"
-                                    className={`h-8 px-3 ${!link.url ? 'pointer-events-none opacity-50' : 'cursor-pointer'}`}
-                                >
-                                    <span dangerouslySetInnerHTML={{ __html: link.label }} />
-                                </Button>
-                            </Link>
-                        ))}
+                    <div className="py-4 px-6 flex items-center justify-between border-t border-slate-100 dark:border-slate-800 bg-slate-50/30 dark:bg-slate-800/10 rounded-xl">
+                        <div className="text-sm font-bold text-slate-500 dark:text-slate-400 uppercase tracking-tight">
+                            Showing <span className="text-slate-900 dark:text-white">{groups.from}-{groups.to}</span> of <span className="text-slate-900 dark:text-white">{groups.total}</span> groups
+                        </div>
+                        <div className="flex flex-wrap justify-center gap-1">
+                            {groups.links.map((link, i) => (
+                                <Link key={i} href={link.url || '#'} preserveScroll>
+                                    <Button
+                                        variant={link.active ? 'default' : 'outline'}
+                                        size="sm"
+                                        className={cn(
+                                            "h-8 px-3 transition-all rounded-lg font-bold text-xs",
+                                            !link.url ? "pointer-events-none opacity-50" : "cursor-pointer",
+                                            link.active 
+                                                ? "bg-slate-900 dark:bg-white dark:text-slate-900 border-transparent shadow-md" 
+                                                : "bg-white dark:bg-slate-900 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800 border-slate-200"
+                                        )}
+                                    >
+                                        <span dangerouslySetInnerHTML={{ __html: link.label }} />
+                                    </Button>
+                                </Link>
+                            ))}
+                        </div>
                     </div>
                 )}
             </div>
