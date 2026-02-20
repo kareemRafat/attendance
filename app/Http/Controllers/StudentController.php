@@ -163,7 +163,7 @@ class StudentController extends Controller
         $this->authorize('update', $student);
         $student->update($request->validated());
 
-        return redirect()->route('students.index')->with('success', 'Student updated successfully.');
+        return back()->with('success', 'Student updated successfully.');
     }
 
     public function destroy(Student $student): RedirectResponse
@@ -221,6 +221,6 @@ class StudentController extends Controller
             ]);
         });
 
-        return redirect()->route('students.index')->with('success', 'Student transfer scheduled successfully.');
+        return back()->with('success', 'Student transfer scheduled successfully.');
     }
 }

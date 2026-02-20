@@ -1,5 +1,5 @@
 import { Head, useForm, Link, usePage, router } from '@inertiajs/react';
-import { Plus, Trash, ArrowRightLeft, Eye, Users, UserPlus, Search, Pencil } from 'lucide-react';
+import { Plus, Trash, ArrowRightLeft, Eye, Users, UserPlus, Search, Pencil, Loader2 } from 'lucide-react';
 import { useState } from 'react';
 import { DeleteConfirmationDialog } from '@/components/delete-confirmation-dialog';
 import { EditStudentDialog } from '@/components/edit-student-dialog';
@@ -100,6 +100,7 @@ export default function StudentsIndex({
     const [transferringStudent, setTransferringStudent] =
         useState<Student | null>(null);
     const [deletingStudent, setDeletingStudent] = useState<Student | null>(null);
+    const [isDeleting, setIsDeleting] = useState(false);
 
     // Track state for filtering groups
     const [quickTrack, setQuickTrack] = useState('');
@@ -190,10 +191,12 @@ export default function StudentsIndex({
 
     const confirmDelete = () => {
         if (!deletingStudent) return;
+        setIsDeleting(true);
         router.delete(`/students/${deletingStudent.id}`, {
             onSuccess: () => {
                 setDeletingStudent(null);
             },
+            onFinish: () => setIsDeleting(false),
         });
     };
 
@@ -355,7 +358,11 @@ export default function StudentsIndex({
                                         <div className="flex gap-2">
                                             <Button type="button" variant="ghost" onClick={() => setIsMassAddOpen(false)} className="cursor-pointer dark:text-slate-400 dark:hover:bg-slate-800">Cancel</Button>
                                             <Button type="submit" disabled={massAdd.processing} className="cursor-pointer bg-slate-900 dark:bg-white dark:text-slate-900 dark:hover:bg-slate-200 shadow-lg shadow-slate-500/10">
-                                                Save {massAdd.data.students.length} Students
+                                                {massAdd.processing ? (
+                                                    <><Loader2 className="mr-2 size-4 animate-spin" /> Saving...</>
+                                                ) : (
+                                                    <>Save {massAdd.data.students.length} Students</>
+                                                )}
                                             </Button>
                                         </div>
                                     </div>
@@ -458,7 +465,11 @@ export default function StudentsIndex({
                                     </div>
                                     <DialogFooter className="pt-2">
                                         <Button type="submit" disabled={quickAdd.processing} className="w-full cursor-pointer bg-slate-900 dark:bg-white dark:text-slate-900 dark:hover:bg-slate-200">
-                                            Create Student
+                                            {quickAdd.processing ? (
+                                                <><Loader2 className="mr-2 size-4 animate-spin" /> Creating...</>
+                                            ) : (
+                                                'Create Student'
+                                            )}
                                         </Button>
                                     </DialogFooter>
                                 </form>
@@ -712,7 +723,7 @@ export default function StudentsIndex({
                     isOpen={!!deletingStudent}
                     onClose={() => setDeletingStudent(null)}
                     onConfirm={confirmDelete}
-                    processing={false}
+                    processing={isDeleting}
                     title="Delete Student"
                     description={`Are you sure you want to delete ${deletingStudent?.name}? This action cannot be undone.`}
                 />

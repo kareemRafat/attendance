@@ -1,5 +1,5 @@
 import { Head, useForm } from '@inertiajs/react';
-import { Plus, Pencil, Building2, MapPin, Users, Library } from 'lucide-react';
+import { Plus, Pencil, Building2, MapPin, Users, Library, Loader2 } from 'lucide-react';
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import {
@@ -121,7 +121,14 @@ export default function BranchesIndex({ branches }: Props) {
                                 </div>
                                 <DialogFooter>
                                     <Button type="submit" disabled={createForm.processing} className="w-full cursor-pointer">
-                                        Create Branch
+                                        {createForm.processing ? (
+                                            <>
+                                                <Loader2 className="mr-2 size-4 animate-spin" />
+                                                Creating...
+                                            </>
+                                        ) : (
+                                            'Create Branch'
+                                        )}
                                     </Button>
                                 </DialogFooter>
                             </form>
@@ -254,7 +261,14 @@ export default function BranchesIndex({ branches }: Props) {
                             </div>
                             <DialogFooter>
                                 <Button type="submit" disabled={editForm.processing} className="w-full cursor-pointer">
-                                    Save Changes
+                                    {editForm.processing ? (
+                                        <>
+                                            <Loader2 className="mr-2 size-4 animate-spin" />
+                                            Saving Changes...
+                                        </>
+                                    ) : (
+                                        'Save Changes'
+                                    )}
                                 </Button>
                             </DialogFooter>
                         </form>

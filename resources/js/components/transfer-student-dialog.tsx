@@ -1,5 +1,5 @@
 import { useForm } from '@inertiajs/react';
-import { ArrowRightLeft, Search } from 'lucide-react';
+import { ArrowRightLeft, Search, Loader2 } from 'lucide-react';
 import { useState, useEffect, useMemo } from 'react';
 import { Button } from '@/components/ui/button';
 import {
@@ -172,7 +172,14 @@ export function TransferStudentDialog({ student, isOpen, onClose, availableGroup
                             disabled={processing}
                             className="w-full bg-orange-600 hover:bg-orange-700 text-white cursor-pointer shadow-sm transition-all active:scale-95"
                         >
-                            Complete Transfer
+                            {processing ? (
+                                <>
+                                    <Loader2 className="mr-2 size-4 animate-spin" />
+                                    Transferring...
+                                </>
+                            ) : (
+                                'Complete Transfer'
+                            )}
                         </Button>
                     </DialogFooter>
                 </form>

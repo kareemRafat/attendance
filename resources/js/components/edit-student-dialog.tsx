@@ -1,5 +1,5 @@
 import { useForm } from '@inertiajs/react';
-import { Pencil } from 'lucide-react';
+import { Pencil, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
     Dialog,
@@ -98,7 +98,14 @@ export function EditStudentDialog({ student, isOpen, onClose, courseTypes }: Pro
                     </div>
                     <DialogFooter>
                         <Button type="submit" disabled={processing} className="w-full cursor-pointer">
-                            Update Student
+                            {processing ? (
+                                <>
+                                    <Loader2 className="mr-2 size-4 animate-spin" />
+                                    Updating...
+                                </>
+                            ) : (
+                                'Update Student'
+                            )}
                         </Button>
                     </DialogFooter>
                 </form>

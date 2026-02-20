@@ -121,9 +121,13 @@ export default function StudentShow({
     const [isEditOpen, setIsEditOpen] = useState(false);
     const [isTransferOpen, setIsTransferOpen] = useState(false);
     const [isDeleteOpen, setIsDeleteOpen] = useState(false);
+    const [isDeleting, setIsDeleting] = useState(false);
 
     const confirmDelete = () => {
-        router.delete(`/students/${student.id}`);
+        setIsDeleting(true);
+        router.delete(`/students/${student.id}`, {
+            onFinish: () => setIsDeleting(false),
+        });
     };
 
     const attendanceRate =
@@ -461,7 +465,7 @@ export default function StudentShow({
                     isOpen={isDeleteOpen}
                     onClose={() => setIsDeleteOpen(false)}
                     onConfirm={confirmDelete}
-                    processing={false}
+                    processing={isDeleting}
                     title="Delete Student"
                     description={`Are you sure you want to delete ${student.name}? This action cannot be undone.`}
                 />
