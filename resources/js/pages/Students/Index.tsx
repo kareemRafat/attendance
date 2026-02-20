@@ -9,6 +9,8 @@ import {
     Search,
     Pencil,
     Loader2,
+    MapPinCheck,
+    NotebookText,
 } from 'lucide-react';
 import { useState } from 'react';
 import { DeleteConfirmationDialog } from '@/components/delete-confirmation-dialog';
@@ -851,11 +853,13 @@ export default function StudentsIndex({
                                             </Link>
                                         </TableCell>
                                         <TableCell className="font-medium dark:text-slate-300">
+                                            <MapPinCheck size={17} className='text-slate-700 inline mx-2'/>
                                             {student.branch?.name || '-'}
                                         </TableCell>
                                         <TableCell>
+                                            <NotebookText size={17} className='text-slate-700 inline mx-2' />
                                             {student.formatted_track ? (
-                                                <span className="rounded-full border bg-slate-100 px-2.5 py-0.5 text-[10px] font-black tracking-tight text-slate-700 capitalize uppercase dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300">
+                                                <span className="rounded-full border bg-slate-100 px-2.5 py-0.5 text-[11px] font-black tracking-tight text-slate-700 uppercase dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300">
                                                     {student.formatted_track}
                                                 </span>
                                             ) : (
@@ -867,7 +871,7 @@ export default function StudentsIndex({
                                                 {student.groups.map((g) => (
                                                     <span
                                                         key={g.id}
-                                                        className="inline-flex items-center rounded-md border bg-white px-2 py-0.5 text-[10px] font-bold text-slate-700 shadow-xs dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300"
+                                                        className="inline-flex items-center rounded-md border bg-white px-2 py-0.5 text-[13px] font-bold text-slate-700 shadow-xs dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300"
                                                     >
                                                         {g.name}
                                                     </span>

@@ -167,7 +167,7 @@ export default function StudentShow({
                             <h1 className="text-2xl font-bold text-slate-900 dark:text-white">
                                 {student.name}
                             </h1>
-                            <p className="text-sm font-medium text-slate-500">
+                            <p className="text-sm font-medium text-slate-500 capitalize">
                                 {student.branch?.name}
                             </p>
                         </div>
@@ -219,7 +219,7 @@ export default function StudentShow({
                                 <p className="text-xs font-medium tracking-wider text-slate-500 uppercase">
                                     Branch
                                 </p>
-                                <p className="mt-1 text-sm font-semibold text-slate-900 dark:text-slate-200">
+                                <p className="mt-1 text-sm font-semibold text-slate-900 dark:text-slate-200 capitalize">
                                     {student.branch?.name || 'N/A'}
                                 </p>
                             </div>
@@ -240,7 +240,7 @@ export default function StudentShow({
                                         currentGroups.map((group) => (
                                             <span
                                                 key={group.id}
-                                                className="inline-flex items-center rounded border border-slate-200 bg-white px-2 py-0.5 text-xs font-medium text-slate-700 shadow-sm dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200"
+                                                className="inline-flex items-center rounded border border-slate-200 bg-white px-2 py-0.5 text-sm font-medium text-slate-700 shadow-sm dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200"
                                             >
                                                 <GraduationCap className="mr-1 size-3 text-slate-400" />
                                                 {group.name}
@@ -510,19 +510,19 @@ export default function StudentShow({
                                             >
                                                 <TableCell className="px-6 font-bold text-slate-900 dark:text-slate-200">
                                                     <div className="flex items-center gap-2">
-                                                        <span className="text-xs">
+                                                        <span>
                                                             {
                                                                 log.from_group
                                                                     .name
                                                             }
                                                         </span>
                                                         <ArrowRightLeft className="size-3 text-slate-400" />
-                                                        <span className="text-xs text-indigo-600 dark:text-indigo-400">
+                                                        <span className=" text-indigo-600 dark:text-indigo-400">
                                                             {log.to_group.name}
                                                         </span>
                                                     </div>
                                                 </TableCell>
-                                                <TableCell className="text-xs font-medium text-slate-500 dark:text-slate-400">
+                                                <TableCell className="font-medium text-slate-500 dark:text-slate-400">
                                                     {format(
                                                         new Date(
                                                             log.effective_date,
@@ -537,7 +537,7 @@ export default function StudentShow({
                                                                 {log.reason}
                                                             </span>
                                                         </TooltipTrigger>
-                                                        <TooltipContent className="max-w-xs whitespace-pre-wrap">
+                                                        <TooltipContent className="max-w-xs whitespace-pre-wrap text-sm">
                                                             {log.reason}
                                                         </TooltipContent>
                                                     </Tooltip>

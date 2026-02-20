@@ -8,7 +8,7 @@ import {
     Edit,
     Loader2,
     Search,
-    Building2,
+    Navigation,
 } from 'lucide-react';
 import type { FormEventHandler } from 'react';
 import { useState } from 'react';
@@ -17,7 +17,6 @@ import {
     reactivate,
     store,
     update,
-    show,
 } from '@/actions/App/Http/Controllers/GroupController';
 import { DeleteConfirmationDialog } from '@/components/delete-confirmation-dialog';
 import InputError from '@/components/input-error';
@@ -366,7 +365,8 @@ export default function GroupsIndex({
                                             {group.name}
                                         </h3>
                                         <div className="mt-1 flex items-center gap-1.5">
-                                            <Building2 size={17} className='text-slate-700' />
+                                            {/* <Building2 size={17} className='text-slate-700' /> */}
+                                            <Navigation size={17} className='text-slate-700' />
                                             <span className="inline-flex items-center rounded-full bg-slate-100 px-2 py-1 text-xs font-bold tracking-wider text-blue-900 capitalize dark:bg-slate-800">
                                                 {group.branch?.name}
                                             </span>
