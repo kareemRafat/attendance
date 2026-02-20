@@ -16,10 +16,10 @@ export function UserInfo({ user }: { user: User }) {
                 </AvatarFallback>
             </Avatar>
             <div className="grid flex-1 text-left leading-tight">
-                <span className="truncate font-bold text-slate-900 dark:text-white">
+                <span className="truncate text-base font-bold text-slate-900 dark:text-white">
                     {user.name}
                 </span>
-                <span className="truncate text-xs font-semibold text-blue-600 dark:text-blue-400">
+                <span className="truncate capitalize text-xs font-semibold text-blue-600 dark:text-blue-400">
                     {subText}
                 </span>
             </div>

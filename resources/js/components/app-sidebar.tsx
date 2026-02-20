@@ -5,6 +5,7 @@ import {
     LayoutGrid,
     Layers,
     Users,
+    UserCheck,
 } from 'lucide-react';
 import { NavFooter } from '@/components/nav-footer';
 import { NavMain } from '@/components/nav-main';
@@ -21,6 +22,7 @@ import {
 import { dashboard } from '@/routes';
 import attendance from '@/routes/attendance';
 import branches from '@/routes/branches';
+import employees from '@/routes/employees';
 import groups from '@/routes/groups';
 import students from '@/routes/students';
 import type { NavItem, User } from '@/types';
@@ -54,6 +56,11 @@ export function AppSidebar() {
         },
         ...(isAdmin
             ? [
+                  {
+                      title: 'Employees',
+                      href: employees.index.url(),
+                      icon: UserCheck,
+                  },
                   {
                       title: 'Branches',
                       href: branches.index.url(),
