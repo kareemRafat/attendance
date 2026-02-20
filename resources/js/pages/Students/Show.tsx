@@ -79,6 +79,7 @@ interface TransferLog {
 interface Props {
     student: Student;
     availableGroups: Group[];
+    availableBranches: { id: number; name: string }[];
     courseTypes: { name: string; value: string }[];
     stats: {
         compliance: number;
@@ -108,6 +109,7 @@ interface Props {
 export default function StudentShow({
     student,
     availableGroups,
+    availableBranches,
     courseTypes,
     stats,
     attendanceHistory,
@@ -451,6 +453,7 @@ export default function StudentShow({
                     isOpen={isEditOpen}
                     onClose={() => setIsEditOpen(false)}
                     courseTypes={courseTypes}
+                    availableBranches={availableBranches}
                 />
 
                 <TransferStudentDialog

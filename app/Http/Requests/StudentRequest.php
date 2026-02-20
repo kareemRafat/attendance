@@ -53,6 +53,8 @@ class StudentRequest extends FormRequest
             return [
                 'name' => ['required', 'string', 'max:255'],
                 'track' => ['required', Rule::enum(CourseType::class)],
+                'branch_id' => ['required', 'exists:branches,id'],
+                'details' => ['nullable', 'string'],
             ];
         }
 

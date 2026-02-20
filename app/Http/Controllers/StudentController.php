@@ -95,6 +95,7 @@ class StudentController extends Controller
         return Inertia::render('Students/Show', [
             'student' => $student,
             'availableGroups' => Group::where('is_active', true)->get(),
+            'availableBranches' => \App\Models\Branch::all(),
             'courseTypes' => collect(CourseType::cases())->map(fn ($case) => [
                 'name' => $case->label(),
                 'value' => $case->value,

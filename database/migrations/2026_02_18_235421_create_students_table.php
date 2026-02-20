@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('branch_id')->constrained()->cascadeOnDelete();
             $table->string('name');
-            $table->text('details')->nullable();
+            // $table->text('details')->nullable();
             $table->timestamps();
         });
     }

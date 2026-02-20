@@ -709,6 +709,7 @@ export default function StudentsIndex({
                     isOpen={!!editingStudent}
                     onClose={() => setEditingStudent(null)}
                     courseTypes={courseTypes}
+                    availableBranches={availableBranches}
                 />
 
                 <TransferStudentDialog

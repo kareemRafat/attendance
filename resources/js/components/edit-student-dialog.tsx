@@ -1,4 +1,4 @@
-import { useForm } from '@inertiajs/react';
+import { useForm, usePage } from '@inertiajs/react';
 import { Pencil, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
@@ -23,6 +23,12 @@ interface Student {
     id: number;
     name: string;
     track: string;
+    branch_id?: number;
+}
+
+interface Branch {
+    id: number;
+    name: string;
 }
 
 interface Props {
@@ -30,12 +36,17 @@ interface Props {
     isOpen: boolean;
     onClose: () => void;
     courseTypes: { name: string; value: string }[];
+    availableBranches?: Branch[];
 }
 
-export function EditStudentDialog({ student, isOpen, onClose, courseTypes }: Props) {
+export function EditStudentDialog({ student, isOpen, onClose, courseTypes, availableBranches = [] }: Props) {
+    const { auth } = usePage<any>().props;
+    const isAdmin = auth.user.role === 'admin';
+
     const { data, setData, put, processing, errors, reset } = useForm({
         name: '',
         track: '',
+        branch_id: '',
     });
 
     useEffect(() => {
@@ -43,6 +54,7 @@ export function EditStudentDialog({ student, isOpen, onClose, courseTypes }: Pro
             setData({
                 name: student.name,
                 track: student.track || '',
+                branch_id: student.branch_id?.toString() || '',
             });
         }
     }, [student]);
@@ -69,6 +81,27 @@ export function EditStudentDialog({ student, isOpen, onClose, courseTypes }: Pro
                     </div>
                 </DialogHeader>
                 <form onSubmit={submit} className="space-y-4 pt-4">
+                    {isAdmin && (
+                        <div className="space-y-2">
+                            <Label htmlFor="edit-branch">Branch</Label>
+                            <Select
+                                value={data.branch_id}
+                                onValueChange={(val) => setData('branch_id', val)}
+                            >
+                                <SelectTrigger id="edit-branch">
+                                    <SelectValue placeholder="Select branch" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    {availableBranches.map((branch) => (
+                                        <SelectItem key={branch.id} value={branch.id.toString()}>
+                                            {branch.name}
+                                        </SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+                            {errors.branch_id && <p className="text-xs text-destructive">{errors.branch_id}</p>}
+                        </div>
+                    )}
                     <div className="space-y-2">
                         <Label htmlFor="edit-name">Name</Label>
                         <Input
