@@ -8,6 +8,7 @@ import {
     Edit,
     Loader2,
     Search,
+    Building2,
 } from 'lucide-react';
 import type { FormEventHandler } from 'react';
 import { useState } from 'react';
@@ -361,11 +362,12 @@ export default function GroupsIndex({
                             <div className="p-5 pb-0">
                                 <div className="flex items-start justify-between gap-4">
                                     <div className="min-w-0">
-                                        <h3 className="truncate text-lg leading-tight font-extrabold text-slate-900 transition-colors group-hover:text-indigo-600 dark:text-white">
+                                        <h3 className="truncate text-xl leading-tight font-extrabold text-slate-900 transition-colors group-hover:text-indigo-600 dark:text-white capitalize">
                                             {group.name}
                                         </h3>
                                         <div className="mt-1 flex items-center gap-1.5">
-                                            <span className="inline-flex items-center rounded-full bg-slate-100 px-2 py-0.5 text-[10px] font-bold tracking-wider text-slate-500 uppercase dark:bg-slate-800">
+                                            <Building2 size={17} className='text-slate-700' />
+                                            <span className="inline-flex items-center rounded-full bg-slate-100 px-2 py-1 text-xs font-bold tracking-wider text-blue-900 capitalize dark:bg-slate-800">
                                                 {group.branch?.name}
                                             </span>
                                         </div>
