@@ -27,6 +27,7 @@ import {
     TableRow,
 } from '@/components/ui/table';
 import AppLayout from '@/layouts/app-layout';
+import { cn } from '@/lib/utils';
 
 interface Group {
     id: number;
@@ -252,129 +253,153 @@ export default function StudentShow({
                     </Card>
                 </div>
 
-                {/* Section 3: Attendance History */}
-                <Card className="border-slate-200 dark:bg-slate-900 dark:border-slate-800">
-                    <CardHeader className="pb-3 border-b border-slate-100 dark:border-slate-800 bg-slate-50/30">
-                        <CardTitle className="text-lg font-bold flex items-center gap-2 dark:text-white text-slate-800">
-                            <Calendar className="size-5 text-indigo-500" />
-                            Attendance History
-                        </CardTitle>
-                    </CardHeader>
-                    <CardContent className="p-0">
-                        <Table>
-                            <TableHeader className="bg-slate-50/50 dark:bg-slate-800/20">
-                                <TableRow className="dark:border-slate-800">
-                                    <TableHead className="px-6 py-4">Date</TableHead>
-                                    <TableHead>Group</TableHead>
-                                    <TableHead>Status</TableHead>
-                                    <TableHead className="text-right px-6">Recorded At</TableHead>
-                                </TableRow>
-                            </TableHeader>
-                            <TableBody>
-                                {attendanceHistory.data.map((record) => (
-                                    <TableRow key={record.id} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition-colors dark:border-slate-800">
-                                        <TableCell className="font-bold px-6 text-slate-900 dark:text-slate-200">
-                                            {format(new Date(record.lecture_session.date), 'PPP')}
-                                        </TableCell>
-                                        <TableCell className="text-slate-600 dark:text-slate-400 font-medium">{record.lecture_session.group.name}</TableCell>
-                                        <TableCell>
-                                            <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-[10px] font-black uppercase tracking-wider border ${
-                                                record.status === 'present' ? 'bg-emerald-50 text-emerald-700 border-emerald-100 dark:bg-emerald-900/20 dark:text-emerald-400 dark:border-emerald-900' :
-                                                record.status === 'absent' ? 'bg-rose-50 text-rose-700 border-rose-100 dark:bg-rose-900/20 dark:text-rose-400 dark:border-rose-900' :
-                                                'bg-amber-50 text-amber-700 border-amber-100 dark:bg-amber-900/20 dark:text-amber-400 dark:border-amber-900'
-                                            }`}>
-                                                {record.status}
-                                            </span>
-                                        </TableCell>
-                                        <TableCell className="text-right text-slate-400 text-xs px-6">
-                                            {format(new Date(record.created_at), 'p')}
-                                        </TableCell>
-                                    </TableRow>
-                                ))}
-                                {attendanceHistory.data.length === 0 && (
-                                    <TableRow>
-                                        <TableCell colSpan={4} className="h-24 text-center text-slate-400 italic">
-                                            No attendance records found.
-                                        </TableCell>
-                                    </TableRow>
-                                )}
-                            </TableBody>
-                        </Table>
-                        {attendanceHistory.links && attendanceHistory.links.length > 3 && (
-                            <div className="py-4 flex flex-wrap justify-center gap-1 border-t border-slate-100 dark:border-slate-800">
-                                {attendanceHistory.links.map((link, i) => (
-                                    <Link key={i} href={link.url || '#'} preserveScroll>
-                                        <Button
-                                            variant={link.active ? 'default' : 'outline'}
-                                            size="sm"
-                                            className={`h-8 px-3 transition-all rounded-lg font-bold text-xs ${!link.url ? 'pointer-events-none opacity-50' : 'cursor-pointer'} ${link.active ? 'bg-slate-900 dark:bg-white dark:text-slate-900 border-transparent shadow-md' : 'bg-white dark:bg-slate-900 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800 border-slate-200'}`}
-                                        >
-                                            <span dangerouslySetInnerHTML={{ __html: link.label }} />
-                                        </Button>
-                                    </Link>
-                                ))}
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    {/* Section 3: Attendance History */}
+                    <Card className="border-slate-200 dark:bg-slate-900 dark:border-slate-800 shadow-sm overflow-hidden flex flex-col h-full">
+                        <CardHeader className="pb-3 border-b border-slate-100 dark:border-slate-800 bg-slate-50/30">
+                            <CardTitle className="text-lg font-bold flex items-center gap-2 dark:text-white text-slate-800">
+                                <Calendar className="size-5 text-indigo-500" />
+                                Attendance History
+                            </CardTitle>
+                        </CardHeader>
+                        <CardContent className="p-0 flex-1 flex flex-col">
+                            <div className="flex-1">
+                                <Table>
+                                    <TableHeader className="bg-slate-50/50 dark:bg-slate-800/20">
+                                        <TableRow className="dark:border-slate-800">
+                                            <TableHead className="px-6 py-4 text-slate-900 dark:text-slate-300 font-bold">Date</TableHead>
+                                            <TableHead className="text-slate-900 dark:text-slate-300 font-bold">Status</TableHead>
+                                            <TableHead className="text-slate-900 dark:text-slate-300 font-bold text-center">Group</TableHead>
+                                            <TableHead className="text-right px-6 text-slate-900 dark:text-slate-300 font-bold">Time</TableHead>
+                                        </TableRow>
+                                    </TableHeader>
+                                    <TableBody>
+                                        {attendanceHistory.data.map((record) => (
+                                            <TableRow key={record.id} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition-colors dark:border-slate-800">
+                                                <TableCell className="font-bold px-6 text-slate-900 dark:text-slate-200">
+                                                    {format(new Date(record.lecture_session.date), 'PPP')}
+                                                </TableCell>
+                                                <TableCell>
+                                                    <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-[10px] font-black uppercase tracking-wider border ${
+                                                        record.status === 'present' ? 'bg-emerald-50 text-emerald-700 border-emerald-100 dark:bg-emerald-900/20 dark:text-emerald-400 dark:border-emerald-900' :
+                                                        record.status === 'absent' ? 'bg-rose-50 text-rose-700 border-rose-100 dark:bg-rose-900/20 dark:text-rose-400 dark:border-rose-900' :
+                                                        'bg-amber-50 text-amber-700 border-amber-100 dark:bg-amber-900/20 dark:text-amber-400 dark:border-amber-900'
+                                                    }`}>
+                                                        {record.status}
+                                                    </span>
+                                                </TableCell>
+                                                <TableCell className="text-center text-slate-500 dark:text-slate-400 font-medium">
+                                                    {record.lecture_session.group.name}
+                                                </TableCell>
+                                                <TableCell className="text-right px-6 text-xs text-slate-400 font-medium">
+                                                    {format(new Date(record.created_at), 'p')}
+                                                </TableCell>
+                                            </TableRow>
+                                        ))}
+                                        {attendanceHistory.data.length === 0 && (
+                                            <TableRow>
+                                                <TableCell colSpan={3} className="h-24 text-center text-slate-400 italic">
+                                                    No attendance records found.
+                                                </TableCell>
+                                            </TableRow>
+                                        )}
+                                    </TableBody>
+                                </Table>
                             </div>
-                        )}
-                    </CardContent>
-                </Card>
+                            {attendanceHistory.links && attendanceHistory.links.length > 3 && (
+                                <div className="py-4 flex flex-wrap justify-center gap-1 border-t border-slate-100 dark:border-slate-800">
+                                    {attendanceHistory.links.map((link, i) => (
+                                        <Link key={i} href={link.url || '#'} preserveScroll>
+                                            <Button
+                                                variant={link.active ? 'default' : 'outline'}
+                                                size="sm"
+                                                className={cn(
+                                                    "h-8 px-3 transition-all rounded-lg font-bold text-xs",
+                                                    !link.url ? "pointer-events-none opacity-50" : "cursor-pointer",
+                                                    link.active 
+                                                        ? "bg-slate-900 dark:bg-white dark:text-slate-900 border-transparent shadow-md" 
+                                                        : "bg-white dark:bg-slate-900 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800 border-slate-200"
+                                                )}
+                                            >
+                                                <span dangerouslySetInnerHTML={{ __html: link.label }} />
+                                            </Button>
+                                        </Link>
+                                    ))}
+                                </div>
+                            )}
+                        </CardContent>
+                    </Card>
 
-                {/* Section 4: Transfer History */}
-                <Card className="border-slate-200 dark:bg-slate-900 dark:border-slate-800">
-                    <CardHeader className="pb-3 border-b border-slate-100 dark:border-slate-800 bg-slate-50/30">
-                        <CardTitle className="text-lg font-bold flex items-center gap-2 dark:text-white text-slate-800">
-                            <ArrowRightLeft className="size-5 text-indigo-500" />
-                            Transfer History
-                        </CardTitle>
-                    </CardHeader>
-                    <CardContent className="p-0">
-                        <Table>
-                            <TableHeader className="bg-slate-50/50 dark:bg-slate-800/20">
-                                <TableRow className="dark:border-slate-800">
-                                    <TableHead className="px-6 py-4">From Group</TableHead>
-                                    <TableHead className="w-10 text-center" />
-                                    <TableHead>To Group</TableHead>
-                                    <TableHead>Effective Date</TableHead>
-                                    <TableHead className="text-right px-6">Reason</TableHead>
-                                </TableRow>
-                            </TableHeader>
-                            <TableBody>
-                                {transferHistory.data.map((log) => (
-                                    <TableRow key={log.id} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition-colors dark:border-slate-800">
-                                        <TableCell className="font-bold text-slate-900 dark:text-slate-200 px-6">{log.from_group.name}</TableCell>
-                                        <TableCell className="text-center">
-                                            <ArrowRightLeft className="size-4 text-slate-300 mx-auto" />
-                                        </TableCell>
-                                        <TableCell className="font-bold text-slate-900 dark:text-slate-200">{log.to_group.name}</TableCell>
-                                        <TableCell className="text-slate-600 dark:text-slate-400 font-medium">{format(new Date(log.effective_date), 'PPP')}</TableCell>
-                                        <TableCell className="text-right text-slate-600 dark:text-slate-400 max-w-[300px] truncate px-6" title={log.reason}>{log.reason}</TableCell>
-                                    </TableRow>
-                                ))}
-                                {transferHistory.data.length === 0 && (
-                                    <TableRow>
-                                        <TableCell colSpan={5} className="h-24 text-center text-slate-400 italic">
-                                            No transfer records found.
-                                        </TableCell>
-                                    </TableRow>
-                                )}
-                            </TableBody>
-                        </Table>
-                        {transferHistory.links && transferHistory.links.length > 3 && (
-                            <div className="py-4 flex flex-wrap justify-center gap-1 border-t border-slate-100 dark:border-slate-800">
-                                {transferHistory.links.map((link, i) => (
-                                    <Link key={i} href={link.url || '#'} preserveScroll>
-                                        <Button
-                                            variant={link.active ? 'default' : 'outline'}
-                                            size="sm"
-                                            className={`h-8 px-3 transition-all rounded-lg font-bold text-xs ${!link.url ? 'pointer-events-none opacity-50' : 'cursor-pointer'} ${link.active ? 'bg-slate-900 dark:bg-white dark:text-slate-900 border-transparent shadow-md' : 'bg-white dark:bg-slate-900 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800 border-slate-200'}`}
-                                        >
-                                            <span dangerouslySetInnerHTML={{ __html: link.label }} />
-                                        </Button>
-                                    </Link>
-                                ))}
+                    {/* Section 4: Transfer History */}
+                    <Card className="border-slate-200 dark:bg-slate-900 dark:border-slate-800 shadow-sm overflow-hidden flex flex-col h-full">
+                        <CardHeader className="pb-3 border-b border-slate-100 dark:border-slate-800 bg-slate-50/30">
+                            <CardTitle className="text-lg font-bold flex items-center gap-2 dark:text-white text-slate-800">
+                                <ArrowRightLeft className="size-5 text-indigo-500" />
+                                Transfer History
+                            </CardTitle>
+                        </CardHeader>
+                        <CardContent className="p-0 flex-1 flex flex-col">
+                            <div className="flex-1">
+                                <Table>
+                                    <TableHeader className="bg-slate-50/50 dark:bg-slate-800/20">
+                                        <TableRow className="dark:border-slate-800">
+                                            <TableHead className="px-6 py-4 text-slate-900 dark:text-slate-300 font-bold">From/To</TableHead>
+                                            <TableHead>Date</TableHead>
+                                            <TableHead className="text-right pr-6">Reason</TableHead>
+                                        </TableRow>
+                                    </TableHeader>
+                                    <TableBody>
+                                        {transferHistory.data.map((log) => (
+                                            <TableRow key={log.id} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition-colors dark:border-slate-800">
+                                                <TableCell className="font-bold text-slate-900 dark:text-slate-200 px-6">
+                                                    <div className="flex flex-col">
+                                                        <span className="text-xs">{log.from_group.name}</span>
+                                                        <ArrowRightLeft className="size-3 text-slate-300 my-0.5" />
+                                                        <span className="text-xs text-indigo-600 dark:text-indigo-400">{log.to_group.name}</span>
+                                                    </div>
+                                                </TableCell>
+                                                <TableCell className="text-xs font-medium text-slate-500 dark:text-slate-400">
+                                                    {format(new Date(log.effective_date), 'PPP')}
+                                                </TableCell>
+                                                <TableCell className="text-right text-slate-600 dark:text-slate-400 max-w-[200px] truncate px-6 text-xs" title={log.reason}>
+                                                    {log.reason}
+                                                </TableCell>
+                                            </TableRow>
+                                        ))}
+                                        {transferHistory.data.length === 0 && (
+                                            <TableRow>
+                                                <TableCell colSpan={3} className="h-24 text-center text-slate-400 italic">
+                                                    No transfer records found.
+                                                </TableCell>
+                                            </TableRow>
+                                        )}
+                                    </TableBody>
+                                </Table>
                             </div>
-                        )}
-                    </CardContent>
-                </Card>
+                            {transferHistory.links && transferHistory.links.length > 3 && (
+                                <div className="py-4 flex flex-wrap justify-center gap-1 border-t border-slate-100 dark:border-slate-800">
+                                    {transferHistory.links.map((link, i) => (
+                                        <Link key={i} href={link.url || '#'} preserveScroll>
+                                            <Button
+                                                variant={link.active ? 'default' : 'outline'}
+                                                size="sm"
+                                                className={cn(
+                                                    "h-8 px-3 transition-all rounded-lg font-bold text-xs",
+                                                    !link.url ? "pointer-events-none opacity-50" : "cursor-pointer",
+                                                    link.active 
+                                                        ? "bg-slate-900 dark:bg-white dark:text-slate-900 border-transparent shadow-md" 
+                                                        : "bg-white dark:bg-slate-900 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800 border-slate-200"
+                                                )}
+                                            >
+                                                <span dangerouslySetInnerHTML={{ __html: link.label }} />
+                                            </Button>
+                                        </Link>
+                                    ))}
+                                </div>
+                            )}
+                        </CardContent>
+                    </Card>
+                </div>
             </div>
         </AppLayout>
     );
