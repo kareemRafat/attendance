@@ -15,9 +15,9 @@ Route::get('/', function () {
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
-    Route::resource('branches', BranchController::class)->except(['show']);
 
     Route::middleware(['admin'])->group(function () {
+        Route::resource('branches', BranchController::class)->except(['show']);
         Route::resource('employees', EmployeeController::class)->except(['show', 'create', 'edit']);
     });
 

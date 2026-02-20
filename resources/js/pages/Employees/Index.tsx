@@ -13,7 +13,6 @@ import {
 import { useState, useEffect } from 'react';
 import { DeleteConfirmationDialog } from '@/components/delete-confirmation-dialog';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
     Dialog,
     DialogContent,
@@ -32,7 +31,16 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select';
+import {
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableHeader,
+    TableRow,
+} from '@/components/ui/table';
 import AppLayout from '@/layouts/app-layout';
+import { cn } from '@/lib/utils';
 
 interface Branch {
     id: number;
@@ -291,75 +299,106 @@ export default function EmployeesIndex({ employees, branches }: Props) {
                     </Dialog>
                 </div>
 
-                <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-                    {employees.map((employee) => (
-                        <Card
-                            key={employee.id}
-                            className="overflow-hidden rounded-3xl border border-slate-100 bg-white shadow-sm transition-all duration-300 dark:border-slate-800 dark:bg-slate-900"
-                        >
-                            <CardHeader className="flex flex-row items-center justify-between space-y-0 p-6 pb-2">
-                                <div className="rounded-2xl bg-indigo-50 p-2.5 text-indigo-600 dark:bg-slate-800 dark:text-indigo-400">
-                                    <Users className="size-6" />
-                                </div>
-                                <div className="flex gap-2">
-                                    <Button
-                                        variant="ghost"
-                                        size="icon"
-                                        className="h-9 w-9 cursor-pointer rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800"
-                                        onClick={() =>
-                                            setEditingEmployee(employee)
-                                        }
-                                    >
-                                        <Pencil className="size-4 text-slate-500" />
-                                    </Button>
-                                    <Button
-                                        variant="ghost"
-                                        size="icon"
-                                        className="h-9 w-9 cursor-pointer rounded-xl hover:bg-rose-50 hover:text-rose-600 dark:hover:bg-rose-900/20"
-                                        onClick={() =>
-                                            setDeletingEmployee(employee)
-                                        }
-                                    >
-                                        <Trash2 className="size-4" />
-                                    </Button>
-                                </div>
-                            </CardHeader>
-                            <CardContent className="p-6 pt-2">
-                                <div className="mb-4">
-                                    <h3 className="text-xl font-bold text-slate-900 dark:text-white">
-                                        {employee.name}
-                                    </h3>
-                                    <div className="mt-1 flex items-center gap-1.5 text-sm text-slate-500 dark:text-slate-400">
-                                        <Mail className="size-3.5" />
-                                        {employee.email}
-                                    </div>
-                                </div>
-
-                                <div className="grid grid-cols-2 gap-3">
-                                    <div className="flex flex-col rounded-2xl bg-slate-50 p-3 dark:bg-slate-800/50">
-                                        <span className="flex items-center gap-1.5 text-[10px] font-black tracking-wider text-slate-400 uppercase">
-                                            <Building2 className="size-3" />{' '}
-                                            Branch
-                                        </span>
-                                        <span className="mt-1 text-sm font-bold text-slate-700 dark:text-slate-200">
-                                            {employee.branch?.name || 'N/A'}
-                                        </span>
-                                    </div>
-                                    <div className="flex flex-col rounded-2xl bg-slate-50 p-3 dark:bg-slate-800/50">
-                                        <span className="flex items-center gap-1.5 text-[10px] font-black tracking-wider text-slate-400 uppercase">
-                                            <Shield className="size-3" /> Role
-                                        </span>
-                                        <span className="mt-1 flex items-center gap-1.5 text-sm font-bold text-slate-700 capitalize dark:text-slate-200">
-                                            <span
-                                                className={`size-2 rounded-full ${employee.role === 'admin' ? 'bg-amber-500' : 'bg-emerald-500'}`}
-                                            />
+                <div className="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-900">
+                    <Table>
+                        <TableHeader className="bg-slate-50/50 dark:bg-slate-800/20">
+                            <TableRow className="dark:border-slate-800">
+                                <TableHead className="px-6 py-4 font-bold text-slate-900 dark:text-slate-300">
+                                    Employee
+                                </TableHead>
+                                <TableHead className="font-bold text-slate-900 dark:text-slate-300">
+                                    Branch
+                                </TableHead>
+                                <TableHead className="font-bold text-slate-900 dark:text-slate-300">
+                                    Role
+                                </TableHead>
+                                <TableHead className="px-6 text-right font-bold text-slate-900 dark:text-slate-300">
+                                    Actions
+                                </TableHead>
+                            </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                            {employees.map((employee) => (
+                                <TableRow
+                                    key={employee.id}
+                                    className="dark:border-slate-800"
+                                >
+                                    <TableCell className="px-6 py-4">
+                                        <div className="flex items-center gap-3">
+                                            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-indigo-50 text-indigo-600 dark:bg-indigo-900/20 dark:text-indigo-400">
+                                                <Users className="size-5" />
+                                            </div>
+                                            <div className="flex flex-col">
+                                                <span className="font-bold text-slate-900 dark:text-white">
+                                                    {employee.name}
+                                                </span>
+                                                <span className="text-xs text-slate-500 dark:text-slate-400">
+                                                    {employee.email}
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </TableCell>
+                                    <TableCell>
+                                        <div className="flex items-center gap-2">
+                                            <Building2 className="size-4 text-slate-400" />
+                                            <span className="font-medium text-slate-700 dark:text-slate-200">
+                                                {employee.branch?.name || 'N/A'}
+                                            </span>
+                                        </div>
+                                    </TableCell>
+                                    <TableCell>
+                                        <span
+                                            className={cn(
+                                                'inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-bold capitalize',
+                                                employee.role === 'admin'
+                                                    ? 'bg-amber-50 text-amber-700 dark:bg-amber-900/20 dark:text-amber-400'
+                                                    : 'bg-emerald-50 text-emerald-700 dark:bg-emerald-900/20 dark:text-emerald-400',
+                                            )}
+                                        >
+                                            <Shield className="size-3" />
                                             {employee.role}
                                         </span>
-                                    </div>
-                                </div>
-                            </CardContent>
-                        </Card>
-                    ))}
+                                    </TableCell>
+                                    <TableCell className="px-6 text-right">
+                                        <div className="flex justify-end gap-2">
+                                            <Button
+                                                variant="ghost"
+                                                size="icon"
+                                                className="h-9 w-9 cursor-pointer rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800"
+                                                onClick={() =>
+                                                    setEditingEmployee(employee)
+                                                }
+                                            >
+                                                <Pencil className="size-4 text-slate-500" />
+                                            </Button>
+                                            <Button
+                                                variant="ghost"
+                                                size="icon"
+                                                className="h-9 w-9 cursor-pointer rounded-xl hover:bg-rose-50 hover:text-rose-600 dark:hover:bg-rose-900/20"
+                                                onClick={() =>
+                                                    setDeletingEmployee(
+                                                        employee,
+                                                    )
+                                                }
+                                            >
+                                                <Trash2 className="size-4" />
+                                            </Button>
+                                        </div>
+                                    </TableCell>
+                                </TableRow>
+                            ))}
+                            {employees.length === 0 && (
+                                <TableRow>
+                                    <TableCell
+                                        colSpan={4}
+                                        className="h-24 text-center text-slate-400 italic"
+                                    >
+                                        No employees found.
+                                    </TableCell>
+                                </TableRow>
+                            )}
+                        </TableBody>
+                    </Table>
                 </div>
 
                 {/* Edit Modal */}
