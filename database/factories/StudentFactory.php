@@ -22,7 +22,6 @@ class StudentFactory extends Factory
             'branch_id' => Branch::factory(),
             'track' => fake()->randomElement(CourseType::cases()),
             'name' => fake()->name(),
-            'details' => fake()->paragraph(),
         ];
     }
 }

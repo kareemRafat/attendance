@@ -1,5 +1,5 @@
-import { Head, router } from '@inertiajs/react';
-import { CheckCircle2, XCircle, Clock, Save, User } from 'lucide-react';
+import { Head, router, usePage } from '@inertiajs/react';
+import { CheckCircle2, XCircle, Clock, Save, User as UserIcon } from 'lucide-react';
 import { useState, useMemo, useEffect, useCallback } from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -10,6 +10,15 @@ import {
     CardHeader,
     CardTitle,
 } from '@/components/ui/card';
+import {
+    Select,
+    SelectContent,
+    SelectGroup,
+    SelectItem,
+    SelectLabel,
+    SelectTrigger,
+    SelectValue,
+} from '@/components/ui/select';
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 import AppLayout from '@/layouts/app-layout';
 
@@ -18,10 +27,16 @@ interface Student {
     name: string;
 }
 
+interface Branch {
+    id: number;
+    name: string;
+}
+
 interface Group {
     id: number;
     name: string;
     branch_id: number;
+    branch: Branch;
     students: Student[];
     lecture_session?: {
         id: number;
@@ -36,9 +51,18 @@ interface Group {
 interface Props {
     groups: Group[];
     selectedDate: string;
+    branches: Branch[];
+    selectedBranchId: number | null;
 }
 
-export default function AttendanceIndex({ groups, selectedDate }: Props) {
+export default function AttendanceIndex({
+    groups,
+    selectedDate,
+    branches,
+    selectedBranchId,
+}: Props) {
+    const { auth } = usePage().props as any;
+    const isAdmin = auth.user.role === 'admin';
     const breadcrumbs = [{ title: 'Attendance', href: '/attendance' }];
 
     const [activeGroupId, setActiveGroupId] = useState<number | null>(
@@ -77,6 +101,11 @@ export default function AttendanceIndex({ groups, selectedDate }: Props) {
         // Focus first student by default
         if (groups.length > 0 && groups[0].students.length > 0) {
             setFocusedStudentId(groups[0].students[0].id);
+        }
+
+        // Set active group to the first one if not set or not in the current list
+        if (groups.length > 0 && (!activeGroupId || !groups.find(g => g.id === activeGroupId))) {
+            setActiveGroupId(groups[0].id);
         }
     }, [groups]);
 
@@ -122,6 +151,32 @@ export default function AttendanceIndex({ groups, selectedDate }: Props) {
         },
         [localAttendances, selectedDate],
     );
+
+    const handleBranchChange = (branchId: string) => {
+        router.get(
+            '/attendance',
+            {
+                date: selectedDate,
+                branch_id: branchId === 'all' ? null : branchId,
+            },
+            { preserveState: true },
+        );
+    };
+
+    // Group groups by branch for admin display
+    const groupedGroups = useMemo(() => {
+        const grouped: Record<number, { name: string, groups: Group[] }> = {};
+        groups.forEach(group => {
+            if (!grouped[group.branch_id]) {
+                grouped[group.branch_id] = {
+                    name: group.branch.name,
+                    groups: []
+                };
+            }
+            grouped[group.branch_id].groups.push(group);
+        });
+        return grouped;
+    }, [groups]);
 
     // Keyboard shortcuts
     useEffect(() => {
@@ -196,26 +251,68 @@ export default function AttendanceIndex({ groups, selectedDate }: Props) {
             <Head title="Mark Attendance" />
 
             <div className="flex flex-col gap-6 p-4">
-                <div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
+                <div className="flex flex-col items-start justify-between gap-4 md:flex-row md:items-center">
                     <h1 className="text-2xl font-bold">
                         Attendance - {selectedDate}
                     </h1>
 
-                    <div className="flex w-full gap-2 overflow-x-auto pb-2 sm:w-auto sm:pb-0">
-                        {groups.map((group) => (
-                            <Button
-                                key={group.id}
-                                variant={
-                                    activeGroupId === group.id
-                                        ? 'default'
-                                        : 'outline'
-                                }
-                                onClick={() => setActiveGroupId(group.id)}
-                                size="sm"
+                    <div className="flex w-full flex-col gap-3 sm:flex-row sm:items-center md:w-auto">
+                        {isAdmin && (
+                            <Select
+                                value={selectedBranchId?.toString() || 'all'}
+                                onValueChange={handleBranchChange}
                             >
-                                {group.name}
-                            </Button>
-                        ))}
+                                <SelectTrigger className="w-full sm:w-[180px]">
+                                    <SelectValue placeholder="All Branches" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="all">All Branches</SelectItem>
+                                    {branches.map((branch) => (
+                                        <SelectItem
+                                            key={branch.id}
+                                            value={branch.id.toString()}
+                                        >
+                                            {branch.name}
+                                        </SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+                        )}
+
+                        <Select
+                            value={activeGroupId?.toString() || ''}
+                            onValueChange={(val) => setActiveGroupId(parseInt(val))}
+                        >
+                            <SelectTrigger className="w-full sm:w-[240px]">
+                                <SelectValue placeholder="Select Group" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                {isAdmin ? (
+                                    Object.entries(groupedGroups).map(([branchId, data]) => (
+                                        <SelectGroup key={branchId}>
+                                            <SelectLabel>{data.name}</SelectLabel>
+                                            {data.groups.map((group) => (
+                                                <SelectItem
+                                                    key={group.id}
+                                                    value={group.id.toString()}
+                                                >
+                                                    {group.name}
+                                                </SelectItem>
+                                            ))}
+                                        </SelectGroup>
+                                    ))
+                                ) : (
+                                    groups.map((group) => (
+                                        <SelectItem
+                                            key={group.id}
+                                            value={group.id.toString()}
+                                        >
+                                            {group.name}
+                                        </SelectItem>
+                                    ))
+                                )}
+                            </SelectContent>
+                        </Select>
                     </div>
                 </div>
 
@@ -228,6 +325,7 @@ export default function AttendanceIndex({ groups, selectedDate }: Props) {
                                     {activeGroup.lecture_session
                                         ? `Lecture #${activeGroup.lecture_session.lecture_number}`
                                         : 'New Lecture Session'}
+                                    {isAdmin && ` • Branch: ${activeGroup.branch.name}`}
                                 </CardDescription>
                             </div>
                             <div className="flex items-center gap-4">
@@ -329,7 +427,7 @@ export default function AttendanceIndex({ groups, selectedDate }: Props) {
                                                         : 'bg-muted'
                                                 }`}
                                             >
-                                                <User className="size-4" />
+                                                <UserIcon className="size-4" />
                                             </div>
                                             <span className="font-medium">
                                                 {student.name}

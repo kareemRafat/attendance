@@ -13,11 +13,15 @@ use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 use Inertia\Response;
 
+use App\Models\Branch;
+
 class AttendanceController extends Controller
 {
     public function index(Request $request): Response
     {
+        $user = $request->user();
         $date = $request->input('date', now()->format('Y-m-d'));
+        $branchId = $request->input('branch_id');
         $carbonDate = Carbon::parse($date);
         $dayOfWeek = $carbonDate->dayOfWeek;
 
@@ -33,9 +37,9 @@ class AttendanceController extends Controller
             $activePatterns[] = DaysPattern::MonThu;
         }
 
-        $groups = Group::where('is_active', true)
+        $query = Group::where('is_active', true)
             ->whereIn('pattern', $activePatterns)
-            ->with(['students' => function ($query) use ($carbonDate) {
+            ->with(['branch', 'students' => function ($query) use ($carbonDate) {
                 // Only students enrolled on this date and not ended
                 $enrolledBefore = $carbonDate->copy()->endOfDay();
                 $endedAfter = $carbonDate->copy()->startOfDay();
@@ -45,8 +49,15 @@ class AttendanceController extends Controller
                         $q->whereNull('enrollments.ended_at')
                             ->orWhere('enrollments.ended_at', '>', $endedAfter);
                     });
-            }])
-            ->get();
+            }]);
+
+        if (! $user->isAdmin()) {
+            $query->where('branch_id', $user->branch_id);
+        } elseif ($branchId) {
+            $query->where('branch_id', $branchId);
+        }
+
+        $groups = $query->get();
 
         // Check if attendance already exists for these groups
         foreach ($groups as $group) {
@@ -61,6 +72,8 @@ class AttendanceController extends Controller
         return Inertia::render('Attendance/Index', [
             'groups' => $groups,
             'selectedDate' => $date,
+            'selectedBranchId' => $branchId ? (int) $branchId : null,
+            'branches' => $user->isAdmin() ? Branch::all() : [],
         ]);
     }
 
