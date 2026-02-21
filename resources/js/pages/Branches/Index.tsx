@@ -37,7 +37,7 @@ interface Props {
 }
 
 export default function BranchesIndex({ branches }: Props) {
-    const breadcrumbs = [{ title: 'Branches', href: '/branches' }];
+    const breadcrumbs = [{ title: 'الفروع', href: '/branches' }];
 
     const [isCreateOpen, setIsCreateOpen] = useState(false);
     const [editingBranch, setEditingBranch] = useState<Branch | null>(null);
@@ -75,39 +75,38 @@ export default function BranchesIndex({ branches }: Props) {
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="Branches" />
+            <Head title="الفروع" />
 
             <div className="mx-auto flex w-full flex-col gap-8 p-6">
                 <div className="flex flex-col justify-between gap-4 md:flex-row md:items-center">
                     <div>
                         <h1 className="text-3xl font-black tracking-tight text-slate-900 dark:text-white">
-                            Branch Management
+                            إدارة الفروع
                         </h1>
                         <p className="mt-1 font-medium text-slate-500 dark:text-slate-400">
-                            Overview and configuration of your academy
-                            locations.
+                            نظرة عامة وإعداد مواقع الأكاديمية الخاصة بك.
                         </p>
                     </div>
 
                     <Dialog open={isCreateOpen} onOpenChange={setIsCreateOpen}>
                         <DialogTrigger asChild>
                             <Button className="cursor-pointer gap-2 shadow-lg shadow-indigo-500/20">
-                                <Plus className="size-4" /> New Branch
+                                <Plus className="size-4" /> فرع جديد
                             </Button>
                         </DialogTrigger>
                         <DialogContent>
                             <DialogHeader>
-                                <DialogTitle>Add New Branch</DialogTitle>
+                                <DialogTitle>إضافة فرع جديد</DialogTitle>
                                 <DialogDescription>
-                                    Create a new location for your academy.
+                                    إنشاء موقع جديد للأكاديمية الخاصة بك.
                                 </DialogDescription>
                             </DialogHeader>
-                            <form onSubmit={submitCreate} className="space-y-4">
-                                <div className="space-y-2">
-                                    <Label htmlFor="name">Branch Name</Label>
+                            <form onSubmit={submitCreate} className="space-y-6">
+                                <div className="space-y-3">
+                                    <Label htmlFor="name">اسم الفرع</Label>
                                     <Input
                                         id="name"
-                                        placeholder="e.g. Main Campus"
+                                        placeholder="مثال: الفرع الرئيسي"
                                         value={createForm.data.name}
                                         onChange={(e) =>
                                             createForm.setData(
@@ -123,11 +122,11 @@ export default function BranchesIndex({ branches }: Props) {
                                         </p>
                                     )}
                                 </div>
-                                <div className="space-y-2">
-                                    <Label htmlFor="location">Location</Label>
+                                <div className="space-y-3">
+                                    <Label htmlFor="location">الموقع</Label>
                                     <Input
                                         id="location"
-                                        placeholder="e.g. Downtown Area"
+                                        placeholder="مثال: وسط المدينة"
                                         value={createForm.data.location}
                                         onChange={(e) =>
                                             createForm.setData(
@@ -150,11 +149,11 @@ export default function BranchesIndex({ branches }: Props) {
                                     >
                                         {createForm.processing ? (
                                             <>
-                                                <Loader2 className="mr-2 size-4 animate-spin" />
-                                                Creating...
+                                                <Loader2 className="ms-2 size-4 animate-spin" />
+                                                جاري الإنشاء...
                                             </>
                                         ) : (
-                                            'Create Branch'
+                                            'إنشاء الفرع'
                                         )}
                                     </Button>
                                 </DialogFooter>
@@ -195,7 +194,7 @@ export default function BranchesIndex({ branches }: Props) {
                                         <MapPin className="size-4 text-blue-400 dark:text-blue-500" />
                                         <span className="line-clamp-1 text-sm font-medium">
                                             {branch.location ||
-                                                'Remote/Virtual Office'}
+                                                'مكتب عن بعد / افتراضي'}
                                         </span>
                                     </div>
                                 </CardHeader>
@@ -203,7 +202,7 @@ export default function BranchesIndex({ branches }: Props) {
                                     <div className="mt-2 grid grid-cols-2 gap-4">
                                         <div className="flex flex-col rounded-2xl border border-indigo-100 bg-indigo-50/30 p-4 dark:border-indigo-900/20 dark:bg-indigo-900/10">
                                             <span className="mb-1 text-[10px] font-black tracking-[0.15em] text-indigo-400 uppercase dark:text-indigo-500">
-                                                Active Groups
+                                                المجموعات النشطة
                                             </span>
                                             <div className="flex items-baseline gap-1">
                                                 <span className="text-3xl font-black text-indigo-700 dark:text-indigo-400">
@@ -214,7 +213,7 @@ export default function BranchesIndex({ branches }: Props) {
                                         </div>
                                         <div className="flex flex-col rounded-2xl border border-blue-100 bg-blue-50/30 p-4 dark:border-blue-900/20 dark:bg-blue-900/10">
                                             <span className="mb-1 text-[10px] font-black tracking-[0.15em] text-blue-400 uppercase dark:text-blue-500">
-                                                Assigned Staff
+                                                الموظفون المعينون
                                             </span>
                                             <div className="flex items-baseline gap-1">
                                                 <span className="text-3xl font-black text-blue-700 dark:text-blue-400">
@@ -248,9 +247,8 @@ export default function BranchesIndex({ branches }: Props) {
                                                 </div>
                                             )}
                                         </div>
-                                        <span className="ml-3 text-[10px] font-bold tracking-widest text-slate-400 uppercase dark:text-slate-500">
-                                            {branch.users_count} total staff
-                                            members
+                                        <span className="ms-3 text-[10px] font-bold tracking-widest text-slate-400 uppercase dark:text-slate-500">
+                                            إجمالي عدد الموظفين: {branch.users_count}
                                         </span>
                                     </div>
                                 </CardContent>
@@ -264,19 +262,17 @@ export default function BranchesIndex({ branches }: Props) {
                                 <Building2 className="size-10 text-slate-200 dark:text-slate-700" />
                             </div>
                             <h3 className="text-2xl font-black text-slate-900 dark:text-white">
-                                Expand Your Network
+                                وسع شبكتك
                             </h3>
                             <p className="mx-auto mt-2 max-w-sm font-medium text-slate-500 dark:text-slate-400">
-                                No branches established yet. Ready to open your
-                                first physical or virtual academy location?
+                                لم يتم إنشاء أي فروع بعد. هل أنت مستعد لافتتاح أول موقع أكاديمي فعلي أو افتراضي؟
                             </p>
                             <Button
                                 variant="outline"
                                 className="mt-8 h-12 cursor-pointer rounded-xl border-indigo-200 px-8 font-bold text-indigo-600 transition-all hover:bg-indigo-50 dark:border-indigo-900 dark:text-indigo-400 dark:hover:bg-indigo-950/30"
                                 onClick={() => setIsCreateOpen(true)}
                             >
-                                <Plus className="mr-2 size-5" /> Start First
-                                Branch
+                                <Plus className="ms-2 size-5" /> ابدأ الفرع الأول
                             </Button>
                         </div>
                     )}
@@ -289,14 +285,14 @@ export default function BranchesIndex({ branches }: Props) {
                 >
                     <DialogContent>
                         <DialogHeader>
-                            <DialogTitle>Edit Branch</DialogTitle>
+                            <DialogTitle>تعديل الفرع</DialogTitle>
                             <DialogDescription>
-                                Update the details for this branch location.
+                                تحديث تفاصيل موقع هذا الفرع.
                             </DialogDescription>
                         </DialogHeader>
-                        <form onSubmit={submitEdit} className="space-y-4">
-                            <div className="space-y-2">
-                                <Label htmlFor="edit-name">Branch Name</Label>
+                        <form onSubmit={submitEdit} className="space-y-6">
+                            <div className="space-y-3">
+                                <Label htmlFor="edit-name">اسم الفرع</Label>
                                 <Input
                                     id="edit-name"
                                     value={editForm.data.name}
@@ -311,8 +307,8 @@ export default function BranchesIndex({ branches }: Props) {
                                     </p>
                                 )}
                             </div>
-                            <div className="space-y-2">
-                                <Label htmlFor="edit-location">Location</Label>
+                            <div className="space-y-3">
+                                <Label htmlFor="edit-location">الموقع</Label>
                                 <Input
                                     id="edit-location"
                                     value={editForm.data.location}
@@ -337,11 +333,11 @@ export default function BranchesIndex({ branches }: Props) {
                                 >
                                     {editForm.processing ? (
                                         <>
-                                            <Loader2 className="mr-2 size-4 animate-spin" />
-                                            Saving Changes...
+                                            <Loader2 className="ms-2 size-4 animate-spin" />
+                                            جاري حفظ التغييرات...
                                         </>
                                     ) : (
-                                        'Save Changes'
+                                        'حفظ التغييرات'
                                     )}
                                 </Button>
                             </DialogFooter>

@@ -62,7 +62,7 @@ interface Props {
 }
 
 export default function EmployeesIndex({ employees, branches }: Props) {
-    const breadcrumbs = [{ title: 'Employees', href: '/employees' }];
+    const breadcrumbs = [{ title: 'الموظفون', href: '/employees' }];
 
     const [isCreateOpen, setIsCreateOpen] = useState(false);
     const [editingEmployee, setEditingEmployee] = useState<Employee | null>(
@@ -131,38 +131,38 @@ export default function EmployeesIndex({ employees, branches }: Props) {
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="Employees" />
+            <Head title="الموظفون" />
 
             <div className="mx-auto flex w-full flex-col gap-8 p-6">
                 <div className="flex flex-col justify-between gap-4 md:flex-row md:items-center">
                     <div>
                         <h1 className="text-3xl font-black tracking-tight text-slate-900 dark:text-white">
-                            Employee Management
+                            إدارة الموظفين
                         </h1>
                         <p className="mt-1 font-medium text-slate-500 dark:text-slate-400">
-                            Manage staff members and their access roles.
+                            إدارة أعضاء الفريق وصلاحيات وصولهم.
                         </p>
                     </div>
 
                     <Dialog open={isCreateOpen} onOpenChange={setIsCreateOpen}>
                         <DialogTrigger asChild>
                             <Button className="cursor-pointer gap-2 shadow-lg shadow-indigo-500/20">
-                                <Plus className="size-4" /> New Employee
+                                <Plus className="size-4" /> موظف جديد
                             </Button>
                         </DialogTrigger>
                         <DialogContent>
                             <DialogHeader>
-                                <DialogTitle>Add New Employee</DialogTitle>
+                                <DialogTitle>إضافة موظف جديد</DialogTitle>
                                 <DialogDescription>
-                                    Create a new account for a staff member.
+                                    إنشاء حساب جديد لعضو في الفريق.
                                 </DialogDescription>
                             </DialogHeader>
-                            <form onSubmit={submitCreate} className="space-y-4">
-                                <div className="space-y-2">
-                                    <Label htmlFor="name">Full Name</Label>
+                            <form onSubmit={submitCreate} className="space-y-6">
+                                <div className="space-y-3">
+                                    <Label htmlFor="name">الاسم بالكامل</Label>
                                     <Input
                                         id="name"
-                                        placeholder="e.g. John Doe"
+                                        placeholder="مثال: أحمد محمد"
                                         value={createForm.data.name}
                                         onChange={(e) =>
                                             createForm.setData(
@@ -178,12 +178,12 @@ export default function EmployeesIndex({ employees, branches }: Props) {
                                         </p>
                                     )}
                                 </div>
-                                <div className="space-y-2">
-                                    <Label htmlFor="email">Email Address</Label>
+                                <div className="space-y-3">
+                                    <Label htmlFor="email">البريد الإلكتروني</Label>
                                     <Input
                                         id="email"
                                         type="email"
-                                        placeholder="e.g. john@example.com"
+                                        placeholder="example@domain.com"
                                         value={createForm.data.email}
                                         onChange={(e) =>
                                             createForm.setData(
@@ -199,8 +199,8 @@ export default function EmployeesIndex({ employees, branches }: Props) {
                                         </p>
                                     )}
                                 </div>
-                                <div className="space-y-2">
-                                    <Label htmlFor="password">Password</Label>
+                                <div className="space-y-3">
+                                    <Label htmlFor="password">كلمة المرور</Label>
                                     <Input
                                         id="password"
                                         type="password"
@@ -220,8 +220,8 @@ export default function EmployeesIndex({ employees, branches }: Props) {
                                     )}
                                 </div>
                                 <div className="grid grid-cols-2 gap-4">
-                                    <div className="space-y-2">
-                                        <Label htmlFor="branch">Branch</Label>
+                                    <div className="space-y-3">
+                                        <Label htmlFor="branch">الفرع</Label>
                                         <Select
                                             value={createForm.data.branch_id}
                                             onValueChange={(val) =>
@@ -232,7 +232,7 @@ export default function EmployeesIndex({ employees, branches }: Props) {
                                             }
                                         >
                                             <SelectTrigger id="branch">
-                                                <SelectValue placeholder="Select Branch" />
+                                                <SelectValue placeholder="اختر الفرع" />
                                             </SelectTrigger>
                                             <SelectContent>
                                                 {branches.map((branch) => (
@@ -251,8 +251,8 @@ export default function EmployeesIndex({ employees, branches }: Props) {
                                             </p>
                                         )}
                                     </div>
-                                    <div className="space-y-2">
-                                        <Label htmlFor="role">Role</Label>
+                                    <div className="space-y-3">
+                                        <Label htmlFor="role">الصلاحية</Label>
                                         <Select
                                             value={createForm.data.role}
                                             onValueChange={(val) =>
@@ -260,14 +260,14 @@ export default function EmployeesIndex({ employees, branches }: Props) {
                                             }
                                         >
                                             <SelectTrigger id="role">
-                                                <SelectValue placeholder="Select Role" />
+                                                <SelectValue placeholder="اختر الصلاحية" />
                                             </SelectTrigger>
                                             <SelectContent>
                                                 <SelectItem value="employee">
-                                                    Employee
+                                                    موظف
                                                 </SelectItem>
                                                 <SelectItem value="admin">
-                                                    Admin
+                                                    مدير
                                                 </SelectItem>
                                             </SelectContent>
                                         </Select>
@@ -286,11 +286,11 @@ export default function EmployeesIndex({ employees, branches }: Props) {
                                     >
                                         {createForm.processing ? (
                                             <>
-                                                <Loader2 className="mr-2 size-4 animate-spin" />
-                                                Creating...
+                                                <Loader2 className="ms-2 size-4 animate-spin" />
+                                                جاري الإنشاء...
                                             </>
                                         ) : (
-                                            'Create Account'
+                                            'إنشاء الحساب'
                                         )}
                                     </Button>
                                 </DialogFooter>
@@ -303,17 +303,17 @@ export default function EmployeesIndex({ employees, branches }: Props) {
                     <Table>
                         <TableHeader className="bg-slate-50/50 dark:bg-slate-800/20">
                             <TableRow className="dark:border-slate-800">
-                                <TableHead className="px-6 py-4 font-bold text-slate-900 dark:text-slate-300">
-                                    Employee
+                                <TableHead className="px-6 py-4 text-start font-bold text-slate-900 dark:text-slate-300">
+                                    الموظف
                                 </TableHead>
-                                <TableHead className="font-bold text-slate-900 dark:text-slate-300">
-                                    Branch
+                                <TableHead className="text-start font-bold text-slate-900 dark:text-slate-300">
+                                    الفرع
                                 </TableHead>
-                                <TableHead className="font-bold text-slate-900 dark:text-slate-300">
-                                    Role
+                                <TableHead className="text-start font-bold text-slate-900 dark:text-slate-300">
+                                    الصلاحية
                                 </TableHead>
-                                <TableHead className="px-6 text-right font-bold text-slate-900 dark:text-slate-300">
-                                    Actions
+                                <TableHead className="px-6 text-end font-bold text-slate-900 dark:text-slate-300">
+                                    الإجراءات
                                 </TableHead>
                             </TableRow>
                         </TableHeader>
@@ -323,12 +323,12 @@ export default function EmployeesIndex({ employees, branches }: Props) {
                                     key={employee.id}
                                     className="dark:border-slate-800"
                                 >
-                                    <TableCell className="px-6 py-4">
-                                        <div className="flex items-center gap-3">
+                                    <TableCell className="px-6 py-4 text-start">
+                                        <div className="flex items-center gap-3 text-start">
                                             <div className="flex h-10 w-10 items-center justify-center rounded-full bg-indigo-50 text-indigo-600 dark:bg-indigo-900/20 dark:text-indigo-400">
                                                 <Users className="size-5" />
                                             </div>
-                                            <div className="flex flex-col">
+                                            <div className="flex flex-col text-start">
                                                 <span className="font-bold text-slate-900 dark:text-white">
                                                     {employee.name}
                                                 </span>
@@ -338,15 +338,15 @@ export default function EmployeesIndex({ employees, branches }: Props) {
                                             </div>
                                         </div>
                                     </TableCell>
-                                    <TableCell>
+                                    <TableCell className="text-start">
                                         <div className="flex items-center gap-2">
                                             <Building2 className="size-4 text-slate-400" />
                                             <span className="font-medium text-slate-700 dark:text-slate-200">
-                                                {employee.branch?.name || 'N/A'}
+                                                {employee.branch?.name || 'غير محدد'}
                                             </span>
                                         </div>
                                     </TableCell>
-                                    <TableCell>
+                                    <TableCell className="text-start">
                                         <span
                                             className={cn(
                                                 'inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-bold capitalize',
@@ -356,10 +356,10 @@ export default function EmployeesIndex({ employees, branches }: Props) {
                                             )}
                                         >
                                             <Shield className="size-3" />
-                                            {employee.role}
+                                            {employee.role === 'admin' ? 'مدير' : 'موظف'}
                                         </span>
                                     </TableCell>
-                                    <TableCell className="px-6 text-right">
+                                    <TableCell className="px-6 text-end">
                                         <div className="flex justify-end gap-2">
                                             <Button
                                                 variant="ghost"
@@ -393,7 +393,7 @@ export default function EmployeesIndex({ employees, branches }: Props) {
                                         colSpan={4}
                                         className="h-24 text-center text-slate-400 italic"
                                     >
-                                        No employees found.
+                                        لم يتم العثور على موظفين.
                                     </TableCell>
                                 </TableRow>
                             )}
@@ -408,14 +408,14 @@ export default function EmployeesIndex({ employees, branches }: Props) {
                 >
                     <DialogContent>
                         <DialogHeader>
-                            <DialogTitle>Edit Employee</DialogTitle>
+                            <DialogTitle>تعديل بيانات الموظف</DialogTitle>
                             <DialogDescription>
-                                Update staff information or change access roles.
+                                تحديث معلومات الموظف أو تغيير صلاحيات الوصول.
                             </DialogDescription>
                         </DialogHeader>
-                        <form onSubmit={submitEdit} className="space-y-4">
-                            <div className="space-y-2">
-                                <Label htmlFor="edit-name">Full Name</Label>
+                        <form onSubmit={submitEdit} className="space-y-6">
+                            <div className="space-y-3">
+                                <Label htmlFor="edit-name">الاسم بالكامل</Label>
                                 <Input
                                     id="edit-name"
                                     value={editForm.data.name}
@@ -430,9 +430,9 @@ export default function EmployeesIndex({ employees, branches }: Props) {
                                     </p>
                                 )}
                             </div>
-                            <div className="space-y-2">
+                            <div className="space-y-3">
                                 <Label htmlFor="edit-email">
-                                    Email Address
+                                    البريد الإلكتروني
                                 </Label>
                                 <Input
                                     id="edit-email"
@@ -452,9 +452,9 @@ export default function EmployeesIndex({ employees, branches }: Props) {
                                     </p>
                                 )}
                             </div>
-                            <div className="space-y-2">
+                            <div className="space-y-3">
                                 <Label htmlFor="edit-password">
-                                    Password (leave blank to keep current)
+                                    كلمة المرور (اتركها فارغة للإبقاء على الحالية)
                                 </Label>
                                 <div className="relative">
                                     <Input
@@ -468,7 +468,7 @@ export default function EmployeesIndex({ employees, branches }: Props) {
                                             )
                                         }
                                     />
-                                    <Lock className="absolute top-1/2 right-3 size-4 -translate-y-1/2 text-slate-400" />
+                                    <Lock className="absolute top-1/2 left-3 size-4 -translate-y-1/2 text-slate-400" />
                                 </div>
                                 {editForm.errors.password && (
                                     <p className="text-xs text-red-500">
@@ -477,8 +477,8 @@ export default function EmployeesIndex({ employees, branches }: Props) {
                                 )}
                             </div>
                             <div className="grid grid-cols-2 gap-4">
-                                <div className="space-y-2">
-                                    <Label htmlFor="edit-branch">Branch</Label>
+                                <div className="space-y-3">
+                                    <Label htmlFor="edit-branch">الفرع</Label>
                                     <Select
                                         value={editForm.data.branch_id}
                                         onValueChange={(val) =>
@@ -486,7 +486,7 @@ export default function EmployeesIndex({ employees, branches }: Props) {
                                         }
                                     >
                                         <SelectTrigger id="edit-branch">
-                                            <SelectValue placeholder="Select Branch" />
+                                            <SelectValue placeholder="اختر الفرع" />
                                         </SelectTrigger>
                                         <SelectContent>
                                             {branches.map((branch) => (
@@ -505,8 +505,8 @@ export default function EmployeesIndex({ employees, branches }: Props) {
                                         </p>
                                     )}
                                 </div>
-                                <div className="space-y-2">
-                                    <Label htmlFor="edit-role">Role</Label>
+                                <div className="space-y-3">
+                                    <Label htmlFor="edit-role">الصلاحية</Label>
                                     <Select
                                         value={editForm.data.role}
                                         onValueChange={(val) =>
@@ -514,14 +514,14 @@ export default function EmployeesIndex({ employees, branches }: Props) {
                                         }
                                     >
                                         <SelectTrigger id="edit-role">
-                                            <SelectValue placeholder="Select Role" />
+                                            <SelectValue placeholder="اختر الصلاحية" />
                                         </SelectTrigger>
                                         <SelectContent>
                                             <SelectItem value="employee">
-                                                Employee
+                                                موظف
                                             </SelectItem>
                                             <SelectItem value="admin">
-                                                Admin
+                                                مدير
                                             </SelectItem>
                                         </SelectContent>
                                     </Select>
@@ -540,11 +540,11 @@ export default function EmployeesIndex({ employees, branches }: Props) {
                                 >
                                     {editForm.processing ? (
                                         <>
-                                            <Loader2 className="mr-2 size-4 animate-spin" />
-                                            Saving Changes...
+                                            <Loader2 className="ms-2 size-4 animate-spin" />
+                                            جاري الحفظ...
                                         </>
                                     ) : (
-                                        'Update Account'
+                                        'تحديث الحساب'
                                     )}
                                 </Button>
                             </DialogFooter>
@@ -556,8 +556,8 @@ export default function EmployeesIndex({ employees, branches }: Props) {
                     isOpen={!!deletingEmployee}
                     onClose={() => setDeletingEmployee(null)}
                     onConfirm={confirmDelete}
-                    title="Delete Employee"
-                    description={`Are you sure you want to delete ${deletingEmployee?.name}? This will permanently remove their access to the system.`}
+                    title="حذف الموظف"
+                    description={`هل أنت متأكد من حذف الموظف ${deletingEmployee?.name}؟ سيؤدي هذا إلى إزالة صلاحية وصوله إلى النظام بشكل نهائي.`}
                 />
             </div>
         </AppLayout>

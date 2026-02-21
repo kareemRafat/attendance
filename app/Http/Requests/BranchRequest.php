@@ -26,4 +26,12 @@ class BranchRequest extends FormRequest
             'location' => ['nullable', 'string', 'max:255'],
         ];
     }
+
+    public function attributes(): array
+    {
+        return [
+            'name' => 'اسم الفرع',
+            'location' => 'الموقع',
+        ];
+    }
 }

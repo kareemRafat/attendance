@@ -35,34 +35,34 @@ export function AppSidebar() {
 
     const mainNavItems: NavItem[] = [
         {
-            title: 'Dashboard',
+            title: 'لوحة التحكم',
             href: dashboard.url(),
             icon: LayoutGrid,
         },
         {
-            title: 'Attendance',
+            title: 'الحضور والغياب',
             href: attendance.index.url(),
             icon: CalendarCheck,
         },
         {
-            title: 'Students',
+            title: 'الطلاب',
             href: students.index.url(),
             icon: Users,
         },
         {
-            title: 'Groups',
+            title: 'المجموعات',
             href: groups.index.url(),
             icon: Layers,
         },
         ...(isAdmin
             ? [
                   {
-                      title: 'Employees',
+                      title: 'الموظفون',
                       href: employees.index.url(),
                       icon: UserCheck,
                   },
                   {
-                      title: 'Branches',
+                      title: 'الفروع',
                       href: branches.index.url(),
                       icon: Building2,
                   },
@@ -73,7 +73,7 @@ export function AppSidebar() {
     const footerNavItems: NavItem[] = [];
 
     return (
-        <Sidebar collapsible="icon" variant="inset">
+        <Sidebar collapsible="icon" variant="inset" side="right">
             <SidebarHeader>
                 <SidebarMenu>
                     <SidebarMenuItem>

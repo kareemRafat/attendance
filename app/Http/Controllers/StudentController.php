@@ -137,7 +137,7 @@ class StudentController extends Controller
                 }
             });
 
-            return redirect()->route('students.index')->with('success', 'Students created successfully.');
+            return redirect()->route('students.index')->with('success', 'تم إضافة الطلاب بنجاح.');
         }
 
         DB::transaction(function () use ($validated, $branchId, $track) {
@@ -156,7 +156,7 @@ class StudentController extends Controller
             }
         });
 
-        return redirect()->route('students.index')->with('success', 'Student created and enrolled successfully.');
+        return redirect()->route('students.index')->with('success', 'تم إضافة الطالب وتسجيله بنجاح.');
     }
 
     public function update(StudentRequest $request, Student $student): RedirectResponse
@@ -164,7 +164,7 @@ class StudentController extends Controller
         $this->authorize('update', $student);
         $student->update($request->validated());
 
-        return back()->with('success', 'Student updated successfully.');
+        return back()->with('success', 'تم تحديث بيانات الطالب بنجاح.');
     }
 
     public function destroy(Student $student): RedirectResponse
@@ -172,7 +172,7 @@ class StudentController extends Controller
         $this->authorize('delete', $student);
         $student->delete();
 
-        return redirect()->route('students.index')->with('success', 'Student deleted successfully.');
+        return redirect()->route('students.index')->with('success', 'تم حذف الطالب بنجاح.');
     }
 
     public function enroll(Request $request, Student $student): RedirectResponse
@@ -186,7 +186,7 @@ class StudentController extends Controller
             'enrolled_at' => now(),
         ]);
 
-        return redirect()->route('students.index')->with('success', 'Student enrolled successfully.');
+        return redirect()->route('students.index')->with('success', 'تم تسجيل الطالب في المجموعة بنجاح.');
     }
 
     public function transfer(Request $request, Student $student): RedirectResponse
@@ -222,6 +222,6 @@ class StudentController extends Controller
             ]);
         });
 
-        return back()->with('success', 'Student transfer scheduled successfully.');
+        return back()->with('success', 'تم جدولة نقل الطالب بنجاح.');
     }
 }

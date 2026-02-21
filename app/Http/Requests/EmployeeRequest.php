@@ -35,4 +35,15 @@ class EmployeeRequest extends FormRequest
             'role' => ['required', Rule::enum(UserRole::class)],
         ];
     }
+
+    public function attributes(): array
+    {
+        return [
+            'name' => 'الاسم بالكامل',
+            'email' => 'البريد الإلكتروني',
+            'password' => 'كلمة المرور',
+            'branch_id' => 'الفرع',
+            'role' => 'الصلاحية',
+        ];
+    }
 }

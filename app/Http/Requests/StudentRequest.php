@@ -64,4 +64,19 @@ class StudentRequest extends FormRequest
             'group_id' => ['required', 'exists:groups,id'],
         ]);
     }
+
+    public function attributes(): array
+    {
+        return [
+            'name' => 'الاسم',
+            'branch_id' => 'الفرع',
+            'track' => 'المسار',
+            'group_id' => 'المجموعة',
+            'students' => 'الطلاب',
+            'students.*.name' => 'اسم الطالب',
+            'students.*.details' => 'تفاصيل الطالب',
+            'reason' => 'السبب',
+            'effective_date' => 'تاريخ السريان',
+        ];
+    }
 }

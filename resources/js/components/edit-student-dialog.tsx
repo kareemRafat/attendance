@@ -83,13 +83,13 @@ export function EditStudentDialog({
                 <DialogHeader>
                     <div className="flex items-center gap-2">
                         <Pencil className="size-5 text-muted-foreground" />
-                        <DialogTitle>Edit Student</DialogTitle>
+                        <DialogTitle>تعديل بيانات الطالب</DialogTitle>
                     </div>
                 </DialogHeader>
-                <form onSubmit={submit} className="space-y-4 pt-4">
+                <form onSubmit={submit} className="space-y-6 pt-4">
                     {isAdmin && (
-                        <div className="space-y-2">
-                            <Label htmlFor="edit-branch">Branch</Label>
+                        <div className="space-y-3">
+                            <Label htmlFor="edit-branch">الفرع</Label>
                             <Select
                                 value={data.branch_id}
                                 onValueChange={(val) =>
@@ -97,7 +97,7 @@ export function EditStudentDialog({
                                 }
                             >
                                 <SelectTrigger id="edit-branch">
-                                    <SelectValue placeholder="Select branch" />
+                                    <SelectValue placeholder="اختر الفرع" />
                                 </SelectTrigger>
                                 <SelectContent>
                                     {availableBranches.map((branch) => (
@@ -117,8 +117,8 @@ export function EditStudentDialog({
                             )}
                         </div>
                     )}
-                    <div className="space-y-2">
-                        <Label htmlFor="edit-name">Name</Label>
+                    <div className="space-y-3">
+                        <Label htmlFor="edit-name">الاسم</Label>
                         <Input
                             id="edit-name"
                             value={data.name}
@@ -131,14 +131,14 @@ export function EditStudentDialog({
                             </p>
                         )}
                     </div>
-                    <div className="space-y-2">
-                        <Label htmlFor="edit-track">Track</Label>
+                    <div className="space-y-3">
+                        <Label htmlFor="edit-track">المسار</Label>
                         <Select
                             value={data.track}
                             onValueChange={(val) => setData('track', val)}
                         >
                             <SelectTrigger id="edit-track">
-                                <SelectValue placeholder="Select track" />
+                                <SelectValue placeholder="اختر المسار" />
                             </SelectTrigger>
                             <SelectContent>
                                 {courseTypes.map((type) => (
@@ -165,11 +165,11 @@ export function EditStudentDialog({
                         >
                             {processing ? (
                                 <>
-                                    <Loader2 className="mr-2 size-4 animate-spin" />
-                                    Updating...
+                                    <Loader2 className="ms-2 size-4 animate-spin" />
+                                    جاري التحديث...
                                 </>
                             ) : (
-                                'Update Student'
+                                'تحديث بيانات الطالب'
                             )}
                         </Button>
                     </DialogFooter>

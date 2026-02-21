@@ -104,7 +104,7 @@ export default function StudentsIndex({
     const user = auth.user;
     const isAdmin = user.role === 'admin';
 
-    const breadcrumbs = [{ title: 'Students', href: '/students' }];
+    const breadcrumbs = [{ title: 'الطلاب', href: '/students' }];
 
     const [isCreateOpen, setIsCreateOpen] = useState(false);
     const [isMassAddOpen, setIsMassAddOpen] = useState(false);
@@ -240,12 +240,12 @@ export default function StudentsIndex({
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="Students" />
+            <Head title="الطلاب" />
 
             <div className="flex flex-col gap-6 p-4">
                 <div className="flex items-center justify-between">
                     <h1 className="text-2xl font-bold text-slate-900 dark:text-white">
-                        Students
+                        الطلاب
                     </h1>
                     <div className="flex gap-2">
                         {/* Mass Add Button & Dialog */}
@@ -261,7 +261,7 @@ export default function StudentsIndex({
                                     variant="outline"
                                     className="cursor-pointer gap-2 border-dashed dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800"
                                 >
-                                    <Plus className="size-4" /> Add Students
+                                    <Plus className="size-4" /> إضافة طلاب
                                 </Button>
                             </DialogTrigger>
                             <DialogContent className="max-h-[90vh] max-w-5xl overflow-y-auto">
@@ -269,12 +269,11 @@ export default function StudentsIndex({
                                     <div className="flex items-center gap-2">
                                         <Users className="size-5 text-muted-foreground" />
                                         <DialogTitle>
-                                            Add Multiple Students
+                                            إضافة طلاب متعددين
                                         </DialogTitle>
                                     </div>
                                     <DialogDescription>
-                                        Add multiple students at once and assign
-                                        them to a group.
+                                        إضافة عدة طلاب دفعة واحدة وتعيينهم لمجموعة.
                                     </DialogDescription>
                                 </DialogHeader>
                                 <form
@@ -283,9 +282,9 @@ export default function StudentsIndex({
                                 >
                                     <div className="grid grid-cols-1 gap-4 rounded-lg border bg-secondary/30 p-4 md:grid-cols-2 dark:border-slate-700 dark:bg-slate-800/50">
                                         {isAdmin && (
-                                            <div className="space-y-2">
+                                            <div className="space-y-3">
                                                 <Label htmlFor="mass-branch-id">
-                                                    Branch
+                                                    الفرع
                                                 </Label>
                                                 <Select
                                                     value={
@@ -299,7 +298,7 @@ export default function StudentsIndex({
                                                     }
                                                 >
                                                     <SelectTrigger className="bg-background dark:border-slate-700 dark:bg-slate-900">
-                                                        <SelectValue placeholder="Select branch" />
+                                                        <SelectValue placeholder="اختر الفرع" />
                                                     </SelectTrigger>
                                                     <SelectContent>
                                                         {availableBranches.map(
@@ -328,8 +327,8 @@ export default function StudentsIndex({
                                                 )}
                                             </div>
                                         )}
-                                        <div className="space-y-2">
-                                            <Label>Choice Track</Label>
+                                        <div className="space-y-3">
+                                            <Label>المسار</Label>
                                             <Select
                                                 value={massTrack}
                                                 onValueChange={
@@ -337,7 +336,7 @@ export default function StudentsIndex({
                                                 }
                                             >
                                                 <SelectTrigger className="bg-background dark:border-slate-700 dark:bg-slate-900">
-                                                    <SelectValue placeholder="Choose Track" />
+                                                    <SelectValue placeholder="اختر المسار" />
                                                 </SelectTrigger>
                                                 <SelectContent>
                                                     {courseTypes.map((type) => (
@@ -356,9 +355,9 @@ export default function StudentsIndex({
                                                 </p>
                                             )}
                                         </div>
-                                        <div className="space-y-2 md:col-span-2">
+                                        <div className="space-y-3 md:col-span-2">
                                             <Label htmlFor="mass-group-id">
-                                                Group Enrollment
+                                                المجموعة
                                             </Label>
                                             <Select
                                                 value={massAdd.data.group_id}
@@ -370,7 +369,7 @@ export default function StudentsIndex({
                                                 }
                                             >
                                                 <SelectTrigger className="bg-background dark:border-slate-700 dark:bg-slate-900">
-                                                    <SelectValue placeholder="Select group" />
+                                                    <SelectValue placeholder="اختر المجموعة" />
                                                 </SelectTrigger>
                                                 <SelectContent>
                                                     {filteredGroupsByTrack().map(
@@ -395,7 +394,7 @@ export default function StudentsIndex({
 
                                     <div className="space-y-4 rounded-lg border bg-secondary/30 p-4 dark:border-slate-700 dark:bg-slate-800/50">
                                         <div className="px-1 text-xs font-bold tracking-widest text-muted-foreground uppercase dark:text-slate-400">
-                                            Students List
+                                            قائمة الطلاب
                                         </div>
                                         <div className="space-y-2">
                                             {massAdd.data.students.map(
@@ -406,7 +405,7 @@ export default function StudentsIndex({
                                                     >
                                                         <div className="flex-1">
                                                             <Input
-                                                                placeholder="Student name"
+                                                                placeholder="اسم الطالب"
                                                                 value={
                                                                     student.name
                                                                 }
@@ -466,7 +465,7 @@ export default function StudentsIndex({
                                             onClick={addStudentRow}
                                             className="cursor-pointer gap-2 dark:border-slate-700 dark:hover:bg-slate-800"
                                         >
-                                            <Plus className="size-4" /> Add Row
+                                            <Plus className="size-4" /> إضافة صف
                                         </Button>
                                         <div className="flex gap-2">
                                             <Button
@@ -477,7 +476,7 @@ export default function StudentsIndex({
                                                 }
                                                 className="cursor-pointer dark:text-slate-400 dark:hover:bg-slate-800"
                                             >
-                                                Cancel
+                                                إلغاء
                                             </Button>
                                             <Button
                                                 type="submit"
@@ -486,17 +485,17 @@ export default function StudentsIndex({
                                             >
                                                 {massAdd.processing ? (
                                                     <>
-                                                        <Loader2 className="mr-2 size-4 animate-spin" />{' '}
-                                                        Saving...
+                                                        <Loader2 className="ms-2 size-4 animate-spin" />{' '}
+                                                        جاري الحفظ...
                                                     </>
                                                 ) : (
                                                     <>
-                                                        Save{' '}
+                                                        حفظ{' '}
                                                         {
                                                             massAdd.data
                                                                 .students.length
                                                         }{' '}
-                                                        Students
+                                                        طلاب
                                                     </>
                                                 )}
                                             </Button>
@@ -519,7 +518,7 @@ export default function StudentsIndex({
                                     className="cursor-pointer gap-2 bg-slate-900 shadow-lg shadow-slate-500/10 dark:bg-white dark:text-slate-900 dark:hover:bg-slate-200"
                                     onClick={() => quickAdd.reset()}
                                 >
-                                    <UserPlus className="size-4" /> Quick Add
+                                    <UserPlus className="size-4" /> إضافة سريع
                                 </Button>
                             </DialogTrigger>
                             <DialogContent>
@@ -527,22 +526,21 @@ export default function StudentsIndex({
                                     <div className="flex items-center gap-2">
                                         <UserPlus className="size-5 text-muted-foreground" />
                                         <DialogTitle>
-                                            Quick Add Student
+                                            إضافة طالب جديد
                                         </DialogTitle>
                                     </div>
                                     <DialogDescription>
-                                        Create a single student record
-                                        instantly.
+                                        إنشاء سجل طالب واحد على الفور.
                                     </DialogDescription>
                                 </DialogHeader>
                                 <form
                                     onSubmit={submitQuickAdd}
-                                    className="space-y-4 pt-4"
+                                    className="space-y-6 pt-4"
                                 >
                                     {isAdmin && (
-                                        <div className="space-y-2">
+                                        <div className="space-y-3">
                                             <Label htmlFor="branch_id">
-                                                Branch
+                                                الفرع
                                             </Label>
                                             <Select
                                                 value={quickAdd.data.branch_id}
@@ -554,7 +552,7 @@ export default function StudentsIndex({
                                                 }
                                             >
                                                 <SelectTrigger className="dark:border-slate-700 dark:bg-slate-900">
-                                                    <SelectValue placeholder="Select branch" />
+                                                    <SelectValue placeholder="اختر الفرع" />
                                                 </SelectTrigger>
                                                 <SelectContent>
                                                     {availableBranches.map(
@@ -576,8 +574,8 @@ export default function StudentsIndex({
                                             )}
                                         </div>
                                     )}
-                                    <div className="space-y-2">
-                                        <Label>Choice Track</Label>
+                                    <div className="space-y-3">
+                                        <Label>المسار</Label>
                                         <Select
                                             value={quickTrack}
                                             onValueChange={
@@ -585,7 +583,7 @@ export default function StudentsIndex({
                                             }
                                         >
                                             <SelectTrigger className="dark:border-slate-700 dark:bg-slate-900">
-                                                <SelectValue placeholder="Choose Track" />
+                                                <SelectValue placeholder="اختر المسار" />
                                             </SelectTrigger>
                                             <SelectContent>
                                                 {courseTypes.map((type) => (
@@ -604,9 +602,9 @@ export default function StudentsIndex({
                                             </p>
                                         )}
                                     </div>
-                                    <div className="space-y-2">
+                                    <div className="space-y-3">
                                         <Label htmlFor="quick-group-id">
-                                            Group
+                                            المجموعة
                                         </Label>
                                         <Select
                                             value={quickAdd.data.group_id}
@@ -618,7 +616,7 @@ export default function StudentsIndex({
                                             }
                                         >
                                             <SelectTrigger className="dark:border-slate-700 dark:bg-slate-900">
-                                                <SelectValue placeholder="Select group" />
+                                                <SelectValue placeholder="اختر المجموعة" />
                                             </SelectTrigger>
                                             <SelectContent>
                                                 {filteredGroupsByTrack().map(
@@ -639,8 +637,8 @@ export default function StudentsIndex({
                                             </p>
                                         )}
                                     </div>
-                                    <div className="space-y-2">
-                                        <Label htmlFor="name">Name</Label>
+                                    <div className="space-y-3">
+                                        <Label htmlFor="name">الاسم</Label>
                                         <Input
                                             id="name"
                                             value={quickAdd.data.name}
@@ -667,11 +665,11 @@ export default function StudentsIndex({
                                         >
                                             {quickAdd.processing ? (
                                                 <>
-                                                    <Loader2 className="mr-2 size-4 animate-spin" />{' '}
-                                                    Creating...
+                                                    <Loader2 className="ms-2 size-4 animate-spin" />{' '}
+                                                    جاري الإنشاء...
                                                 </>
                                             ) : (
-                                                'Create Student'
+                                                'إنشاء الطالب'
                                             )}
                                         </Button>
                                     </DialogFooter>
@@ -687,11 +685,10 @@ export default function StudentsIndex({
                             <Users className="size-5 text-slate-400 dark:text-slate-500" />
                             <div>
                                 <CardTitle className="text-lg font-bold text-slate-900 dark:text-white">
-                                    All Students
+                                    جميع الطلاب
                                 </CardTitle>
                                 <CardDescription className="font-medium dark:text-slate-400">
-                                    Manage your student database and group
-                                    memberships.
+                                    إدارة قاعدة بيانات الطلاب وعضوية المجموعات.
                                 </CardDescription>
                             </div>
                         </div>
@@ -699,15 +696,15 @@ export default function StudentsIndex({
                         <div className="flex flex-wrap items-center gap-4 border-t border-slate-100/50 pt-4 dark:border-slate-800">
                             {/* Search */}
                             <div className="relative w-full md:w-96">
-                                <Search className="absolute top-1/2 left-3 size-4 -translate-y-1/2 text-slate-400" />
+                                <Search className="absolute top-1/2 inset-inline-start-3 size-4 -translate-y-1/2 text-slate-400" />
                                 <Input
-                                    placeholder="Search students by name..."
+                                    placeholder="بحث عن طالب بالاسم..."
                                     value={search}
                                     onChange={(e) => {
                                         setSearch(e.target.value);
                                         handleFilter(e.target.value);
                                     }}
-                                    className="h-10 rounded-xl bg-white pl-9 shadow-sm dark:border-slate-700 dark:bg-slate-900"
+                                    className="h-10 rounded-xl bg-white ps-9 shadow-sm dark:border-slate-700 dark:bg-slate-900"
                                 />
                             </div>
 
@@ -721,11 +718,11 @@ export default function StudentsIndex({
                                     }}
                                 >
                                     <SelectTrigger className="h-10 w-full rounded-xl bg-white shadow-sm md:w-[200px] dark:border-slate-700 dark:bg-slate-900">
-                                        <SelectValue placeholder="All Branches" />
+                                        <SelectValue placeholder="جميع الفروع" />
                                     </SelectTrigger>
                                     <SelectContent>
                                         <SelectItem value="all">
-                                            All Branches
+                                            جميع الفروع
                                         </SelectItem>
                                         {availableBranches.map((branch) => (
                                             <SelectItem
@@ -753,11 +750,11 @@ export default function StudentsIndex({
                                 }}
                             >
                                 <SelectTrigger className="h-10 w-full rounded-xl bg-white shadow-sm md:w-[180px] dark:border-slate-700 dark:bg-slate-900">
-                                    <SelectValue placeholder="All Tracks" />
+                                    <SelectValue placeholder="جميع المسارات" />
                                 </SelectTrigger>
                                 <SelectContent>
                                     <SelectItem value="all">
-                                        All Tracks
+                                        جميع المسارات
                                     </SelectItem>
                                     {courseTypes.map((type) => (
                                         <SelectItem
@@ -779,11 +776,11 @@ export default function StudentsIndex({
                                 }}
                             >
                                 <SelectTrigger className="h-10 w-full rounded-xl bg-white shadow-sm md:w-[220px] dark:border-slate-700 dark:bg-slate-900">
-                                    <SelectValue placeholder="All Groups" />
+                                    <SelectValue placeholder="جميع المجموعات" />
                                 </SelectTrigger>
                                 <SelectContent>
                                     <SelectItem value="all">
-                                        All Groups
+                                        جميع المجموعات
                                     </SelectItem>
                                     {availableGroups.map((group) => (
                                         <SelectItem
@@ -812,7 +809,7 @@ export default function StudentsIndex({
                                     }}
                                     className="h-10 cursor-pointer rounded-xl px-4 text-xs font-bold text-indigo-600 transition-all hover:bg-indigo-50 hover:text-indigo-700 dark:text-indigo-400 dark:hover:bg-indigo-900/20 dark:hover:text-indigo-300"
                                 >
-                                    Reset Filters
+                                    إعادة تعيين
                                 </Button>
                             )}
                         </div>
@@ -821,20 +818,20 @@ export default function StudentsIndex({
                         <Table>
                             <TableHeader className="dark:bg-slate-800/20">
                                 <TableRow className="dark:border-slate-800">
-                                    <TableHead className="pl-6 font-bold text-slate-900 dark:text-slate-300">
-                                        Name
+                                    <TableHead className="ps-6 text-start font-bold text-slate-900 dark:text-slate-300">
+                                        الاسم
                                     </TableHead>
-                                    <TableHead className="font-bold text-slate-900 dark:text-slate-300">
-                                        Branch
+                                    <TableHead className="text-start font-bold text-slate-900 dark:text-slate-300">
+                                        الفرع
                                     </TableHead>
-                                    <TableHead className="font-bold text-slate-900 dark:text-slate-300">
-                                        Track
+                                    <TableHead className="text-start font-bold text-slate-900 dark:text-slate-300">
+                                        المسار
                                     </TableHead>
-                                    <TableHead className="font-bold text-slate-900 dark:text-slate-300">
-                                        Current Groups
+                                    <TableHead className="text-start font-bold text-slate-900 dark:text-slate-300">
+                                        المجموعات الحالية
                                     </TableHead>
-                                    <TableHead className="pr-6 text-right font-bold text-slate-900 dark:text-slate-300">
-                                        Actions
+                                    <TableHead className="pe-6 text-end font-bold text-slate-900 dark:text-slate-300">
+                                        الإجراءات
                                     </TableHead>
                                 </TableRow>
                             </TableHeader>
@@ -844,7 +841,7 @@ export default function StudentsIndex({
                                         key={student.id}
                                         className="transition-colors even:bg-slate-50/50 hover:bg-slate-100/50 dark:border-slate-800 dark:even:bg-slate-800/10 dark:hover:bg-slate-800/30"
                                     >
-                                        <TableCell className="pl-6 font-bold">
+                                        <TableCell className="ps-6 text-start font-bold">
                                             <Link
                                                 href={`/students/${student.id}`}
                                                 className="text-indigo-600 transition-colors hover:underline dark:text-indigo-400"
@@ -852,11 +849,11 @@ export default function StudentsIndex({
                                                 {student.name}
                                             </Link>
                                         </TableCell>
-                                        <TableCell className="font-medium dark:text-slate-300">
+                                        <TableCell className="text-start font-medium dark:text-slate-300">
                                             <MapPinCheck size={17} className='text-slate-700 inline mx-2'/>
                                             {student.branch?.name || '-'}
                                         </TableCell>
-                                        <TableCell>
+                                        <TableCell className="text-start">
                                             <NotebookText size={17} className='text-slate-700 inline mx-2' />
                                             {student.formatted_track ? (
                                                 <span className="rounded-full border bg-slate-100 px-2.5 py-0.5 text-[11px] font-black tracking-tight text-slate-700 uppercase dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300">
@@ -866,7 +863,7 @@ export default function StudentsIndex({
                                                 '-'
                                             )}
                                         </TableCell>
-                                        <TableCell>
+                                        <TableCell className="text-start">
                                             <div className="flex flex-wrap gap-1">
                                                 {student.groups.map((g) => (
                                                     <span
@@ -879,12 +876,12 @@ export default function StudentsIndex({
                                                 {student.groups.length ===
                                                     0 && (
                                                     <span className="text-xs text-muted-foreground italic dark:text-slate-500">
-                                                        Not Enrolled
+                                                        غير مسجل
                                                     </span>
                                                 )}
                                             </div>
                                         </TableCell>
-                                        <TableCell className="pr-6 text-right">
+                                        <TableCell className="pe-6 text-end">
                                             <div className="flex justify-end gap-1.5">
                                                 <Link
                                                     href={`/students/${student.id}`}
@@ -892,7 +889,7 @@ export default function StudentsIndex({
                                                     <Button
                                                         variant="ghost"
                                                         size="icon"
-                                                        title="View Student"
+                                                        title="عرض الطالب"
                                                         className="size-8 cursor-pointer rounded-lg text-indigo-600 transition-colors hover:bg-indigo-50 dark:text-indigo-400 dark:hover:bg-indigo-900/30"
                                                     >
                                                         <Eye className="size-4" />
@@ -901,7 +898,7 @@ export default function StudentsIndex({
                                                 <Button
                                                     variant="ghost"
                                                     size="icon"
-                                                    title="Transfer Student"
+                                                    title="نقل الطالب"
                                                     className="size-8 cursor-pointer rounded-lg text-amber-600 transition-colors hover:bg-amber-50 dark:text-amber-400 dark:hover:bg-amber-900/30"
                                                     onClick={() =>
                                                         setTransferringStudent(
@@ -914,7 +911,7 @@ export default function StudentsIndex({
                                                 <Button
                                                     variant="ghost"
                                                     size="icon"
-                                                    title="Edit Student"
+                                                    title="تعديل الطالب"
                                                     className="size-8 cursor-pointer rounded-lg text-slate-600 transition-colors hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-800"
                                                     onClick={() =>
                                                         setEditingStudent(
@@ -927,7 +924,7 @@ export default function StudentsIndex({
                                                 <Button
                                                     variant="ghost"
                                                     size="icon"
-                                                    title="Delete Student"
+                                                    title="حذف الطالب"
                                                     className="size-8 cursor-pointer rounded-lg text-rose-600 transition-colors hover:bg-rose-50 dark:text-rose-400 dark:hover:bg-rose-900/30"
                                                     onClick={() =>
                                                         setDeletingStudent(
@@ -947,7 +944,7 @@ export default function StudentsIndex({
                                             colSpan={isAdmin ? 5 : 4}
                                             className="h-24 text-center text-muted-foreground italic dark:text-slate-500"
                                         >
-                                            No students found.
+                                            لم يتم العثور على طلاب.
                                         </TableCell>
                                     </TableRow>
                                 )}
@@ -958,15 +955,15 @@ export default function StudentsIndex({
                         {students.links && students.links.length > 3 && (
                             <div className="flex items-center justify-between border-t border-slate-100 bg-slate-50/30 px-6 py-4 dark:border-slate-800 dark:bg-slate-800/10">
                                 <div className="text-sm font-bold tracking-tight text-slate-500 uppercase dark:text-slate-400">
-                                    Showing{' '}
+                                    عرض{' '}
                                     <span className="text-slate-900 dark:text-white">
                                         {students.from}-{students.to}
                                     </span>{' '}
-                                    of{' '}
+                                    من أصل{' '}
                                     <span className="text-slate-900 dark:text-white">
                                         {students.total}
                                     </span>{' '}
-                                    students
+                                    طالب
                                 </div>
                                 <div className="flex flex-wrap justify-center gap-1">
                                     {students.links.map(
@@ -995,7 +992,7 @@ export default function StudentsIndex({
                                                 >
                                                     <span
                                                         dangerouslySetInnerHTML={{
-                                                            __html: link.label,
+                                                            __html: link.label === '&laquo; Previous' ? 'السابق' : (link.label === 'Next &raquo;' ? 'التالي' : link.label),
                                                         }}
                                                     />
                                                 </Button>
@@ -1029,8 +1026,8 @@ export default function StudentsIndex({
                     onClose={() => setDeletingStudent(null)}
                     onConfirm={confirmDelete}
                     processing={isDeleting}
-                    title="Delete Student"
-                    description={`Are you sure you want to delete ${deletingStudent?.name}? This action cannot be undone.`}
+                    title="حذف الطالب"
+                    description={`هل أنت متأكد من حذف الطالب ${deletingStudent?.name}؟ لا يمكن التراجع عن هذا الإجراء.`}
                 />
             </div>
         </AppLayout>

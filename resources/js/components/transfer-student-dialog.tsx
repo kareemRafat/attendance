@@ -91,12 +91,12 @@ export function TransferStudentDialog({
         let hasError = false;
 
         if (!data.from_group_id) {
-            setError('from_group_id', 'The from group field is required.');
+            setError('from_group_id', 'حقل المجموعة الحالية مطلوب.');
             hasError = true;
         }
 
         if (!data.to_group_id) {
-            setError('to_group_id', 'The to group field is required.');
+            setError('to_group_id', 'حقل المجموعة المنقول إليها مطلوب.');
             hasError = true;
         }
 
@@ -119,28 +119,28 @@ export function TransferStudentDialog({
                     <div className="flex items-center gap-2">
                         <ArrowRightLeft className="size-5 text-orange-500" />
                         <DialogTitle className="font-bold text-orange-900">
-                            Transfer Student
+                            نقل الطالب
                         </DialogTitle>
                     </div>
                     <DialogDescription>
-                        Move{' '}
+                        نقل الطالب{' '}
                         <span className="font-bold text-orange-600">
                             {student?.name}
                         </span>{' '}
-                        to a different group.
+                        إلى مجموعة مختلفة.
                     </DialogDescription>
                 </DialogHeader>
-                <form onSubmit={submit} className="space-y-4 pt-4">
-                    <div className="space-y-2">
+                <form onSubmit={submit} className="space-y-6 pt-4">
+                    <div className="space-y-3">
                         <Label className="text-xs font-bold text-slate-500 uppercase">
-                            Choice Track
+                            اختر المسار
                         </Label>
                         <Select
                             value={transferTrack}
                             onValueChange={setTransferTrack}
                         >
                             <SelectTrigger>
-                                <SelectValue placeholder="Choose Track" />
+                                <SelectValue placeholder="اختر المسار" />
                             </SelectTrigger>
                             <SelectContent>
                                 {courseTypes.map((type) => (
@@ -155,12 +155,12 @@ export function TransferStudentDialog({
                         </Select>
                     </div>
                     <div className="grid grid-cols-2 gap-4">
-                        <div className="space-y-2">
+                        <div className="space-y-3">
                             <Label
                                 htmlFor="from_group_id"
                                 className="text-xs font-bold text-slate-500 uppercase"
                             >
-                                From Group
+                                من مجموعة
                             </Label>
                             <Select
                                 value={data.from_group_id}
@@ -175,7 +175,7 @@ export function TransferStudentDialog({
                                             : ''
                                     }
                                 >
-                                    <SelectValue placeholder="Current" />
+                                    <SelectValue placeholder="المجموعة الحالية" />
                                 </SelectTrigger>
                                 <SelectContent>
                                     {student?.groups?.map((group) => (
@@ -190,12 +190,12 @@ export function TransferStudentDialog({
                             </Select>
                             <InputError message={errors.from_group_id} />
                         </div>
-                        <div className="space-y-2">
+                        <div className="space-y-3">
                             <Label
                                 htmlFor="to_group_id"
                                 className="text-xs font-bold text-slate-500 uppercase"
                             >
-                                To Group
+                                إلى مجموعة
                             </Label>
                             <Select
                                 value={data.to_group_id}
@@ -210,14 +210,14 @@ export function TransferStudentDialog({
                                             : ''
                                     }
                                 >
-                                    <SelectValue placeholder="Target" />
+                                    <SelectValue placeholder="المجموعة المستهدفة" />
                                 </SelectTrigger>
                                 <SelectContent>
                                     <div className="border-b px-2 py-2 dark:border-slate-800">
                                         <div className="relative">
-                                            <Search className="absolute top-1/2 left-2 size-3 -translate-y-1/2 text-slate-400" />
+                                            <Search className="absolute top-1/2 inset-inline-start-2 size-3 -translate-y-1/2 text-slate-400" />
                                             <Input
-                                                placeholder="Search group..."
+                                                placeholder="بحث عن مجموعة..."
                                                 value={groupSearch}
                                                 onChange={(e) =>
                                                     setGroupSearch(
@@ -227,7 +227,7 @@ export function TransferStudentDialog({
                                                 onKeyDown={(e) =>
                                                     e.stopPropagation()
                                                 }
-                                                className="h-8 border-none bg-slate-50 pl-7 text-xs focus-visible:ring-0 dark:bg-slate-900"
+                                                className="h-8 border-none bg-slate-50 ps-7 text-xs focus-visible:ring-0 dark:bg-slate-900"
                                             />
                                         </div>
                                     </div>
@@ -242,7 +242,7 @@ export function TransferStudentDialog({
                                         ))
                                     ) : (
                                         <div className="p-2 text-center text-xs text-slate-500 italic">
-                                            No groups found
+                                            لم يتم العثور على مجموعات
                                         </div>
                                     )}
                                 </SelectContent>
@@ -250,12 +250,12 @@ export function TransferStudentDialog({
                             <InputError message={errors.to_group_id} />
                         </div>
                     </div>
-                    <div className="space-y-2">
+                    <div className="space-y-3">
                         <Label
                             htmlFor="effective_date"
                             className="text-xs font-bold text-slate-500 uppercase"
                         >
-                            Effective Date
+                            تاريخ السريان
                         </Label>
                         <Input
                             id="effective_date"
@@ -267,16 +267,16 @@ export function TransferStudentDialog({
                             required
                         />
                     </div>
-                    <div className="space-y-2">
+                    <div className="space-y-3">
                         <Label
                             htmlFor="reason"
                             className="text-xs font-bold text-slate-500 uppercase"
                         >
-                            Reason
+                            السبب
                         </Label>
                         <Input
                             id="reason"
-                            placeholder="Enter reason"
+                            placeholder="أدخل سبب النقل"
                             value={data.reason}
                             onChange={(e) => setData('reason', e.target.value)}
                             required
@@ -290,11 +290,11 @@ export function TransferStudentDialog({
                         >
                             {processing ? (
                                 <>
-                                    <Loader2 className="mr-2 size-4 animate-spin" />
-                                    Transferring...
+                                    <Loader2 className="ms-2 size-4 animate-spin" />
+                                    جاري النقل...
                                 </>
                             ) : (
-                                'Complete Transfer'
+                                'إتمام عملية النقل'
                             )}
                         </Button>
                     </DialogFooter>

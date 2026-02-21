@@ -35,7 +35,7 @@ export function DeleteConfirmationDialog({
     title,
     description,
     processing = false,
-    confirmText = 'Delete',
+    confirmText = 'حذف',
     confirmVariant = 'destructive',
     confirmSize = 'default',
 }: DeleteConfirmationDialogProps) {
@@ -71,7 +71,7 @@ export function DeleteConfirmationDialog({
                         className="cursor-pointer"
                         size={confirmSize}
                     >
-                        Cancel
+                        إلغاء
                     </Button>
                     <Button
                         variant={confirmVariant}
@@ -82,10 +82,10 @@ export function DeleteConfirmationDialog({
                     >
                         {processing ? (
                             <>
-                                <Loader2 className="mr-2 size-4 animate-spin" />
+                                <Loader2 className="ms-2 size-4 animate-spin" />
                                 {confirmVariant === 'destructive'
-                                    ? 'Deleting...'
-                                    : 'Processing...'}
+                                    ? 'جاري الحذف...'
+                                    : 'جاري المعالجة...'}
                             </>
                         ) : (
                             confirmText

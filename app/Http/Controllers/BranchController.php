@@ -23,14 +23,14 @@ class BranchController extends Controller
     {
         Branch::create($request->validated());
 
-        return redirect()->route('branches.index')->with('success', 'Branch created successfully.');
+        return redirect()->route('branches.index')->with('success', 'تم إنشاء الفرع بنجاح.');
     }
 
     public function update(BranchRequest $request, Branch $branch): RedirectResponse
     {
         $branch->update($request->validated());
 
-        return redirect()->route('branches.index')->with('success', 'Branch updated successfully.');
+        return redirect()->route('branches.index')->with('success', 'تم تحديث الفرع بنجاح.');
     }
 
     public function destroy(Branch $branch): RedirectResponse
@@ -38,6 +38,6 @@ class BranchController extends Controller
         $this->authorize('delete', $branch);
         $branch->delete();
 
-        return redirect()->route('branches.index')->with('success', 'Branch deleted successfully.');
+        return redirect()->route('branches.index')->with('success', 'تم حذف الفرع بنجاح.');
     }
 }

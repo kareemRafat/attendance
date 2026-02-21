@@ -5,7 +5,7 @@ import type { User } from '@/types';
 export function UserInfo({ user }: { user: User }) {
     const getInitials = useInitials();
     const isAdmin = user.role === 'admin';
-    const subText = isAdmin ? 'Admin' : user.branch?.name || 'Employee';
+    const subText = isAdmin ? 'مدير' : user.branch?.name || 'موظف';
 
     return (
         <div className="flex items-center gap-3">

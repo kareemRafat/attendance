@@ -33,7 +33,7 @@ class EmployeeController extends Controller
             'password' => Hash::make($request->password),
         ]);
 
-        return redirect()->route('employees.index')->with('success', 'Employee created successfully.');
+        return redirect()->route('employees.index')->with('success', 'تم إنشاء حساب الموظف بنجاح.');
     }
 
     /**
@@ -51,7 +51,7 @@ class EmployeeController extends Controller
 
         $employee->update($data);
 
-        return redirect()->route('employees.index')->with('success', 'Employee updated successfully.');
+        return redirect()->route('employees.index')->with('success', 'تم تحديث بيانات الموظف بنجاح.');
     }
 
     /**
@@ -60,11 +60,11 @@ class EmployeeController extends Controller
     public function destroy(User $employee): RedirectResponse
     {
         if ($employee->id === auth()->id()) {
-            return back()->withErrors(['error' => 'You cannot delete yourself.']);
+            return back()->withErrors(['error' => 'لا يمكنك حذف حسابك الشخصي.']);
         }
 
         $employee->delete();
 
-        return redirect()->route('employees.index')->with('success', 'Employee deleted successfully.');
+        return redirect()->route('employees.index')->with('success', 'تم حذف حساب الموظف بنجاح.');
     }
 }
