@@ -51,11 +51,6 @@ interface DaysPatternOption {
     value: string;
 }
 
-interface CourseTypeOption {
-    name: string;
-    value: string;
-}
-
 interface Group {
     id: number;
     branch_id: number;
@@ -85,12 +80,10 @@ interface Props {
     };
     branches: Branch[];
     daysPatterns: DaysPatternOption[];
-    courseTypes: CourseTypeOption[];
     currentTab: string;
     filters: {
         search?: string;
         branch_id?: string;
-        track?: string;
     };
 }
 
@@ -98,7 +91,6 @@ export default function GroupsIndex({
     groups,
     branches = [],
     daysPatterns = [],
-    courseTypes = [],
     currentTab,
     filters,
 }: Props) {
@@ -119,21 +111,17 @@ export default function GroupsIndex({
     const [branchFilter, setBranchFilter] = useState(
         filters.branch_id || 'all',
     );
-    const [trackFilter, setTrackFilter] = useState(filters.track || 'all');
 
     const handleFilter = (
         newSearch?: string,
         newBranch?: string,
-        newTrack?: string,
     ) => {
         const query: any = { tab: currentTab };
         const s = newSearch !== undefined ? newSearch : search;
         const b = newBranch !== undefined ? newBranch : branchFilter;
-        const t = newTrack !== undefined ? newTrack : trackFilter;
 
         if (s) query.search = s;
         if (b && b !== 'all') query.branch_id = b;
-        if (t && t !== 'all') query.track = t;
 
         router.get('/groups', query, {
             preserveState: true,
@@ -241,7 +229,7 @@ export default function GroupsIndex({
                 <div className="flex flex-wrap items-center justify-between gap-4">
                     <div className="inline-flex gap-1 self-start rounded-lg bg-neutral-100 p-1 dark:bg-neutral-800">
                         <Link
-                            href={`/groups?tab=active${branchFilter !== 'all' ? `&branch_id=${branchFilter}` : ''}${trackFilter !== 'all' ? `&track=${trackFilter}` : ''}${search ? `&search=${search}` : ''}`}
+                            href={`/groups?tab=active${branchFilter !== 'all' ? `&branch_id=${branchFilter}` : ''}${search ? `&search=${search}` : ''}`}
                             className={cn(
                                 'flex cursor-pointer items-center rounded-md px-4 py-2 text-sm font-medium transition-colors',
                                 currentTab === 'active'
@@ -252,7 +240,7 @@ export default function GroupsIndex({
                             Active Groups
                         </Link>
                         <Link
-                            href={`/groups?tab=closed${branchFilter !== 'all' ? `&branch_id=${branchFilter}` : ''}${trackFilter !== 'all' ? `&track=${trackFilter}` : ''}${search ? `&search=${search}` : ''}`}
+                            href={`/groups?tab=closed${branchFilter !== 'all' ? `&branch_id=${branchFilter}` : ''}${search ? `&search=${search}` : ''}`}
                             className={cn(
                                 'flex cursor-pointer items-center rounded-md px-4 py-2 text-sm font-medium transition-colors',
                                 currentTab === 'closed'
@@ -307,41 +295,15 @@ export default function GroupsIndex({
                             </Select>
                         )}
 
-                        {/* Track Filter */}
-                        <Select
-                            value={trackFilter}
-                            onValueChange={(val) => {
-                                setTrackFilter(val);
-                                handleFilter(undefined, undefined, val);
-                            }}
-                        >
-                            <SelectTrigger className="h-10 w-full rounded-xl border-slate-200 bg-white sm:w-48 dark:border-slate-800 dark:bg-slate-900">
-                                <SelectValue placeholder="All Tracks" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectItem value="all">All Tracks</SelectItem>
-                                {courseTypes.map((type) => (
-                                    <SelectItem
-                                        key={type.value}
-                                        value={type.value}
-                                    >
-                                        {type.name}
-                                    </SelectItem>
-                                ))}
-                            </SelectContent>
-                        </Select>
-
                         {(search ||
-                            (branchFilter && branchFilter !== 'all') ||
-                            (trackFilter && trackFilter !== 'all')) && (
+                            (branchFilter && branchFilter !== 'all')) && (
                             <Button
                                 variant="ghost"
                                 size="sm"
                                 onClick={() => {
                                     setSearch('');
                                     setBranchFilter('all');
-                                    setTrackFilter('all');
-                                    handleFilter('', 'all', 'all');
+                                    handleFilter('', 'all');
                                 }}
                                 className="h-10 cursor-pointer rounded-xl px-4 text-xs font-bold text-indigo-600 transition-all hover:bg-indigo-50 hover:text-indigo-700 dark:hover:bg-indigo-900/20"
                             >

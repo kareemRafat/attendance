@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Enums\CourseType;
 use App\Enums\DaysPattern;
 use App\Http\Requests\GroupRequest;
 use App\Models\Branch;
@@ -33,12 +32,6 @@ class GroupController extends Controller
             $query->where('branch_id', $request->branch_id);
         }
 
-        if ($request->filled('track')) {
-            $query->whereHas('students', function ($q) use ($request) {
-                $q->where('track', $request->track);
-            });
-        }
-
         $groups = $query->latest()
             ->paginate(9)
             ->withQueryString();
@@ -46,17 +39,13 @@ class GroupController extends Controller
         return Inertia::render('Groups/Index', [
             'groups' => $groups,
             'branches' => Branch::all(),
-            'courseTypes' => collect(CourseType::cases())->map(fn ($case) => [
-                'name' => $case->label(),
-                'value' => $case->value,
-            ]),
             'daysPatterns' => collect(DaysPattern::cases())->map(fn ($case) => [
                 'name' => $case->label(),
                 'value' => $case->value,
             ]),
             'canManageEverything' => Auth::user()->isAdmin(),
             'currentTab' => $status,
-            'filters' => $request->only(['search', 'branch_id', 'track']),
+            'filters' => $request->only(['search', 'branch_id']),
         ]);
     }
 
