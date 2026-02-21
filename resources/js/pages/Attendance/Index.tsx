@@ -1,5 +1,5 @@
 import { Head, router, usePage } from '@inertiajs/react';
-import { CheckCircle2, XCircle, Clock, Save, User as UserIcon } from 'lucide-react';
+import { CheckCircle2, XCircle, Clock, Save, User as UserIcon, ReceiptText } from 'lucide-react';
 import { useState, useMemo, useEffect, useCallback } from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -10,6 +10,7 @@ import {
     CardHeader,
     CardTitle,
 } from '@/components/ui/card';
+import { Checkbox } from '@/components/ui/checkbox';
 import {
     Select,
     SelectContent,
@@ -21,6 +22,7 @@ import {
 } from '@/components/ui/select';
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 import AppLayout from '@/layouts/app-layout';
+import { cn } from '@/lib/utils';
 
 interface Student {
     id: number;
@@ -44,6 +46,7 @@ interface Group {
         attendances: Array<{
             student_id: number;
             status: string;
+            is_installment_due: boolean;
         }>;
     };
 }
@@ -53,6 +56,11 @@ interface Props {
     selectedDate: string;
     branches: Branch[];
     selectedBranchId: number | null;
+}
+
+interface AttendanceState {
+    status: string;
+    is_installment_due: boolean;
 }
 
 export default function AttendanceIndex({
@@ -75,16 +83,17 @@ export default function AttendanceIndex({
 
     // Initial state calculation helper
     const calculateInitialState = (groupsList: Group[]) => {
-        const state: Record<number, Record<number, string>> = {};
+        const state: Record<number, Record<number, AttendanceState>> = {};
         groupsList.forEach((group) => {
             state[group.id] = {};
             group.students.forEach((student) => {
                 const existing = group.lecture_session?.attendances.find(
                     (a) => a.student_id === student.id,
                 );
-                state[group.id][student.id] = existing
-                    ? existing.status
-                    : 'absent';
+                state[group.id][student.id] = {
+                    status: existing ? existing.status : 'absent',
+                    is_installment_due: existing ? existing.is_installment_due : false,
+                };
             });
         });
         return state;
@@ -92,7 +101,7 @@ export default function AttendanceIndex({
 
     // Local state for attendance to make it "Ultra-Fast"
     const [localAttendances, setLocalAttendances] = useState<
-        Record<number, Record<number, string>>
+        Record<number, Record<number, AttendanceState>>
     >(() => calculateInitialState(groups));
 
     useEffect(() => {
@@ -121,7 +130,27 @@ export default function AttendanceIndex({
             ...prev,
             [groupId]: {
                 ...prev[groupId],
-                [studentId]: status,
+                [studentId]: {
+                    ...prev[groupId][studentId],
+                    status,
+                },
+            },
+        }));
+    };
+
+    const handleInstallmentToggle = (
+        groupId: number,
+        studentId: number,
+        checked: boolean,
+    ) => {
+        setLocalAttendances((prev) => ({
+            ...prev,
+            [groupId]: {
+                ...prev[groupId],
+                [studentId]: {
+                    ...prev[groupId][studentId],
+                    is_installment_due: checked,
+                },
             },
         }));
     };
@@ -130,9 +159,10 @@ export default function AttendanceIndex({
         (groupId: number) => {
             const attendancesForGroup = Object.entries(
                 localAttendances[groupId] || {},
-            ).map(([studentId, status]) => ({
+            ).map(([studentId, data]) => ({
                 student_id: parseInt(studentId),
-                status,
+                status: data.status,
+                is_installment_due: data.is_installment_due,
             }));
 
             setIsSaving(true);
@@ -225,23 +255,26 @@ export default function AttendanceIndex({
                         focusedStudentId,
                         'absent',
                     );
+                } else if (e.key === 'i') {
+                    const current = localAttendances[activeGroup.id][focusedStudentId];
+                    handleInstallmentToggle(activeGroup.id, focusedStudentId, !current.is_installment_due);
                 }
             }
         };
 
         window.addEventListener('keydown', handleKeyDown);
         return () => window.removeEventListener('keydown', handleKeyDown);
-    }, [activeGroup, focusedStudentId, saveAttendance]);
+    }, [activeGroup, focusedStudentId, saveAttendance, localAttendances]);
 
     const counters = useMemo(() => {
         if (!activeGroupId || !localAttendances[activeGroupId])
             return { present: 0, excused: 0, absent: 0 };
 
         const stats = { present: 0, excused: 0, absent: 0 };
-        Object.values(localAttendances[activeGroupId]).forEach((status) => {
-            if (status === 'present') stats.present++;
-            else if (status === 'excused') stats.excused++;
-            else if (status === 'absent') stats.absent++;
+        Object.values(localAttendances[activeGroupId]).forEach((data) => {
+            if (data.status === 'present') stats.present++;
+            else if (data.status === 'excused') stats.excused++;
+            else if (data.status === 'absent') stats.absent++;
         });
         return stats;
     }, [activeGroupId, localAttendances]);
@@ -398,6 +431,15 @@ export default function AttendanceIndex({
                                             variant="outline"
                                             className="h-4 px-1 py-0 text-[10px]"
                                         >
+                                            I
+                                        </Badge>{' '}
+                                        Installment
+                                    </span>
+                                    <span className="flex items-center gap-1">
+                                        <Badge
+                                            variant="outline"
+                                            className="h-4 px-1 py-0 text-[10px]"
+                                        >
                                             ⌘S
                                         </Badge>{' '}
                                         Save
@@ -406,92 +448,121 @@ export default function AttendanceIndex({
                             </div>
 
                             <div className="space-y-4">
-                                {activeGroup.students.map((student) => (
-                                    <div
-                                        key={student.id}
-                                        onClick={() =>
-                                            setFocusedStudentId(student.id)
-                                        }
-                                        className={`flex cursor-pointer flex-col items-start justify-between rounded-lg border p-3 transition-all sm:flex-row sm:items-center ${
-                                            focusedStudentId === student.id
-                                                ? 'border-primary bg-accent ring-1 ring-primary/50'
-                                                : 'bg-card hover:bg-accent/30'
-                                        }`}
-                                    >
-                                        <div className="mb-3 flex items-center gap-3 sm:mb-0">
-                                            <div
-                                                className={`flex size-8 items-center justify-center rounded-full transition-colors ${
-                                                    focusedStudentId ===
-                                                    student.id
-                                                        ? 'bg-primary text-primary-foreground'
-                                                        : 'bg-muted'
-                                                }`}
-                                            >
-                                                <UserIcon className="size-4" />
-                                            </div>
-                                            <span className="font-medium">
-                                                {student.name}
-                                            </span>
-                                        </div>
+                                {activeGroup.students.map((student) => {
+                                    const studentAttendance = localAttendances[activeGroup.id]?.[student.id];
+                                    const isDue = studentAttendance?.is_installment_due;
+                                    const isFocused = focusedStudentId === student.id;
 
-                                        <ToggleGroup
-                                            type="single"
-                                            value={
-                                                localAttendances[
-                                                    activeGroup.id
-                                                ]?.[student.id]
+                                    return (
+                                        <div
+                                            key={student.id}
+                                            onClick={() =>
+                                                setFocusedStudentId(student.id)
                                             }
-                                            onValueChange={(val) =>
-                                                handleStatusChange(
-                                                    activeGroup.id,
-                                                    student.id,
-                                                    val,
-                                                )
-                                            }
-                                            className="grid w-full grid-cols-3 rounded-md border bg-background p-1 sm:flex sm:w-auto"
+                                            className={cn(
+                                                "flex cursor-pointer flex-col items-start justify-between rounded-lg border p-3 transition-all sm:flex-row sm:items-center",
+                                                isFocused && !isDue && "border-primary bg-accent ring-1 ring-primary/50",
+                                                isFocused && isDue && "border-red-500 bg-red-100 ring-1 ring-red-500/50",
+                                                !isFocused && isDue && "bg-red-50 hover:bg-red-100 border-red-200",
+                                                !isFocused && !isDue && "bg-card hover:bg-accent/30"
+                                            )}
                                         >
-                                            <ToggleGroupItem
-                                                value="present"
-                                                aria-label="Present"
-                                                className="flex-1 data-[state=on]:bg-green-100 data-[state=on]:text-green-700"
-                                            >
-                                                <CheckCircle2 className="size-4 sm:mr-2" />
-                                                <span className="hidden sm:inline">
-                                                    Present
-                                                </span>
-                                                <span className="text-xs sm:hidden">
-                                                    P
-                                                </span>
-                                            </ToggleGroupItem>
-                                            <ToggleGroupItem
-                                                value="excused"
-                                                aria-label="Excused"
-                                                className="flex-1 data-[state=on]:bg-yellow-100 data-[state=on]:text-yellow-700"
-                                            >
-                                                <Clock className="size-4 sm:mr-2" />
-                                                <span className="hidden sm:inline">
-                                                    Excused
-                                                </span>
-                                                <span className="text-xs sm:hidden">
-                                                    E
-                                                </span>
-                                            </ToggleGroupItem>
-                                            <ToggleGroupItem
-                                                value="absent"
-                                                aria-label="Absent"
-                                                className="flex-1 data-[state=on]:bg-red-100 data-[state=on]:text-red-700"
-                                            >
-                                                <XCircle className="size-4 sm:mr-2" />
-                                                <span className="hidden sm:inline">
-                                                    Absent
-                                                </span>
-                                                <span className="text-xs sm:hidden">
-                                                    A
-                                                </span>
-                                            </ToggleGroupItem>
-                                        </ToggleGroup>
-                                    </div>
-                                ))}
+                                            <div className="mb-3 flex items-center gap-4 sm:mb-0">
+                                                <Checkbox
+                                                    id={`installment-${student.id}`}
+                                                    checked={isDue}
+                                                    onCheckedChange={(checked) =>
+                                                        handleInstallmentToggle(activeGroup.id, student.id, checked === true)
+                                                    }
+                                                    className={cn(
+                                                        "size-5 transition-transform hover:scale-110",
+                                                        isDue
+                                                            ? "border-transparent data-[state=checked]:bg-red-600 data-[state=checked]:border-red-600"
+                                                            : "border-muted-foreground"
+                                                    )}
+                                                    title="Mark Installment Due"
+                                                    onClick={(e) => e.stopPropagation()}
+                                                />
+
+                                                <div className="flex items-center gap-3">
+                                                    <div
+                                                        className={cn(
+                                                            "flex size-8 items-center justify-center rounded-full transition-colors",
+                                                            isFocused ? "bg-primary text-primary-foreground" : "bg-muted"
+                                                        )}
+                                                    >
+                                                        <UserIcon className="size-4" />
+                                                    </div>
+                                                    <div className="flex flex-col">
+                                                        <span className="font-medium">
+                                                            {student.name}
+                                                        </span>
+                                                        {isDue && (
+                                                            <span className="flex items-center gap-1 text-[10px] font-bold text-red-600 uppercase">
+                                                                <ReceiptText className="size-3" /> Due Installment
+                                                            </span>
+                                                        )}
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div className="flex w-full items-center justify-end gap-4 sm:w-auto">
+                                                <ToggleGroup
+                                                    type="single"
+                                                    value={studentAttendance?.status}
+                                                    onValueChange={(val) =>
+                                                        handleStatusChange(
+                                                            activeGroup.id,
+                                                            student.id,
+                                                            val,
+                                                        )
+                                                    }
+                                                    className="grid flex-1 grid-cols-3 rounded-md border bg-background p-1 sm:flex sm:w-auto"
+                                                >
+                                                    <ToggleGroupItem
+                                                        value="present"
+                                                        aria-label="Present"
+                                                        className="flex-1 data-[state=on]:bg-green-100 data-[state=on]:text-green-700"
+                                                    >
+                                                        <CheckCircle2 className="size-4 sm:mr-2" />
+                                                        <span className="hidden sm:inline">
+                                                            Present
+                                                        </span>
+                                                        <span className="text-xs sm:hidden">
+                                                            P
+                                                        </span>
+                                                    </ToggleGroupItem>
+                                                    <ToggleGroupItem
+                                                        value="excused"
+                                                        aria-label="Excused"
+                                                        className="flex-1 data-[state=on]:bg-yellow-100 data-[state=on]:text-yellow-700"
+                                                    >
+                                                        <Clock className="size-4 sm:mr-2" />
+                                                        <span className="hidden sm:inline">
+                                                            Excused
+                                                        </span>
+                                                        <span className="text-xs sm:hidden">
+                                                            E
+                                                        </span>
+                                                    </ToggleGroupItem>
+                                                    <ToggleGroupItem
+                                                        value="absent"
+                                                        aria-label="Absent"
+                                                        className="flex-1 data-[state=on]:bg-red-100 data-[state=on]:text-red-700"
+                                                    >
+                                                        <XCircle className="size-4 sm:mr-2" />
+                                                        <span className="hidden sm:inline">
+                                                            Absent
+                                                        </span>
+                                                        <span className="text-xs sm:hidden">
+                                                            A
+                                                        </span>
+                                                    </ToggleGroupItem>
+                                                </ToggleGroup>
+                                            </div>
+                                        </div>
+                                    );
+                                })}
 
                                 {activeGroup.students.length === 0 && (
                                     <div className="py-12 text-center text-muted-foreground">

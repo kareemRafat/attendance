@@ -12,12 +12,13 @@ class Attendance extends Model
     /** @use HasFactory<\Database\Factories\AttendanceFactory> */
     use HasFactory;
 
-    protected $fillable = ['lecture_session_id', 'student_id', 'status'];
+    protected $fillable = ['lecture_session_id', 'student_id', 'status', 'is_installment_due'];
 
     protected function casts(): array
     {
         return [
             'status' => AttendanceStatus::class,
+            'is_installment_due' => 'boolean',
         ];
     }
 

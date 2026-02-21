@@ -85,6 +85,7 @@ class AttendanceController extends Controller
             'attendances' => ['required', 'array'],
             'attendances.*.student_id' => ['required', 'exists:students,id'],
             'attendances.*.status' => ['required', 'string'],
+            'attendances.*.is_installment_due' => ['required', 'boolean'],
         ]);
 
         DB::transaction(function () use ($request) {
@@ -105,6 +106,7 @@ class AttendanceController extends Controller
                     'lecture_session_id' => $session->id,
                     'student_id' => $item['student_id'],
                     'status' => $item['status'],
+                    'is_installment_due' => $item['is_installment_due'],
                     'created_at' => now(),
                     'updated_at' => now(),
                 ];
@@ -114,7 +116,7 @@ class AttendanceController extends Controller
             Attendance::upsert(
                 $attendanceData,
                 ['lecture_session_id', 'student_id'],
-                ['status', 'updated_at']
+                ['status', 'is_installment_due', 'updated_at']
             );
         });
 

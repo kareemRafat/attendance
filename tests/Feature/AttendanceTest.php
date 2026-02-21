@@ -56,6 +56,34 @@ test('employee only sees groups from their own branch for today', function () {
     expect($response->viewData('page')['props']['branches'])->toHaveCount(0);
 });
 
+test('can save attendance with installment due status', function () {
+    $group = Group::factory()->create([
+        'branch_id' => $this->branch1->id,
+        'pattern' => DaysPattern::SatTue,
+    ]);
+    $student = \App\Models\Student::factory()->create(['branch_id' => $this->branch1->id]);
+    $student->enrollments()->create(['group_id' => $group->id, 'enrolled_at' => now()->subDay()]);
+
+    $response = $this->actingAs($this->employee)->post(route('attendance.store'), [
+        'group_id' => $group->id,
+        'date' => now()->format('Y-m-d'),
+        'attendances' => [
+            [
+                'student_id' => $student->id,
+                'status' => 'present',
+                'is_installment_due' => true,
+            ],
+        ],
+    ]);
+
+    $response->assertRedirect();
+    $this->assertDatabaseHas('attendances', [
+        'student_id' => $student->id,
+        'status' => 'present',
+        'is_installment_due' => true,
+    ]);
+});
+
 test('admin sees groups from all branches and can filter by branch', function () {
     Group::factory()->create([
         'branch_id' => $this->branch1->id,

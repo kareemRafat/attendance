@@ -76,8 +76,8 @@ class BranchIsolationTest extends TestCase
             'group_id' => $group->id,
             'date' => $date,
             'attendances' => [
-                ['student_id' => $student1->id, 'status' => 'present'],
-                ['student_id' => $student2->id, 'status' => 'absent'],
+                ['student_id' => $student1->id, 'status' => 'present', 'is_installment_due' => false],
+                ['student_id' => $student2->id, 'status' => 'absent', 'is_installment_due' => true],
             ],
         ]);
 
@@ -92,6 +92,13 @@ class BranchIsolationTest extends TestCase
         $this->assertDatabaseHas('attendances', [
             'student_id' => $student1->id,
             'status' => 'present',
+            'is_installment_due' => false,
+        ]);
+
+        $this->assertDatabaseHas('attendances', [
+            'student_id' => $student2->id,
+            'status' => 'absent',
+            'is_installment_due' => true,
         ]);
     }
 }
