@@ -15,7 +15,7 @@ export function UserInfo({ user }: { user: User }) {
                     {getInitials(user.name)}
                 </AvatarFallback>
             </Avatar>
-            <div className="grid flex-1 text-left leading-tight">
+            <div className="grid flex-1 text-start leading-tight">
                 <span className="truncate text-base font-bold text-slate-900 dark:text-white">
                     {user.name}
                 </span>

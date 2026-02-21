@@ -86,6 +86,12 @@ class AttendanceController extends Controller
             'attendances.*.student_id' => ['required', 'exists:students,id'],
             'attendances.*.status' => ['required', 'string'],
             'attendances.*.is_installment_due' => ['required', 'boolean'],
+        ], [], [
+            'group_id' => 'المجموعة',
+            'date' => 'التاريخ',
+            'attendances' => 'سجلات الحضور',
+            'attendances.*.status' => 'الحالة',
+            'attendances.*.is_installment_due' => 'حالة القسط',
         ]);
 
         DB::transaction(function () use ($request) {
@@ -120,6 +126,6 @@ class AttendanceController extends Controller
             );
         });
 
-        return redirect()->back()->with('success', 'Attendance saved successfully.');
+        return redirect()->back()->with('success', 'تم حفظ سجل الحضور بنجاح.');
     }
 }

@@ -71,7 +71,7 @@ export default function AttendanceIndex({
 }: Props) {
     const { auth } = usePage().props as any;
     const isAdmin = auth.user.role === 'admin';
-    const breadcrumbs = [{ title: 'Attendance', href: '/attendance' }];
+    const breadcrumbs = [{ title: 'الحضور والغياب', href: '/attendance' }];
 
     const [activeGroupId, setActiveGroupId] = useState<number | null>(
         groups.length > 0 ? groups[0].id : null,
@@ -91,7 +91,7 @@ export default function AttendanceIndex({
                     (a) => a.student_id === student.id,
                 );
                 state[group.id][student.id] = {
-                    status: existing ? existing.status : 'absent',
+                    status: existing ? existing.status : 'present',
                     is_installment_due: existing ? existing.is_installment_due : false,
                 };
             });
@@ -281,12 +281,12 @@ export default function AttendanceIndex({
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="Mark Attendance" />
+            <Head title="تسجيل الحضور والغياب" />
 
             <div className="flex flex-col gap-6 p-4">
                 <div className="flex flex-col items-start justify-between gap-4 md:flex-row md:items-center">
                     <h1 className="text-2xl font-bold">
-                        Attendance - {selectedDate}
+                        الحضور والغياب - {selectedDate}
                     </h1>
 
                     <div className="flex w-full flex-col gap-3 sm:flex-row sm:items-center md:w-auto">
@@ -296,10 +296,10 @@ export default function AttendanceIndex({
                                 onValueChange={handleBranchChange}
                             >
                                 <SelectTrigger className="w-full sm:w-[180px]">
-                                    <SelectValue placeholder="All Branches" />
+                                    <SelectValue placeholder="جميع الفروع" />
                                 </SelectTrigger>
                                 <SelectContent>
-                                    <SelectItem value="all">All Branches</SelectItem>
+                                    <SelectItem value="all">جميع الفروع</SelectItem>
                                     {branches.map((branch) => (
                                         <SelectItem
                                             key={branch.id}
@@ -317,7 +317,7 @@ export default function AttendanceIndex({
                             onValueChange={(val) => setActiveGroupId(parseInt(val))}
                         >
                             <SelectTrigger className="w-full sm:w-[240px]">
-                                <SelectValue placeholder="Select Group" />
+                                <SelectValue placeholder="اختر المجموعة" />
                             </SelectTrigger>
                             <SelectContent>
                                 {isAdmin ? (
@@ -356,9 +356,9 @@ export default function AttendanceIndex({
                                 <CardTitle>{activeGroup.name}</CardTitle>
                                 <CardDescription>
                                     {activeGroup.lecture_session
-                                        ? `Lecture #${activeGroup.lecture_session.lecture_number}`
-                                        : 'New Lecture Session'}
-                                    {isAdmin && ` • Branch: ${activeGroup.branch.name}`}
+                                        ? `محاضرة رقم #${activeGroup.lecture_session.lecture_number}`
+                                        : 'محاضرة جديدة'}
+                                    {isAdmin && ` • الفرع: ${activeGroup.branch.name}`}
                                 </CardDescription>
                             </div>
                             <div className="flex items-center gap-4">
@@ -383,7 +383,7 @@ export default function AttendanceIndex({
                                     disabled={isSaving}
                                     className="gap-2"
                                 >
-                                    <Save className="size-4" /> Save
+                                    <Save className="size-4" /> حفظ
                                 </Button>
                             </div>
                         </CardHeader>
@@ -397,7 +397,7 @@ export default function AttendanceIndex({
                                         >
                                             ↓/↑
                                         </Badge>{' '}
-                                        Navigate
+                                        التنقل
                                     </span>
                                     <span className="flex items-center gap-1">
                                         <Badge
@@ -406,7 +406,7 @@ export default function AttendanceIndex({
                                         >
                                             1/P
                                         </Badge>{' '}
-                                        Present
+                                        حاضر
                                     </span>
                                     <span className="flex items-center gap-1">
                                         <Badge
@@ -415,7 +415,7 @@ export default function AttendanceIndex({
                                         >
                                             2/E
                                         </Badge>{' '}
-                                        Excused
+                                        بعذر
                                     </span>
                                     <span className="flex items-center gap-1">
                                         <Badge
@@ -424,7 +424,7 @@ export default function AttendanceIndex({
                                         >
                                             3/A
                                         </Badge>{' '}
-                                        Absent
+                                        غائب
                                     </span>
                                     <span className="flex items-center gap-1">
                                         <Badge
@@ -433,7 +433,7 @@ export default function AttendanceIndex({
                                         >
                                             I
                                         </Badge>{' '}
-                                        Installment
+                                        قسط
                                     </span>
                                     <span className="flex items-center gap-1">
                                         <Badge
@@ -442,13 +442,13 @@ export default function AttendanceIndex({
                                         >
                                             ⌘S
                                         </Badge>{' '}
-                                        Save
+                                        حفظ
                                     </span>
                                 </div>
                             </div>
 
                             <div className="space-y-4">
-                                {activeGroup.students.map((student) => {
+                                {activeGroup.students.map((student, index) => {
                                     const studentAttendance = localAttendances[activeGroup.id]?.[student.id];
                                     const isDue = studentAttendance?.is_installment_due;
                                     const isFocused = focusedStudentId === student.id;
@@ -468,6 +468,9 @@ export default function AttendanceIndex({
                                             )}
                                         >
                                             <div className="mb-3 flex items-center gap-4 sm:mb-0">
+                                                <div className="w-6 text-sm font-bold text-slate-400">
+                                                    {index + 1}
+                                                </div>
                                                 <Checkbox
                                                     id={`installment-${student.id}`}
                                                     checked={isDue}
@@ -480,7 +483,7 @@ export default function AttendanceIndex({
                                                             ? "border-transparent data-[state=checked]:bg-red-600 data-[state=checked]:border-red-600"
                                                             : "border-muted-foreground"
                                                     )}
-                                                    title="Mark Installment Due"
+                                                    title="تحديد قسط مستحق"
                                                     onClick={(e) => e.stopPropagation()}
                                                 />
 
@@ -493,13 +496,13 @@ export default function AttendanceIndex({
                                                     >
                                                         <UserIcon className="size-4" />
                                                     </div>
-                                                    <div className="flex flex-col">
+                                                    <div className="flex flex-col text-start">
                                                         <span className="font-medium">
                                                             {student.name}
                                                         </span>
                                                         {isDue && (
                                                             <span className="flex items-center gap-1 text-[10px] font-bold text-red-600 uppercase">
-                                                                <ReceiptText className="size-3" /> Due Installment
+                                                                <ReceiptText className="size-3" /> قسط مستحق
                                                             </span>
                                                         )}
                                                     </div>
@@ -520,42 +523,42 @@ export default function AttendanceIndex({
                                                     className="grid flex-1 grid-cols-3 rounded-md border bg-background p-1 sm:flex sm:w-auto"
                                                 >
                                                     <ToggleGroupItem
-                                                        value="present"
-                                                        aria-label="Present"
-                                                        className="flex-1 data-[state=on]:bg-green-100 data-[state=on]:text-green-700"
+                                                        value="absent"
+                                                        aria-label="Absent"
+                                                        className="flex-1 data-[state=on]:bg-red-300 data-[state=on]:text-red-900"
                                                     >
-                                                        <CheckCircle2 className="size-4 sm:mr-2" />
+                                                        <XCircle className="size-4 sm:me-2" />
                                                         <span className="hidden sm:inline">
-                                                            Present
+                                                            غائب
                                                         </span>
                                                         <span className="text-xs sm:hidden">
-                                                            P
+                                                            غ
                                                         </span>
                                                     </ToggleGroupItem>
                                                     <ToggleGroupItem
                                                         value="excused"
                                                         aria-label="Excused"
-                                                        className="flex-1 data-[state=on]:bg-yellow-100 data-[state=on]:text-yellow-700"
+                                                        className="flex-1 data-[state=on]:bg-yellow-300 data-[state=on]:text-yellow-900"
                                                     >
-                                                        <Clock className="size-4 sm:mr-2" />
+                                                        <Clock className="size-4 sm:me-2" />
                                                         <span className="hidden sm:inline">
-                                                            Excused
+                                                            بعذر
                                                         </span>
                                                         <span className="text-xs sm:hidden">
-                                                            E
+                                                            ع
                                                         </span>
                                                     </ToggleGroupItem>
                                                     <ToggleGroupItem
-                                                        value="absent"
-                                                        aria-label="Absent"
-                                                        className="flex-1 data-[state=on]:bg-red-100 data-[state=on]:text-red-700"
+                                                        value="present"
+                                                        aria-label="Present"
+                                                        className="flex-1 data-[state=on]:bg-green-300 data-[state=on]:text-green-900"
                                                     >
-                                                        <XCircle className="size-4 sm:mr-2" />
+                                                        <CheckCircle2 className="size-4 sm:me-2" />
                                                         <span className="hidden sm:inline">
-                                                            Absent
+                                                            حاضر
                                                         </span>
                                                         <span className="text-xs sm:hidden">
-                                                            A
+                                                            ح
                                                         </span>
                                                     </ToggleGroupItem>
                                                 </ToggleGroup>
@@ -566,7 +569,7 @@ export default function AttendanceIndex({
 
                                 {activeGroup.students.length === 0 && (
                                     <div className="py-12 text-center text-muted-foreground">
-                                        No students enrolled in this group.
+                                        لا يوجد طلاب مسجلين في هذه المجموعة.
                                     </div>
                                 )}
                             </div>
@@ -575,11 +578,10 @@ export default function AttendanceIndex({
                 ) : (
                     <div className="rounded-xl border bg-muted/20 py-24 text-center">
                         <h3 className="text-lg font-medium">
-                            No groups active for today
+                            لا توجد مجموعات نشطة لهذا اليوم
                         </h3>
                         <p className="text-muted-foreground">
-                            Try selecting another date or check the groups'
-                            schedules.
+                            حاول اختيار تاريخ آخر أو تحقق من جداول المجموعات.
                         </p>
                     </div>
                 )}
