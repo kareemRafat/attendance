@@ -30,8 +30,8 @@ export default function Login({ status, canResetPassword }: Props) {
 
     return (
         <AuthLayout
-            title="تسجيل الدخول إلى حسابك"
-            description="أدخل اسمك وكلمة المرور أدناه لتسجيل الدخول"
+            title="نظام الحضور للطلاب "
+            description="تسجيل الدخول إلى حسابك"
         >
             <Head title="تسجيل الدخول" />
 
