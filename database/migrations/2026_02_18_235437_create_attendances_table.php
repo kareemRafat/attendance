@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('lecture_session_id')->constrained()->cascadeOnDelete();
             $table->foreignId('student_id')->constrained()->cascadeOnDelete();
-            $table->string('status');
+            $table->string('status')->default('absent');
             $table->timestamps();
 
             $table->unique(['lecture_session_id', 'student_id']);

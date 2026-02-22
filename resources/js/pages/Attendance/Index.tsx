@@ -100,14 +100,14 @@ export default function AttendanceIndex({
         groupsList.forEach((group) => {
             state[group.id] = {};
             group.students.forEach((student) => {
-                // Priority: 1. LocalStorage Draft, 2. Database Existing, 3. Default 'present'
+                // Priority: 1. LocalStorage Draft, 2. Database Existing, 3. Default 'absent'
                 const draft = draftData[group.id]?.[student.id];
                 const existing = group.lecture_session?.attendances.find(
                     (a) => a.student_id === student.id,
                 );
 
                 state[group.id][student.id] = {
-                    status: draft ? draft.status : (existing ? existing.status : 'present'),
+                    status: draft ? draft.status : (existing ? existing.status : 'absent'),
                     is_installment_due: draft
                         ? draft.is_installment_due
                         : (existing ? existing.is_installment_due : false),
@@ -148,24 +148,25 @@ export default function AttendanceIndex({
     ) => {
         if (!status) return; // Prevent unselecting
         setLocalAttendances((prev) => {
-            const newState = {
-                ...prev,
-                [groupId]: {
-                    ...prev[groupId],
-                    [studentId]: {
-                        ...prev[groupId][studentId],
-                        status,
-                    },
+            const newGroupState = {
+                ...prev[groupId],
+                [studentId]: {
+                    ...prev[groupId][studentId],
+                    status,
                 },
             };
 
-            // Save to localStorage
-            localStorage.setItem(
-                `attendance_draft_${selectedDate}`,
-                JSON.stringify(newState),
-            );
+            // Save ONLY this group's draft to localStorage
+            const key = `attendance_draft_${selectedDate}`;
+            const savedDraft = localStorage.getItem(key);
+            const draftData = savedDraft ? JSON.parse(savedDraft) : {};
+            draftData[groupId] = newGroupState;
+            localStorage.setItem(key, JSON.stringify(draftData));
 
-            return newState;
+            return {
+                ...prev,
+                [groupId]: newGroupState,
+            };
         });
     };
 
@@ -175,24 +176,25 @@ export default function AttendanceIndex({
         checked: boolean,
     ) => {
         setLocalAttendances((prev) => {
-            const newState = {
-                ...prev,
-                [groupId]: {
-                    ...prev[groupId],
-                    [studentId]: {
-                        ...prev[groupId][studentId],
-                        is_installment_due: checked,
-                    },
+            const newGroupState = {
+                ...prev[groupId],
+                [studentId]: {
+                    ...prev[groupId][studentId],
+                    is_installment_due: checked,
                 },
             };
 
-            // Save to localStorage
-            localStorage.setItem(
-                `attendance_draft_${selectedDate}`,
-                JSON.stringify(newState),
-            );
+            // Save ONLY this group's draft to localStorage
+            const key = `attendance_draft_${selectedDate}`;
+            const savedDraft = localStorage.getItem(key);
+            const draftData = savedDraft ? JSON.parse(savedDraft) : {};
+            draftData[groupId] = newGroupState;
+            localStorage.setItem(key, JSON.stringify(draftData));
 
-            return newState;
+            return {
+                ...prev,
+                [groupId]: newGroupState,
+            };
         });
     };
 
@@ -218,14 +220,17 @@ export default function AttendanceIndex({
                     preserveScroll: true,
                     onSuccess: () => {
                         // Clear this group's draft from localStorage after successful save
-                        const savedDraft = localStorage.getItem(`attendance_draft_${selectedDate}`);
+                        const key = `attendance_draft_${selectedDate}`;
+                        const savedDraft = localStorage.getItem(key);
                         if (savedDraft) {
                             const draftData = JSON.parse(savedDraft);
                             delete draftData[groupId];
-                            localStorage.setItem(
-                                `attendance_draft_${selectedDate}`,
-                                JSON.stringify(draftData),
-                            );
+
+                            if (Object.keys(draftData).length === 0) {
+                                localStorage.removeItem(key);
+                            } else {
+                                localStorage.setItem(key, JSON.stringify(draftData));
+                            }
                         }
                     },
                     onFinish: () => setIsSaving(false),
@@ -379,14 +384,14 @@ export default function AttendanceIndex({
                     <div className="flex flex-wrap justify-end gap-2 border-b border-slate-100 pb-3 dark:border-slate-800">
                         {groups.map((group) => {
                             const colors = [
-                                'bg-indigo-800 hover:bg-indigo-900',
-                                'bg-violet-800 hover:bg-violet-900',
                                 'bg-purple-800 hover:bg-purple-900',
                                 'bg-fuchsia-800 hover:bg-fuchsia-900',
                                 'bg-pink-800 hover:bg-pink-900',
                                 'bg-rose-800 hover:bg-rose-900',
                                 'bg-emerald-800 hover:bg-emerald-900',
                                 'bg-teal-800 hover:bg-teal-900',
+                                'bg-indigo-800 hover:bg-indigo-900',
+                                'bg-violet-800 hover:bg-violet-900',
                                 'bg-cyan-800 hover:bg-cyan-900',
                                 'bg-sky-800 hover:bg-sky-900',
                             ];
