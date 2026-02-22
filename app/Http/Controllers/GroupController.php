@@ -32,6 +32,10 @@ class GroupController extends Controller
             $query->where('branch_id', $request->branch_id);
         }
 
+        if ($request->filled('pattern')) {
+            $query->where('pattern', $request->pattern);
+        }
+
         $groups = $query->latest()
             ->paginate(9)
             ->withQueryString();
@@ -45,17 +49,17 @@ class GroupController extends Controller
             ]),
             'canManageEverything' => Auth::user()->isAdmin(),
             'currentTab' => $status,
-            'filters' => $request->only(['search', 'branch_id']),
+            'filters' => $request->only(['search', 'branch_id', 'pattern']),
         ]);
     }
 
-    public function show(Group $group): Response
+    public function show(Group $group, Request $request): Response
     {
         $this->authorize('view', $group);
 
         $group->load('branch');
 
-        $students = $group->students()
+        $studentsQuery = $group->students()
             ->withPivot('enrolled_at', 'ended_at')
             ->withCount([
                 'attendances as present_count' => function ($query) use ($group) {
@@ -73,8 +77,32 @@ class GroupController extends Controller
                         $q->where('group_id', $group->id);
                     })->where('status', \App\Enums\AttendanceStatus::Excused);
                 },
-            ])
-            ->paginate(10, ['*'], 'students_page')
+            ]);
+
+        if ($request->filled('absent_days')) {
+            $absentDays = (int) $request->absent_days;
+            $lastSessionIds = $group->lectureSessions()
+                ->latest('date')
+                ->latest('id')
+                ->limit($absentDays)
+                ->pluck('id');
+
+            foreach ($lastSessionIds as $sessionId) {
+                $studentsQuery->whereHas('attendances', function ($query) use ($sessionId) {
+                    $query->where('lecture_session_id', $sessionId)
+                        ->where('status', \App\Enums\AttendanceStatus::Absent);
+                });
+            }
+
+            // If we asked for N days but there are fewer than N sessions, 
+            // the loop above will filter by all available sessions.
+            // If we want to be strict and only show if they missed EXACTLY N (and N sessions exist):
+            if ($lastSessionIds->count() < $absentDays) {
+                $studentsQuery->whereRaw('1 = 0'); // Return no results if not enough sessions exist
+            }
+        }
+
+        $students = $studentsQuery->paginate(10, ['*'], 'students_page')
             ->withQueryString();
 
         $sessions = $group->lectureSessions()
@@ -91,6 +119,7 @@ class GroupController extends Controller
             'group' => $group,
             'students' => $students,
             'sessions' => $sessions,
+            'filters' => request()->only(['search', 'branch_id', 'pattern', 'tab', 'page', 'absent_days']),
         ]);
     }
 

@@ -1,4 +1,4 @@
-import { Head, Link } from '@inertiajs/react';
+import { Head, Link, router } from '@inertiajs/react';
 import { format } from 'date-fns';
 import {
     CheckCircle2,
@@ -10,9 +10,17 @@ import {
     GraduationCap,
     TrendingUp,
     BookOpen,
+    Filter,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from '@/components/ui/select';
 import {
     Table,
     TableBody,
@@ -75,13 +83,53 @@ interface Props {
         to: number;
         total: number;
     };
+    filters: {
+        search?: string;
+        branch_id?: string;
+        pattern?: string;
+        tab?: string;
+        page?: string;
+        absent_days?: string;
+    };
 }
 
-export default function GroupShow({ group, students, sessions }: Props) {
+export default function GroupShow({
+    group,
+    students,
+    sessions,
+    filters,
+}: Props) {
+    const query = new URLSearchParams();
+    if (filters.search) query.set('search', filters.search);
+    if (filters.branch_id) query.set('branch_id', filters.branch_id);
+    if (filters.pattern) query.set('pattern', filters.pattern);
+    if (filters.tab) query.set('tab', filters.tab);
+    if (filters.page) query.set('page', filters.page);
+
+    const queryString = query.toString();
+    const returnUrl = `/groups${queryString ? `?${queryString}` : ''}`;
+
     const breadcrumbs = [
-        { title: 'المجموعات', href: '/groups' },
-        { title: group.name, href: `/groups/${group.id}` },
+        { title: 'المجموعات', href: returnUrl },
+        {
+            title: group.name,
+            href: `/groups/${group.id}${queryString ? `?${queryString}` : ''}`,
+        },
     ];
+
+    const handleAbsentFilter = (value: string) => {
+        const params = new URLSearchParams(window.location.search);
+        if (value === 'all') {
+            params.delete('absent_days');
+        } else {
+            params.set('absent_days', value);
+        }
+        params.delete('students_page'); // Reset pagination when filtering
+        router.get(`/groups/${group.id}`, Object.fromEntries(params), {
+            preserveState: true,
+            preserveScroll: true,
+        });
+    };
 
     const totalSessions = sessions.total;
 
@@ -92,7 +140,7 @@ export default function GroupShow({ group, students, sessions }: Props) {
             <div className="flex flex-col gap-6 p-4">
                 <div className="flex items-center justify-between">
                     <div className="flex items-center gap-4">
-                        <Link href="/groups">
+                        <Link href={returnUrl}>
                             <Button
                                 variant="outline"
                                 size="icon"
@@ -167,10 +215,43 @@ export default function GroupShow({ group, students, sessions }: Props) {
                 {/* Section 2: Students Attendance Report */}
                 <Card className="overflow-hidden border-slate-200 shadow-sm dark:border-slate-800 dark:bg-slate-900/50">
                     <CardHeader className="border-b border-slate-100 bg-slate-50/30 pb-3 dark:border-slate-800 dark:bg-slate-800/30">
-                        <CardTitle className="flex items-center gap-2 text-lg font-bold text-slate-800 dark:text-white">
-                            <GraduationCap className="size-5 text-indigo-500" />
-                            تقرير حضور الطلاب
-                        </CardTitle>
+                        <div className="flex flex-wrap items-center justify-between gap-4">
+                            <CardTitle className="flex items-center gap-2 text-lg font-bold text-slate-800 dark:text-white">
+                                <GraduationCap className="size-5 text-indigo-500" />
+                                تقرير حضور الطلاب
+                            </CardTitle>
+
+                            <div className="flex items-center gap-2">
+                                <span className="text-xs font-bold text-slate-500 dark:text-slate-400">
+                                    فلترة حسب الغياب (آخر):
+                                </span>
+                                <Select
+                                    value={filters.absent_days || 'all'}
+                                    onValueChange={handleAbsentFilter}
+                                >
+                                    <SelectTrigger className="h-9 w-[150px] rounded-lg border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-950">
+                                        <SelectValue placeholder="الكل" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="all">
+                                            جميع الطلاب
+                                        </SelectItem>
+                                        <SelectItem value="1">
+                                            آخر محاضرة
+                                        </SelectItem>
+                                        <SelectItem value="2">
+                                            آخر محاضرتين
+                                        </SelectItem>
+                                        <SelectItem value="3">
+                                            آخر 3 محاضرات
+                                        </SelectItem>
+                                        <SelectItem value="4">
+                                            آخر 4 محاضرات
+                                        </SelectItem>
+                                    </SelectContent>
+                                </Select>
+                            </div>
+                        </div>
                     </CardHeader>
                     <CardContent className="p-0">
                         <Table>

@@ -84,6 +84,7 @@ interface Props {
     filters: {
         search?: string;
         branch_id?: string;
+        pattern?: string;
     };
 }
 
@@ -111,17 +112,23 @@ export default function GroupsIndex({
     const [branchFilter, setBranchFilter] = useState(
         filters.branch_id || 'all',
     );
+    const [patternFilter, setPatternFilter] = useState(
+        filters.pattern || 'all',
+    );
 
     const handleFilter = (
         newSearch?: string,
         newBranch?: string,
+        newPattern?: string,
     ) => {
         const query: any = { tab: currentTab };
         const s = newSearch !== undefined ? newSearch : search;
         const b = newBranch !== undefined ? newBranch : branchFilter;
+        const p = newPattern !== undefined ? newPattern : patternFilter;
 
         if (s) query.search = s;
         if (b && b !== 'all') query.branch_id = b;
+        if (p && p !== 'all') query.pattern = p;
 
         router.get('/groups', query, {
             preserveState: true,
@@ -211,9 +218,7 @@ export default function GroupsIndex({
             <div className="flex flex-col gap-6 p-4">
                 <div className="flex items-center justify-between">
                     <div>
-                        <h1 className="text-2xl font-bold">
-                            إدارة المجموعات
-                        </h1>
+                        <h1 className="text-2xl font-bold">إدارة المجموعات</h1>
                         <p className="text-sm text-muted-foreground">
                             إدارة مجموعات الدورات وحالاتها.
                         </p>
@@ -229,7 +234,7 @@ export default function GroupsIndex({
                 <div className="flex flex-wrap items-center justify-between gap-4">
                     <div className="inline-flex gap-1 self-start rounded-lg bg-neutral-100 p-1 dark:bg-neutral-800">
                         <Link
-                            href={`/groups?tab=active${branchFilter !== 'all' ? `&branch_id=${branchFilter}` : ''}${search ? `&search=${search}` : ''}`}
+                            href={`/groups?tab=active${branchFilter !== 'all' ? `&branch_id=${branchFilter}` : ''}${patternFilter !== 'all' ? `&pattern=${patternFilter}` : ''}${search ? `&search=${search}` : ''}`}
                             className={cn(
                                 'flex cursor-pointer items-center rounded-md px-4 py-2 text-sm font-medium transition-colors',
                                 currentTab === 'active'
@@ -240,7 +245,7 @@ export default function GroupsIndex({
                             المجموعات النشطة
                         </Link>
                         <Link
-                            href={`/groups?tab=closed${branchFilter !== 'all' ? `&branch_id=${branchFilter}` : ''}${search ? `&search=${search}` : ''}`}
+                            href={`/groups?tab=closed${branchFilter !== 'all' ? `&branch_id=${branchFilter}` : ''}${patternFilter !== 'all' ? `&pattern=${patternFilter}` : ''}${search ? `&search=${search}` : ''}`}
                             className={cn(
                                 'flex cursor-pointer items-center rounded-md px-4 py-2 text-sm font-medium transition-colors',
                                 currentTab === 'closed'
@@ -296,15 +301,41 @@ export default function GroupsIndex({
                             </Select>
                         )}
 
+                        {/* Pattern Filter */}
+                        <Select
+                            value={patternFilter}
+                            onValueChange={(val) => {
+                                setPatternFilter(val);
+                                handleFilter(undefined, undefined, val);
+                            }}
+                        >
+                            <SelectTrigger className="h-10 w-full rounded-xl border-slate-200 bg-white sm:w-48 dark:border-slate-800 dark:bg-slate-900">
+                                <SelectValue placeholder="جميع الأيام" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="all">جميع الأيام</SelectItem>
+                                {daysPatterns.map((pattern) => (
+                                    <SelectItem
+                                        key={pattern.value}
+                                        value={pattern.value}
+                                    >
+                                        {pattern.name}
+                                    </SelectItem>
+                                ))}
+                            </SelectContent>
+                        </Select>
+
                         {(search ||
-                            (branchFilter && branchFilter !== 'all')) && (
+                            (branchFilter && branchFilter !== 'all') ||
+                            (patternFilter && patternFilter !== 'all')) && (
                             <Button
                                 variant="ghost"
                                 size="sm"
                                 onClick={() => {
                                     setSearch('');
                                     setBranchFilter('all');
-                                    handleFilter('', 'all');
+                                    setPatternFilter('all');
+                                    handleFilter('', 'all', 'all');
                                 }}
                                 className="h-10 cursor-pointer rounded-xl px-4 text-xs font-bold text-indigo-600 transition-all hover:bg-indigo-50 hover:text-indigo-700 dark:hover:bg-indigo-900/20"
                             >
@@ -329,7 +360,10 @@ export default function GroupsIndex({
                                         </h3>
                                         <div className="mt-1 flex items-center gap-1.5">
                                             {/* <Building2 size={17} className='text-slate-700' /> */}
-                                            <Navigation size={17} className='text-slate-700' />
+                                            <Navigation
+                                                size={17}
+                                                className="text-slate-700"
+                                            />
                                             <span className="inline-flex items-center rounded-full bg-slate-100 px-2 py-1 text-xs font-bold tracking-wider text-blue-900 capitalize dark:bg-slate-800">
                                                 {group.branch?.name}
                                             </span>
@@ -411,7 +445,9 @@ export default function GroupsIndex({
                                             asChild
                                             className="h-10 cursor-pointer rounded-xl bg-slate-900 px-5 font-bold text-white shadow-lg shadow-slate-500/10 transition-all hover:bg-slate-800"
                                         >
-                                            <Link href={`/groups/${group.id}`}>
+                                            <Link
+                                                href={`/groups/${group.id}${window.location.search}`}
+                                            >
                                                 الحضور
                                             </Link>
                                         </Button>
@@ -424,7 +460,8 @@ export default function GroupsIndex({
                     {groups.data.length === 0 && (
                         <div className="col-span-full rounded-xl border bg-muted/20 py-24 text-center">
                             <p className="text-muted-foreground">
-                                لم يتم العثور على مجموعات {currentTab === 'active' ? 'نشطة' : 'مغلقة'}.
+                                لم يتم العثور على مجموعات{' '}
+                                {currentTab === 'active' ? 'نشطة' : 'مغلقة'}.
                             </p>
                         </div>
                     )}

@@ -75,8 +75,11 @@ class StudentController extends Controller
             });
 
         $attendanceHistory = $student->attendances()
+            ->join('lecture_sessions', 'attendances.lecture_session_id', '=', 'lecture_sessions.id')
+            ->select('attendances.*')
             ->with(['lectureSession.group'])
-            ->latest()
+            ->orderBy('lecture_sessions.date', 'desc')
+            ->orderBy('attendances.created_at', 'desc')
             ->paginate(5, ['*'], 'attendance_page')
             ->withQueryString();
 
