@@ -336,25 +336,41 @@ export default function AttendanceIndex({
                 {/* Groups Selection Buttons */}
                 {groups.length > 0 && (
                     <div className="flex flex-wrap justify-end gap-2 border-b border-slate-100 pb-3 dark:border-slate-800">
-                        {groups.map((group) => (
-                            <Button
-                                key={group.id}
-                                variant={
-                                    activeGroupId === group.id
-                                        ? 'default'
-                                        : 'outline'
-                                }
-                                onClick={() => setActiveGroupId(group.id)}
-                                className={cn(
-                                    'h-9 cursor-pointer rounded-lg px-4 text-sm font-bold transition-all',
-                                    activeGroupId === group.id
-                                        ? 'bg-indigo-600 text-white shadow-md shadow-indigo-500/20 hover:bg-indigo-700'
-                                        : 'border-slate-200 bg-white text-slate-600 hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300 dark:hover:bg-slate-800',
-                                )}
-                            >
-                                {group.name}
-                            </Button>
-                        ))}
+                        {groups.map((group) => {
+                            const colors = [
+                                'bg-indigo-800 hover:bg-indigo-900',
+                                'bg-violet-800 hover:bg-violet-900',
+                                'bg-purple-800 hover:bg-purple-900',
+                                'bg-fuchsia-800 hover:bg-fuchsia-900',
+                                'bg-pink-800 hover:bg-pink-900',
+                                'bg-rose-800 hover:bg-rose-900',
+                                'bg-emerald-800 hover:bg-emerald-900',
+                                'bg-teal-800 hover:bg-teal-900',
+                                'bg-cyan-800 hover:bg-cyan-900',
+                                'bg-sky-800 hover:bg-sky-900',
+                            ];
+                            const colorClass = colors[group.id % colors.length];
+
+                            return (
+                                <Button
+                                    key={group.id}
+                                    variant={
+                                        activeGroupId === group.id
+                                            ? 'default'
+                                            : 'outline'
+                                    }
+                                    onClick={() => setActiveGroupId(group.id)}
+                                    className={cn(
+                                        'h-9 cursor-pointer rounded-lg px-4 text-sm font-bold transition-all',
+                                        activeGroupId === group.id
+                                            ? `${colorClass} text-white shadow-md shadow-black/20`
+                                            : 'border-slate-200 bg-white text-slate-600 hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300 dark:hover:bg-slate-800',
+                                    )}
+                                >
+                                    {group.name}
+                                </Button>
+                            );
+                        })}
                     </div>
                 )}
                 {activeGroup ? (
