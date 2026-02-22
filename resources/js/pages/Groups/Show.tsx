@@ -79,7 +79,7 @@ interface Props {
 
 export default function GroupShow({ group, students, sessions }: Props) {
     const breadcrumbs = [
-        { title: 'Groups', href: '/groups' },
+        { title: 'المجموعات', href: '/groups' },
         { title: group.name, href: `/groups/${group.id}` },
     ];
 
@@ -87,7 +87,7 @@ export default function GroupShow({ group, students, sessions }: Props) {
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title={`Group Report: ${group.name}`} />
+            <Head title={`تقرير المجموعة: ${group.name}`} />
 
             <div className="flex flex-col gap-6 p-4">
                 <div className="flex items-center justify-between">
@@ -98,7 +98,7 @@ export default function GroupShow({ group, students, sessions }: Props) {
                                 size="icon"
                                 className="rounded-full"
                             >
-                                <ArrowLeft className="size-4" />
+                                <ArrowLeft className="size-4 rtl:rotate-180" />
                             </Button>
                         </Link>
                         <div>
@@ -117,7 +117,7 @@ export default function GroupShow({ group, students, sessions }: Props) {
                     <Card className="border-indigo-100 bg-indigo-50/50 shadow-sm dark:border-indigo-900 dark:bg-indigo-950/20">
                         <CardHeader className="p-4 pb-2">
                             <CardTitle className="flex items-center gap-2 text-xs font-bold tracking-wider text-indigo-600 uppercase dark:text-indigo-400">
-                                <Calendar className="size-3.5" /> Schedule
+                                <Calendar className="size-3.5" /> الجدول
                             </CardTitle>
                         </CardHeader>
                         <CardContent className="p-4 pt-0">
@@ -125,7 +125,7 @@ export default function GroupShow({ group, students, sessions }: Props) {
                                 {group.formatted_pattern}
                             </p>
                             <p className="text-xs font-medium text-indigo-600/70">
-                                Started{' '}
+                                بدأت في{' '}
                                 {format(new Date(group.start_date), 'PPP')}
                             </p>
                         </CardContent>
@@ -134,15 +134,15 @@ export default function GroupShow({ group, students, sessions }: Props) {
                     <Card className="border-emerald-100 bg-emerald-50/50 shadow-sm dark:border-emerald-900 dark:bg-emerald-950/20">
                         <CardHeader className="p-4 pb-2">
                             <CardTitle className="flex items-center gap-2 text-xs font-bold tracking-wider text-emerald-600 uppercase dark:text-emerald-400">
-                                <Users className="size-3.5" /> Enrollment
+                                <Users className="size-3.5" /> المسجلين
                             </CardTitle>
                         </CardHeader>
                         <CardContent className="p-4 pt-0">
                             <p className="text-lg font-bold text-emerald-900 dark:text-emerald-200">
-                                {students.total} Students
+                                {students.total} طلاب
                             </p>
                             <p className="text-xs font-medium text-emerald-600/70">
-                                Active in this group
+                                نشط في هذه المجموعة
                             </p>
                         </CardContent>
                     </Card>
@@ -150,15 +150,15 @@ export default function GroupShow({ group, students, sessions }: Props) {
                     <Card className="border-amber-100 bg-amber-50/50 shadow-sm dark:border-amber-900 dark:bg-amber-950/20">
                         <CardHeader className="p-4 pb-2">
                             <CardTitle className="flex items-center gap-2 text-xs font-bold tracking-wider text-amber-600 uppercase dark:text-amber-400">
-                                <BookOpen className="size-3.5" /> Progress
+                                <BookOpen className="size-3.5" /> التقدم
                             </CardTitle>
                         </CardHeader>
                         <CardContent className="p-4 pt-0">
                             <p className="text-lg font-bold text-amber-900 dark:text-amber-200">
-                                {totalSessions} / {group.max_lectures} Lectures
+                                {totalSessions} / {group.max_lectures} محاضرة
                             </p>
                             <p className="text-xs font-medium text-amber-600/70">
-                                Total sessions recorded
+                                إجمالي الجلسات المسجلة
                             </p>
                         </CardContent>
                     </Card>
@@ -169,33 +169,33 @@ export default function GroupShow({ group, students, sessions }: Props) {
                     <CardHeader className="border-b border-slate-100 bg-slate-50/30 pb-3 dark:border-slate-800 dark:bg-slate-800/30">
                         <CardTitle className="flex items-center gap-2 text-lg font-bold text-slate-800 dark:text-white">
                             <GraduationCap className="size-5 text-indigo-500" />
-                            Students Attendance Report
+                            تقرير حضور الطلاب
                         </CardTitle>
                     </CardHeader>
                     <CardContent className="p-0">
                         <Table>
                             <TableHeader className="bg-slate-50/50 dark:bg-slate-800/20">
                                 <TableRow className="dark:border-slate-800">
-                                    <TableHead className="py-4 pl-6 font-bold text-slate-900 dark:text-slate-300">
-                                        Student Name
+                                    <TableHead className="py-4 pr-6 font-bold text-slate-900 dark:text-slate-300">
+                                        اسم الطالب
                                     </TableHead>
                                     <TableHead className="font-bold text-slate-900 dark:text-slate-300">
-                                        Track
+                                        المسار
                                     </TableHead>
                                     <TableHead className="text-center font-bold text-slate-900 dark:text-slate-300">
-                                        Rate
+                                        النسبة
                                     </TableHead>
                                     <TableHead className="text-center font-bold text-emerald-600 dark:text-emerald-400">
-                                        Present
+                                        حضور
                                     </TableHead>
                                     <TableHead className="text-center font-bold text-rose-600 dark:text-rose-400">
-                                        Absent
+                                        غياب
                                     </TableHead>
                                     <TableHead className="text-center font-bold text-amber-600 dark:text-amber-400">
-                                        Excused
+                                        بعذر
                                     </TableHead>
-                                    <TableHead className="pr-6 text-right font-bold text-slate-900 dark:text-slate-300">
-                                        Action
+                                    <TableHead className="pl-6 text-left font-bold text-slate-900 dark:text-slate-300">
+                                        إجراء
                                     </TableHead>
                                 </TableRow>
                             </TableHeader>
@@ -220,7 +220,7 @@ export default function GroupShow({ group, students, sessions }: Props) {
                                             key={student.id}
                                             className="group transition-colors hover:bg-slate-50/50 dark:border-slate-800 dark:hover:bg-slate-800/30"
                                         >
-                                            <TableCell className="py-4 pl-6 font-bold text-slate-900 dark:text-slate-200">
+                                            <TableCell className="py-4 pr-6 font-bold text-slate-900 dark:text-slate-200">
                                                 {student.name}
                                             </TableCell>
                                             <TableCell>
@@ -267,7 +267,7 @@ export default function GroupShow({ group, students, sessions }: Props) {
                                                     {student.excused_count}
                                                 </span>
                                             </TableCell>
-                                            <TableCell className="pr-6 text-right">
+                                            <TableCell className="pl-6 text-left">
                                                 <Link
                                                     href={`/students/${student.id}`}
                                                 >
@@ -276,7 +276,7 @@ export default function GroupShow({ group, students, sessions }: Props) {
                                                         size="sm"
                                                         className="h-8 rounded-full text-xs font-bold text-indigo-600 hover:bg-indigo-50 hover:text-indigo-700 dark:text-indigo-400 dark:hover:bg-indigo-900/30"
                                                     >
-                                                        View Profile
+                                                        عرض الملف الشخصي
                                                     </Button>
                                                 </Link>
                                             </TableCell>
@@ -289,7 +289,7 @@ export default function GroupShow({ group, students, sessions }: Props) {
                                             colSpan={7}
                                             className="h-24 text-center text-slate-400 italic"
                                         >
-                                            No students found in this group.
+                                            لا يوجد طلاب في هذه المجموعة.
                                         </TableCell>
                                     </TableRow>
                                 )}
@@ -298,15 +298,15 @@ export default function GroupShow({ group, students, sessions }: Props) {
                         {students.links && students.links.length > 3 && (
                             <div className="flex items-center justify-between border-t border-slate-100 bg-slate-50/30 px-6 py-4 dark:border-slate-800 dark:bg-slate-800/10">
                                 <div className="text-sm font-bold tracking-tight text-slate-500 uppercase dark:text-slate-400">
-                                    Showing{' '}
+                                    عرض{' '}
                                     <span className="text-slate-900 dark:text-white">
                                         {students.from}-{students.to}
                                     </span>{' '}
-                                    of{' '}
+                                    من أصل{' '}
                                     <span className="text-slate-900 dark:text-white">
                                         {students.total}
                                     </span>{' '}
-                                    students
+                                    طالب
                                 </div>
                                 <div className="flex flex-wrap justify-center gap-1">
                                     {students.links.map((link, i) => (
@@ -334,7 +334,7 @@ export default function GroupShow({ group, students, sessions }: Props) {
                                             >
                                                 <span
                                                     dangerouslySetInnerHTML={{
-                                                        __html: link.label,
+                                                        __html: link.label === '&laquo; Previous' ? 'السابق' : (link.label === 'Next &raquo;' ? 'التالي' : link.label),
                                                     }}
                                                 />
                                             </Button>
@@ -351,27 +351,27 @@ export default function GroupShow({ group, students, sessions }: Props) {
                     <CardHeader className="border-b border-slate-100 bg-slate-50/30 pb-3 dark:border-slate-800 dark:bg-slate-800/30">
                         <CardTitle className="flex items-center gap-2 text-lg font-bold text-slate-800 dark:text-white">
                             <Calendar className="size-5 text-indigo-500" />
-                            Attendance History (Sessions)
+                            سجل الحضور (الجلسات)
                         </CardTitle>
                     </CardHeader>
                     <CardContent className="p-0">
                         <Table>
                             <TableHeader className="bg-slate-50/50 dark:bg-slate-800/20">
                                 <TableRow className="dark:border-slate-800">
-                                    <TableHead className="py-4 pl-6 font-bold text-slate-900 dark:text-slate-300">
-                                        Session #
+                                    <TableHead className="py-4 pr-6 font-bold text-slate-900 dark:text-slate-300">
+                                        رقم الجلسة
                                     </TableHead>
                                     <TableHead className="font-bold text-slate-900 dark:text-slate-300">
-                                        Date
+                                        التاريخ
                                     </TableHead>
                                     <TableHead className="text-center font-bold text-emerald-600 dark:text-emerald-400">
-                                        Present
+                                        حضور
                                     </TableHead>
                                     <TableHead className="text-center font-bold text-rose-600 dark:text-rose-400">
-                                        Absent
+                                        غياب
                                     </TableHead>
                                     <TableHead className="text-center font-bold text-amber-600 dark:text-amber-400">
-                                        Excused
+                                        بعذر
                                     </TableHead>
                                 </TableRow>
                             </TableHeader>
@@ -381,8 +381,8 @@ export default function GroupShow({ group, students, sessions }: Props) {
                                         key={session.id}
                                         className="transition-colors hover:bg-slate-50/50 dark:border-slate-800 dark:hover:bg-slate-800/30"
                                     >
-                                        <TableCell className="py-4 pl-6 font-black text-slate-900 dark:text-slate-200">
-                                            Lecture {session.lecture_number}
+                                        <TableCell className="py-4 pr-6 font-black text-slate-900 dark:text-slate-200">
+                                            محاضرة {session.lecture_number}
                                         </TableCell>
                                         <TableCell className="font-medium text-slate-600 dark:text-slate-400">
                                             {format(
@@ -416,8 +416,7 @@ export default function GroupShow({ group, students, sessions }: Props) {
                                             colSpan={5}
                                             className="h-24 text-center text-slate-400 italic"
                                         >
-                                            No sessions recorded for this group
-                                            yet.
+                                            لم يتم تسجيل أي جلسات لهذه المجموعة بعد.
                                         </TableCell>
                                     </TableRow>
                                 )}
@@ -426,15 +425,15 @@ export default function GroupShow({ group, students, sessions }: Props) {
                         {sessions.links && sessions.links.length > 3 && (
                             <div className="flex items-center justify-between border-t border-slate-100 bg-slate-50/30 px-6 py-4 dark:border-slate-800 dark:bg-slate-800/10">
                                 <div className="text-sm font-bold tracking-tight text-slate-500 uppercase dark:text-slate-400">
-                                    Showing{' '}
+                                    عرض{' '}
                                     <span className="text-slate-900 dark:text-white">
                                         {sessions.from}-{sessions.to}
                                     </span>{' '}
-                                    of{' '}
+                                    من أصل{' '}
                                     <span className="text-slate-900 dark:text-white">
                                         {sessions.total}
                                     </span>{' '}
-                                    sessions
+                                    جلسة
                                 </div>
                                 <div className="flex flex-wrap justify-center gap-1">
                                     {sessions.links.map((link, i) => (
@@ -462,7 +461,7 @@ export default function GroupShow({ group, students, sessions }: Props) {
                                             >
                                                 <span
                                                     dangerouslySetInnerHTML={{
-                                                        __html: link.label,
+                                                        __html: link.label === '&laquo; Previous' ? 'السابق' : (link.label === 'Next &raquo;' ? 'التالي' : link.label),
                                                     }}
                                                 />
                                             </Button>

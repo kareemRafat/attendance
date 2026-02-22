@@ -11,9 +11,9 @@ enum DaysPattern: string
     public function label(): string
     {
         return match ($this) {
-            self::SatTue => 'Saturday & Tuesday',
-            self::SunWed => 'Sunday & Wednesday',
-            self::MonThu => 'Monday & Thursday',
+            self::SatTue => 'السبت والثلاثاء',
+            self::SunWed => 'الأحد والأربعاء',
+            self::MonThu => 'الاثنين والخميس',
         };
     }
 }

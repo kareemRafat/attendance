@@ -98,7 +98,7 @@ export default function GroupsIndex({
     const user = auth.user;
     const isAdmin = user.role === 'admin';
 
-    const breadcrumbs = [{ title: 'Groups', href: '/groups' }];
+    const breadcrumbs = [{ title: 'المجموعات', href: '/groups' }];
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
     const [editingGroup, setEditingGroup] = useState<Group | null>(null);
     const [finishingGroup, setFinishingGroup] = useState<Group | null>(null);
@@ -206,23 +206,23 @@ export default function GroupsIndex({
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="Groups" />
+            <Head title="المجموعات" />
 
             <div className="flex flex-col gap-6 p-4">
                 <div className="flex items-center justify-between">
                     <div>
                         <h1 className="text-2xl font-bold">
-                            Groups Management
+                            إدارة المجموعات
                         </h1>
                         <p className="text-sm text-muted-foreground">
-                            Manage your course groups and their status.
+                            إدارة مجموعات الدورات وحالاتها.
                         </p>
                     </div>
                     <Button
                         className="cursor-pointer gap-2"
                         onClick={() => setIsCreateModalOpen(true)}
                     >
-                        <Plus className="size-4" /> New Group
+                        <Plus className="size-4" /> مجموعة جديدة
                     </Button>
                 </div>
 
@@ -237,7 +237,7 @@ export default function GroupsIndex({
                                     : 'text-neutral-500 hover:bg-neutral-200/60 hover:text-black dark:text-neutral-400 dark:hover:bg-neutral-700/60',
                             )}
                         >
-                            Active Groups
+                            المجموعات النشطة
                         </Link>
                         <Link
                             href={`/groups?tab=closed${branchFilter !== 'all' ? `&branch_id=${branchFilter}` : ''}${search ? `&search=${search}` : ''}`}
@@ -248,22 +248,23 @@ export default function GroupsIndex({
                                     : 'text-neutral-500 hover:bg-neutral-200/60 hover:text-black dark:text-neutral-400 dark:hover:bg-neutral-700/60',
                             )}
                         >
-                            Closed Groups
+                            المجموعات المغلقة
                         </Link>
                     </div>
 
                     <div className="flex flex-wrap items-center gap-3">
                         {/* Search */}
                         <div className="relative w-full sm:w-64">
-                            <Search className="absolute top-1/2 left-3 size-4 -translate-y-1/2 text-slate-400" />
+                            <Search className="absolute top-1/2 right-3 size-4 -translate-y-1/2 text-slate-400" />
                             <Input
-                                placeholder="Search groups..."
+                                type="search"
+                                placeholder="بحث عن المجموعات..."
                                 value={search}
                                 onChange={(e) => {
                                     setSearch(e.target.value);
                                     handleFilter(e.target.value);
                                 }}
-                                className="h-10 rounded-xl border-slate-200 bg-white pl-9 dark:border-slate-800 dark:bg-slate-900"
+                                className="h-10 rounded-xl border-slate-200 bg-white pr-9 dark:border-slate-800 dark:bg-slate-900"
                             />
                         </div>
 
@@ -277,11 +278,11 @@ export default function GroupsIndex({
                                 }}
                             >
                                 <SelectTrigger className="h-10 w-full rounded-xl border-slate-200 bg-white sm:w-48 dark:border-slate-800 dark:bg-slate-900">
-                                    <SelectValue placeholder="All Branches" />
+                                    <SelectValue placeholder="جميع الفروع" />
                                 </SelectTrigger>
                                 <SelectContent>
                                     <SelectItem value="all">
-                                        All Branches
+                                        جميع الفروع
                                     </SelectItem>
                                     {branches.map((branch) => (
                                         <SelectItem
@@ -307,7 +308,7 @@ export default function GroupsIndex({
                                 }}
                                 className="h-10 cursor-pointer rounded-xl px-4 text-xs font-bold text-indigo-600 transition-all hover:bg-indigo-50 hover:text-indigo-700 dark:hover:bg-indigo-900/20"
                             >
-                                Reset
+                                إعادة تعيين
                             </Button>
                         )}
                     </div>
@@ -352,7 +353,7 @@ export default function GroupsIndex({
                                         </div>
                                         <div className="flex flex-col">
                                             <span className="text-[10px] font-bold tracking-tight text-slate-400 uppercase">
-                                                Schedule
+                                                الجدول
                                             </span>
                                             <span className="text-slate-900 dark:text-slate-200">
                                                 {group.formatted_pattern}
@@ -366,11 +367,11 @@ export default function GroupsIndex({
                                         </div>
                                         <div className="flex flex-col">
                                             <span className="text-[10px] font-bold tracking-tight text-slate-400 uppercase">
-                                                Enrolled
+                                                المسجلين
                                             </span>
                                             <span className="text-slate-900 dark:text-slate-200">
                                                 {group.students_count || 0}{' '}
-                                                Students
+                                                طلاب
                                             </span>
                                         </div>
                                     </div>
@@ -395,12 +396,12 @@ export default function GroupsIndex({
                                         {group.is_active ? (
                                             <>
                                                 <CheckCircle className="mr-2 size-4" />{' '}
-                                                Finish Group
+                                                إنهاء المجموعة
                                             </>
                                         ) : (
                                             <>
                                                 <RotateCcw className="mr-2 size-4" />{' '}
-                                                Reactivate
+                                                إعادة تنشيط
                                             </>
                                         )}
                                     </Button>
@@ -411,7 +412,7 @@ export default function GroupsIndex({
                                             className="h-10 cursor-pointer rounded-xl bg-slate-900 px-5 font-bold text-white shadow-lg shadow-slate-500/10 transition-all hover:bg-slate-800"
                                         >
                                             <Link href={`/groups/${group.id}`}>
-                                                Attendance
+                                                الحضور
                                             </Link>
                                         </Button>
                                     )}
@@ -423,7 +424,7 @@ export default function GroupsIndex({
                     {groups.data.length === 0 && (
                         <div className="col-span-full rounded-xl border bg-muted/20 py-24 text-center">
                             <p className="text-muted-foreground">
-                                No {currentTab} groups found.
+                                لم يتم العثور على مجموعات {currentTab === 'active' ? 'نشطة' : 'مغلقة'}.
                             </p>
                         </div>
                     )}
@@ -433,15 +434,15 @@ export default function GroupsIndex({
                 {groups.links && groups.links.length > 3 && (
                     <div className="flex items-center justify-between rounded-xl border-t border-slate-100 bg-slate-50/30 px-6 py-4 dark:border-slate-800 dark:bg-slate-800/10">
                         <div className="text-sm font-bold tracking-tight text-slate-500 uppercase dark:text-slate-400">
-                            Showing{' '}
+                            عرض{' '}
                             <span className="text-slate-900 dark:text-white">
                                 {groups.from}-{groups.to}
                             </span>{' '}
-                            of{' '}
+                            من أصل{' '}
                             <span className="text-slate-900 dark:text-white">
                                 {groups.total}
                             </span>{' '}
-                            groups
+                            مجموعة
                         </div>
                         <div className="flex flex-wrap justify-center gap-1">
                             {groups.links.map((link, i) => (
@@ -467,7 +468,7 @@ export default function GroupsIndex({
                                     >
                                         <span
                                             dangerouslySetInnerHTML={{
-                                                __html: link.label,
+                                                __html: link.label === '&laquo; Previous' ? 'السابق' : (link.label === 'Next &raquo;' ? 'التالي' : link.label),
                                             }}
                                         />
                                     </Button>
@@ -486,14 +487,14 @@ export default function GroupsIndex({
                 <DialogContent>
                     <form onSubmit={handleCreateSubmit}>
                         <DialogHeader>
-                            <DialogTitle>Create New Group</DialogTitle>
+                            <DialogTitle>إنشاء مجموعة جديدة</DialogTitle>
                             <DialogDescription>
-                                Add a new study group to a specific branch.
+                                إضافة مجموعة دراسية جديدة لفرع معين.
                             </DialogDescription>
                         </DialogHeader>
                         <div className="grid gap-4 py-4">
                             <div className="grid gap-2">
-                                <Label htmlFor="create-branch">Branch</Label>
+                                <Label htmlFor="create-branch">الفرع</Label>
                                 <Select
                                     value={createForm.data.branch_id.toString()}
                                     onValueChange={(v) =>
@@ -504,7 +505,7 @@ export default function GroupsIndex({
                                     }
                                 >
                                     <SelectTrigger id="create-branch">
-                                        <SelectValue placeholder="Select branch" />
+                                        <SelectValue placeholder="اختر الفرع" />
                                     </SelectTrigger>
                                     <SelectContent>
                                         {(branches || []).map((branch) => (
@@ -523,7 +524,7 @@ export default function GroupsIndex({
                             </div>
 
                             <div className="grid gap-2">
-                                <Label htmlFor="create-name">Group Name</Label>
+                                <Label htmlFor="create-name">اسم المجموعة</Label>
                                 <Input
                                     id="create-name"
                                     value={createForm.data.name}
@@ -533,14 +534,14 @@ export default function GroupsIndex({
                                             e.target.value,
                                         )
                                     }
-                                    placeholder="e.g. Frontend G1"
+                                    placeholder="مثال: فرونت إند G1"
                                 />
                                 <InputError message={createForm.errors.name} />
                             </div>
 
                             <div className="grid gap-2">
                                 <Label htmlFor="create-pattern">
-                                    Days Pattern
+                                    نمط الأيام
                                 </Label>
                                 <Select
                                     value={createForm.data.pattern}
@@ -549,7 +550,7 @@ export default function GroupsIndex({
                                     }
                                 >
                                     <SelectTrigger id="create-pattern">
-                                        <SelectValue placeholder="Select pattern" />
+                                        <SelectValue placeholder="اختر النمط" />
                                     </SelectTrigger>
                                     <SelectContent>
                                         {(daysPatterns || []).map((pattern) => (
@@ -570,7 +571,7 @@ export default function GroupsIndex({
                             <div className="grid grid-cols-2 gap-4">
                                 <div className="grid gap-2">
                                     <Label htmlFor="create-start-date">
-                                        Start Date
+                                        تاريخ البدء
                                     </Label>
                                     <Input
                                         id="create-start-date"
@@ -589,7 +590,7 @@ export default function GroupsIndex({
                                 </div>
                                 <div className="grid gap-2">
                                     <Label htmlFor="create-max-lectures">
-                                        Max Lectures
+                                        أقصى عدد محاضرات
                                     </Label>
                                     <Input
                                         id="create-max-lectures"
@@ -614,7 +615,7 @@ export default function GroupsIndex({
                                 variant="outline"
                                 onClick={() => setIsCreateModalOpen(false)}
                             >
-                                Cancel
+                                إلغاء
                             </Button>
                             <Button
                                 type="submit"
@@ -623,7 +624,7 @@ export default function GroupsIndex({
                                 {createForm.processing && (
                                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                                 )}
-                                Create Group
+                                إنشاء المجموعة
                             </Button>
                         </DialogFooter>
                     </form>
@@ -638,14 +639,14 @@ export default function GroupsIndex({
                 <DialogContent>
                     <form onSubmit={handleEditSubmit}>
                         <DialogHeader>
-                            <DialogTitle>Edit Group</DialogTitle>
+                            <DialogTitle>تعديل المجموعة</DialogTitle>
                             <DialogDescription>
-                                Update the group details.
+                                تحديث تفاصيل المجموعة.
                             </DialogDescription>
                         </DialogHeader>
                         <div className="grid gap-4 py-4">
                             <div className="grid gap-2">
-                                <Label htmlFor="edit-branch">Branch</Label>
+                                <Label htmlFor="edit-branch">الفرع</Label>
                                 <Select
                                     value={editForm.data.branch_id.toString()}
                                     onValueChange={(v) =>
@@ -656,7 +657,7 @@ export default function GroupsIndex({
                                     }
                                 >
                                     <SelectTrigger id="edit-branch">
-                                        <SelectValue placeholder="Select branch" />
+                                        <SelectValue placeholder="اختر الفرع" />
                                     </SelectTrigger>
                                     <SelectContent>
                                         {(branches || []).map((branch) => (
@@ -675,7 +676,7 @@ export default function GroupsIndex({
                             </div>
 
                             <div className="grid gap-2">
-                                <Label htmlFor="edit-name">Group Name</Label>
+                                <Label htmlFor="edit-name">اسم المجموعة</Label>
                                 <Input
                                     id="edit-name"
                                     value={editForm.data.name}
@@ -688,7 +689,7 @@ export default function GroupsIndex({
 
                             <div className="grid gap-2">
                                 <Label htmlFor="edit-pattern">
-                                    Days Pattern
+                                    نمط الأيام
                                 </Label>
                                 <Select
                                     value={editForm.data.pattern}
@@ -697,7 +698,7 @@ export default function GroupsIndex({
                                     }
                                 >
                                     <SelectTrigger id="edit-pattern">
-                                        <SelectValue placeholder="Select pattern" />
+                                        <SelectValue placeholder="اختر النمط" />
                                     </SelectTrigger>
                                     <SelectContent>
                                         {(daysPatterns || []).map((pattern) => (
@@ -716,7 +717,7 @@ export default function GroupsIndex({
                             <div className="grid grid-cols-2 gap-4">
                                 <div className="grid gap-2">
                                     <Label htmlFor="edit-start-date">
-                                        Start Date
+                                        تاريخ البدء
                                     </Label>
                                     <Input
                                         id="edit-start-date"
@@ -735,7 +736,7 @@ export default function GroupsIndex({
                                 </div>
                                 <div className="grid gap-2">
                                     <Label htmlFor="edit-max-lectures">
-                                        Max Lectures
+                                        أقصى عدد محاضرات
                                     </Label>
                                     <Input
                                         id="edit-max-lectures"
@@ -760,7 +761,7 @@ export default function GroupsIndex({
                                 variant="outline"
                                 onClick={() => setEditingGroup(null)}
                             >
-                                Cancel
+                                إلغاء
                             </Button>
                             <Button
                                 type="submit"
@@ -769,7 +770,7 @@ export default function GroupsIndex({
                                 {editForm.processing && (
                                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                                 )}
-                                Save Changes
+                                حفظ التغييرات
                             </Button>
                         </DialogFooter>
                     </form>
@@ -782,9 +783,9 @@ export default function GroupsIndex({
                 onClose={() => setFinishingGroup(null)}
                 onConfirm={handleConfirmFinish}
                 processing={finishing}
-                title="Finish Group"
-                description={`Are you sure you want to finish the group "${finishingGroup?.name}"? This will move it to the closed groups section.`}
-                confirmText="Finish Group"
+                title="إنهاء المجموعة"
+                description={`هل أنت متأكد من إنهاء المجموعة "${finishingGroup?.name}"؟ سيتم نقلها إلى قسم المجموعات المغلقة.`}
+                confirmText="إنهاء المجموعة"
                 confirmVariant="destructive"
                 confirmSize="sm"
             />
@@ -795,9 +796,9 @@ export default function GroupsIndex({
                 onClose={() => setReactivatingGroup(null)}
                 onConfirm={handleConfirmReactivate}
                 processing={reactivating}
-                title="Reactivate Group"
-                description={`Are you sure you want to reactivate the group "${reactivatingGroup?.name}"? This will move it back to the active groups section.`}
-                confirmText="Reactivate"
+                title="إعادة تنشيط المجموعة"
+                description={`هل أنت متأكد من إعادة تنشيط المجموعة "${reactivatingGroup?.name}"؟ سيتم إعادتها إلى قسم المجموعات النشطة.`}
+                confirmText="إعادة تنشيط"
                 confirmVariant="default"
                 confirmSize="sm"
             />

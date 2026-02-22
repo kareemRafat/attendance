@@ -215,8 +215,9 @@ export function TransferStudentDialog({
                                 <SelectContent>
                                     <div className="border-b px-2 py-2 dark:border-slate-800">
                                         <div className="relative">
-                                            <Search className="absolute top-1/2 inset-inline-start-2 size-3 -translate-y-1/2 text-slate-400" />
+                                            <Search className="absolute top-1/2 right-2 size-3 -translate-y-1/2 text-slate-400" />
                                             <Input
+                                                type="search"
                                                 placeholder="بحث عن مجموعة..."
                                                 value={groupSearch}
                                                 onChange={(e) =>
@@ -227,7 +228,7 @@ export function TransferStudentDialog({
                                                 onKeyDown={(e) =>
                                                     e.stopPropagation()
                                                 }
-                                                className="h-8 border-none bg-slate-50 ps-7 text-xs focus-visible:ring-0 dark:bg-slate-900"
+                                                className="h-8 border-none bg-slate-50 pr-7 text-xs focus-visible:ring-0 dark:bg-slate-900"
                                             />
                                         </div>
                                     </div>

@@ -162,7 +162,28 @@ class StudentController extends Controller
     public function update(StudentRequest $request, Student $student): RedirectResponse
     {
         $this->authorize('update', $student);
-        $student->update($request->validated());
+
+        DB::transaction(function () use ($request, $student) {
+            $student->update($request->validated());
+
+            if ($request->filled('group_id')) {
+                $groupId = $request->group_id;
+
+                // Find current active enrollment
+                $currentEnrollment = $student->enrollments()->whereNull('ended_at')->first();
+
+                if ($currentEnrollment) {
+                    if ($currentEnrollment->group_id != $groupId) {
+                        $currentEnrollment->update(['group_id' => $groupId]);
+                    }
+                } else {
+                    $student->enrollments()->create([
+                        'group_id' => $groupId,
+                        'enrolled_at' => now(),
+                    ]);
+                }
+            }
+        });
 
         return back()->with('success', 'تم تحديث بيانات الطالب بنجاح.');
     }

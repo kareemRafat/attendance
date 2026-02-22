@@ -696,15 +696,16 @@ export default function StudentsIndex({
                         <div className="flex flex-wrap items-center gap-4 border-t border-slate-100/50 pt-4 dark:border-slate-800">
                             {/* Search */}
                             <div className="relative w-full md:w-96">
-                                <Search className="absolute top-1/2 inset-inline-start-3 size-4 -translate-y-1/2 text-slate-400" />
+                                <Search className="absolute top-1/2 right-3 size-4 -translate-y-1/2 text-slate-400" />
                                 <Input
+                                    type="search"
                                     placeholder="بحث عن طالب بالاسم..."
                                     value={search}
                                     onChange={(e) => {
                                         setSearch(e.target.value);
                                         handleFilter(e.target.value);
                                     }}
-                                    className="h-10 rounded-xl bg-white ps-9 shadow-sm dark:border-slate-700 dark:bg-slate-900"
+                                    className="h-10 rounded-xl bg-white pr-9 shadow-sm dark:border-slate-700 dark:bg-slate-900"
                                 />
                             </div>
 
@@ -1011,6 +1012,7 @@ export default function StudentsIndex({
                     onClose={() => setEditingStudent(null)}
                     courseTypes={courseTypes}
                     availableBranches={availableBranches}
+                    availableGroups={availableGroups}
                 />
 
                 <TransferStudentDialog

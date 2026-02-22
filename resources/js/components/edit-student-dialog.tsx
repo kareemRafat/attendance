@@ -19,11 +19,17 @@ import {
     SelectValue,
 } from '@/components/ui/select';
 
+interface Group {
+    id: number;
+    name: string;
+}
+
 interface Student {
     id: number;
     name: string;
     track: string;
     branch_id?: number;
+    groups?: Group[];
 }
 
 interface Branch {
@@ -37,6 +43,7 @@ interface Props {
     onClose: () => void;
     courseTypes: { name: string; value: string }[];
     availableBranches?: Branch[];
+    availableGroups?: Group[];
 }
 
 export function EditStudentDialog({
@@ -45,6 +52,7 @@ export function EditStudentDialog({
     onClose,
     courseTypes,
     availableBranches = [],
+    availableGroups = [],
 }: Props) {
     const { auth } = usePage<any>().props;
     const isAdmin = auth.user.role === 'admin';
@@ -53,6 +61,7 @@ export function EditStudentDialog({
         name: '',
         track: '',
         branch_id: '',
+        group_id: '',
     });
 
     useEffect(() => {
@@ -61,6 +70,7 @@ export function EditStudentDialog({
                 name: student.name,
                 track: student.track || '',
                 branch_id: student.branch_id?.toString() || '',
+                group_id: student.groups?.[0]?.id.toString() || '',
             });
         }
     }, [student, setData]);
@@ -131,31 +141,61 @@ export function EditStudentDialog({
                             </p>
                         )}
                     </div>
-                    <div className="space-y-3">
-                        <Label htmlFor="edit-track">المسار</Label>
-                        <Select
-                            value={data.track}
-                            onValueChange={(val) => setData('track', val)}
-                        >
-                            <SelectTrigger id="edit-track">
-                                <SelectValue placeholder="اختر المسار" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                {courseTypes.map((type) => (
-                                    <SelectItem
-                                        key={type.value}
-                                        value={type.value}
-                                    >
-                                        {type.name}
-                                    </SelectItem>
-                                ))}
-                            </SelectContent>
-                        </Select>
-                        {errors.track && (
-                            <p className="text-xs text-destructive">
-                                {errors.track}
-                            </p>
-                        )}
+                    <div className="grid grid-cols-2 gap-4">
+                        <div className="space-y-3">
+                            <Label htmlFor="edit-track">المسار</Label>
+                            <Select
+                                value={data.track}
+                                onValueChange={(val) => setData('track', val)}
+                            >
+                                <SelectTrigger id="edit-track">
+                                    <SelectValue placeholder="اختر المسار" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    {courseTypes.map((type) => (
+                                        <SelectItem
+                                            key={type.value}
+                                            value={type.value}
+                                        >
+                                            {type.name}
+                                        </SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+                            {errors.track && (
+                                <p className="text-xs text-destructive">
+                                    {errors.track}
+                                </p>
+                            )}
+                        </div>
+                        <div className="space-y-3">
+                            <Label htmlFor="edit-group">المجموعة</Label>
+                            <Select
+                                value={data.group_id}
+                                onValueChange={(val) =>
+                                    setData('group_id', val)
+                                }
+                            >
+                                <SelectTrigger id="edit-group">
+                                    <SelectValue placeholder="اختر المجموعة" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    {availableGroups.map((group) => (
+                                        <SelectItem
+                                            key={group.id}
+                                            value={group.id.toString()}
+                                        >
+                                            {group.name}
+                                        </SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+                            {errors.group_id && (
+                                <p className="text-xs text-destructive">
+                                    {errors.group_id}
+                                </p>
+                            )}
+                        </div>
                     </div>
                     <DialogFooter>
                         <Button
