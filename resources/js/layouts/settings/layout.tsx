@@ -13,22 +13,22 @@ import type { NavItem } from '@/types';
 
 const sidebarNavItems: NavItem[] = [
     {
-        title: 'Profile',
+        title: 'الملف الشخصي',
         href: edit(),
         icon: null,
     },
     {
-        title: 'Password',
+        title: 'كلمة المرور',
         href: editPassword(),
         icon: null,
     },
     {
-        title: 'Two-Factor Auth',
+        title: 'المصادقة الثنائية',
         href: show(),
         icon: null,
     },
     {
-        title: 'Appearance',
+        title: 'المظهر',
         href: editAppearance(),
         icon: null,
     },
@@ -43,16 +43,16 @@ export default function SettingsLayout({ children }: PropsWithChildren) {
     }
 
     return (
-        <div className="px-4 py-6">
+        <div className="px-4 py-6 text-start">
             <Heading
-                title="Settings"
-                description="Manage your profile and account settings"
+                title="الإعدادات"
+                description="إدارة ملفك الشخصي وإعدادات حسابك"
             />
 
-            <div className="flex flex-col lg:flex-row lg:space-x-12">
-                <aside className="w-full max-w-xl lg:w-48">
+            <div className="flex flex-col lg:flex-row lg:gap-12">
+                <aside className="w-full max-w-xl lg:w-64">
                     <nav
-                        className="flex flex-col space-y-1 space-x-0"
+                        className="flex flex-col space-y-1"
                         aria-label="Settings"
                     >
                         {sidebarNavItems.map((item, index) => (
@@ -61,13 +61,13 @@ export default function SettingsLayout({ children }: PropsWithChildren) {
                                 size="sm"
                                 variant="ghost"
                                 asChild
-                                className={cn('w-full justify-start', {
+                                className={cn('w-full justify-start text-start', {
                                     'bg-muted': isCurrentUrl(item.href),
                                 })}
                             >
                                 <Link href={item.href}>
                                     {item.icon && (
-                                        <item.icon className="h-4 w-4" />
+                                        <item.icon className="me-2 h-4 w-4" />
                                     )}
                                     {item.title}
                                 </Link>

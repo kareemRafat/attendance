@@ -54,14 +54,13 @@ export default function TwoFactorRecoveryCodes({
 
     return (
         <Card>
-            <CardHeader>
+            <CardHeader className="text-start">
                 <CardTitle className="flex gap-3">
                     <LockKeyhole className="size-4" aria-hidden="true" />
-                    2FA Recovery Codes
+                    رموز استرداد المصادقة الثنائية
                 </CardTitle>
                 <CardDescription>
-                    Recovery codes let you regain access if you lose your 2FA
-                    device. Store them in a secure password manager.
+                    تتيح لك رموز الاسترداد استعادة الوصول إذا فقدت جهاز المصادقة الخاص بك. قم بتخزينها في مدير كلمات مرور آمن.
                 </CardDescription>
             </CardHeader>
             <CardContent>
@@ -76,7 +75,7 @@ export default function TwoFactorRecoveryCodes({
                             className="size-4"
                             aria-hidden="true"
                         />
-                        {codesAreVisible ? 'Hide' : 'View'} Recovery Codes
+                        {codesAreVisible ? 'إخفاء' : 'عرض'} رموز الاسترداد
                     </Button>
 
                     {canRegenerateCodes && (
@@ -92,7 +91,7 @@ export default function TwoFactorRecoveryCodes({
                                     disabled={processing}
                                     aria-describedby="regenerate-warning"
                                 >
-                                    <RefreshCw /> Regenerate Codes
+                                    <RefreshCw /> إعادة إنشاء الرموز
                                 </Button>
                             )}
                         </Form>
@@ -143,15 +142,13 @@ export default function TwoFactorRecoveryCodes({
                                     )}
                                 </div>
 
-                                <div className="text-xs text-muted-foreground select-none">
+                                <div className="text-xs text-muted-foreground select-none text-start">
                                     <p id="regenerate-warning">
-                                        Each recovery code can be used once to
-                                        access your account and will be removed
-                                        after use. If you need more, click{' '}
+                                        يمكن استخدام كل رمز استرداد مرة واحدة فقط للوصول إلى حسابك وسيتم إزالته بعد الاستخدام. إذا كنت بحاجة إلى المزيد، انقر فوق{' '}
                                         <span className="font-bold">
-                                            Regenerate Codes
+                                            إعادة إنشاء الرموز
                                         </span>{' '}
-                                        above.
+                                        أعلاه.
                                     </p>
                                 </div>
                             </>

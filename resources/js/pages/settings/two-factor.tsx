@@ -19,7 +19,7 @@ type Props = {
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
-        title: 'Two-Factor Authentication',
+        title: 'المصادقة الثنائية',
         href: show.url(),
     },
 ];
@@ -42,25 +42,22 @@ export default function TwoFactor({
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="Two-Factor Authentication" />
+            <Head title="المصادقة الثنائية" />
 
-            <h1 className="sr-only">Two-Factor Authentication Settings</h1>
+            <h1 className="sr-only">إعدادات المصادقة الثنائية</h1>
 
             <SettingsLayout>
                 <div className="space-y-6">
                     <Heading
                         variant="small"
-                        title="Two-Factor Authentication"
-                        description="Manage your two-factor authentication settings"
+                        title="المصادقة الثنائية"
+                        description="إدارة إعدادات المصادقة الثنائية الخاصة بك"
                     />
                     {twoFactorEnabled ? (
                         <div className="flex flex-col items-start justify-start space-y-4">
-                            <Badge variant="default">Enabled</Badge>
-                            <p className="text-muted-foreground">
-                                With two-factor authentication enabled, you will
-                                be prompted for a secure, random pin during
-                                login, which you can retrieve from the
-                                TOTP-supported application on your phone.
+                            <Badge variant="default">مفعلة</Badge>
+                            <p className="text-muted-foreground text-start">
+                                مع تفعيل المصادقة الثنائية، سيُطلب منك إدخال رمز أمان عشوائي أثناء تسجيل الدخول، والذي يمكنك الحصول عليه من تطبيق يدعم TOTP على هاتفك.
                             </p>
 
                             <TwoFactorRecoveryCodes
@@ -77,7 +74,7 @@ export default function TwoFactor({
                                             type="submit"
                                             disabled={processing}
                                         >
-                                            <ShieldBan /> Disable 2FA
+                                            <ShieldBan /> تعطيل المصادقة الثنائية
                                         </Button>
                                     )}
                                 </Form>
@@ -85,12 +82,9 @@ export default function TwoFactor({
                         </div>
                     ) : (
                         <div className="flex flex-col items-start justify-start space-y-4">
-                            <Badge variant="destructive">Disabled</Badge>
-                            <p className="text-muted-foreground">
-                                When you enable two-factor authentication, you
-                                will be prompted for a secure pin during login.
-                                This pin can be retrieved from a TOTP-supported
-                                application on your phone.
+                            <Badge variant="destructive">معطلة</Badge>
+                            <p className="text-muted-foreground text-start">
+                                عند تفعيل المصادقة الثنائية، سيُطلب منك إدخال رمز أمان أثناء تسجيل الدخول. يمكن الحصول على هذا الرمز من تطبيق يدعم TOTP على هاتفك.
                             </p>
 
                             <div>
@@ -99,7 +93,7 @@ export default function TwoFactor({
                                         onClick={() => setShowSetupModal(true)}
                                     >
                                         <ShieldCheck />
-                                        Continue Setup
+                                        متابعة الإعداد
                                     </Button>
                                 ) : (
                                     <Form
@@ -114,7 +108,7 @@ export default function TwoFactor({
                                                 disabled={processing}
                                             >
                                                 <ShieldCheck />
-                                                Enable 2FA
+                                                تفعيل المصادقة الثنائية
                                             </Button>
                                         )}
                                     </Form>

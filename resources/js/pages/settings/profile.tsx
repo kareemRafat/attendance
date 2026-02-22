@@ -15,7 +15,7 @@ import type { BreadcrumbItem } from '@/types';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
-        title: 'Profile settings',
+        title: 'إعدادات الملف الشخصي',
         href: edit().url,
     },
 ];
@@ -31,16 +31,16 @@ export default function Profile({
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="Profile settings" />
+            <Head title="إعدادات الملف الشخصي" />
 
-            <h1 className="sr-only">Profile Settings</h1>
+            <h1 className="sr-only">إعدادات الملف الشخصي</h1>
 
             <SettingsLayout>
                 <div className="space-y-6">
                     <Heading
                         variant="small"
-                        title="Profile information"
-                        description="Update your name and email address"
+                        title="معلومات الملف الشخصي"
+                        description="تحديث اسمك وعنوان بريدك الإلكتروني"
                     />
 
                     <Form
@@ -52,8 +52,8 @@ export default function Profile({
                     >
                         {({ processing, recentlySuccessful, errors }) => (
                             <>
-                                <div className="grid gap-2">
-                                    <Label htmlFor="name">Name</Label>
+                                <div className="grid gap-2 text-start">
+                                    <Label htmlFor="name">الاسم</Label>
 
                                     <Input
                                         id="name"
@@ -62,7 +62,7 @@ export default function Profile({
                                         name="name"
                                         required
                                         autoComplete="name"
-                                        placeholder="Full name"
+                                        placeholder="الاسم بالكامل"
                                     />
 
                                     <InputError
@@ -71,18 +71,18 @@ export default function Profile({
                                     />
                                 </div>
 
-                                <div className="grid gap-2">
-                                    <Label htmlFor="email">Email address</Label>
+                                <div className="grid gap-2 text-start">
+                                    <Label htmlFor="email">البريد الإلكتروني</Label>
 
                                     <Input
                                         id="email"
                                         type="email"
-                                        className="mt-1 block w-full"
+                                        className="mt-1 block w-full text-start"
                                         defaultValue={auth.user.email}
                                         name="email"
                                         required
                                         autoComplete="username"
-                                        placeholder="Email address"
+                                        placeholder="البريد الإلكتروني"
                                     />
 
                                     <InputError
@@ -95,24 +95,20 @@ export default function Profile({
                                     auth.user.email_verified_at === null && (
                                         <div>
                                             <p className="-mt-4 text-sm text-muted-foreground">
-                                                Your email address is
-                                                unverified.{' '}
+                                                عنوان بريدك الإلكتروني غير محقق.{' '}
                                                 <Link
                                                     href={send()}
                                                     as="button"
                                                     className="text-foreground underline decoration-neutral-300 underline-offset-4 transition-colors duration-300 ease-out hover:decoration-current! dark:decoration-neutral-500"
                                                 >
-                                                    Click here to resend the
-                                                    verification email.
+                                                    انقر هنا لإعادة إرسال بريد التحقق.
                                                 </Link>
                                             </p>
 
                                             {status ===
                                                 'verification-link-sent' && (
                                                 <div className="mt-2 text-sm font-medium text-green-600">
-                                                    A new verification link has
-                                                    been sent to your email
-                                                    address.
+                                                    تم إرسال رابط تحقق جديد إلى عنوان بريدك الإلكتروني.
                                                 </div>
                                             )}
                                         </div>
@@ -123,7 +119,7 @@ export default function Profile({
                                         disabled={processing}
                                         data-test="update-profile-button"
                                     >
-                                        Save
+                                        حفظ
                                     </Button>
 
                                     <Transition
@@ -134,7 +130,7 @@ export default function Profile({
                                         leaveTo="opacity-0"
                                     >
                                         <p className="text-sm text-neutral-600">
-                                            Saved
+                                            تم الحفظ
                                         </p>
                                     </Transition>
                                 </div>
