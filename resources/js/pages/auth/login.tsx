@@ -30,15 +30,15 @@ export default function Login({ status, canResetPassword }: Props) {
 
     return (
         <AuthLayout
-            title="Log in to your account"
-            description="Enter your name and password below to log in"
+            title="تسجيل الدخول إلى حسابك"
+            description="أدخل اسمك وكلمة المرور أدناه لتسجيل الدخول"
         >
-            <Head title="Log in" />
+            <Head title="تسجيل الدخول" />
 
             <form onSubmit={submit} className="flex flex-col gap-6">
                 <div className="grid gap-6">
                     <div className="grid gap-2">
-                        <Label htmlFor="name">Name</Label>
+                        <Label htmlFor="name">الاسم</Label>
                         <Input
                             id="name"
                             type="text"
@@ -49,23 +49,14 @@ export default function Login({ status, canResetPassword }: Props) {
                             autoFocus
                             tabIndex={1}
                             autoComplete="username"
-                            placeholder="Name"
+                            placeholder="الاسم"
                         />
                         <InputError message={errors.name} />
                     </div>
 
                     <div className="grid gap-2">
                         <div className="flex items-center">
-                            <Label htmlFor="password">Password</Label>
-                            {canResetPassword && (
-                                <TextLink
-                                    href="/forgot-password"
-                                    className="ml-auto text-sm"
-                                    tabIndex={5}
-                                >
-                                    Forgot password?
-                                </TextLink>
-                            )}
+                            <Label htmlFor="password">كلمة المرور</Label>
                         </div>{' '}
                         <Input
                             id="password"
@@ -78,7 +69,7 @@ export default function Login({ status, canResetPassword }: Props) {
                             required
                             tabIndex={2}
                             autoComplete="current-password"
-                            placeholder="Password"
+                            placeholder="كلمة المرور"
                         />
                         <InputError message={errors.password} />
                     </div>
@@ -93,7 +84,9 @@ export default function Login({ status, canResetPassword }: Props) {
                             }
                             tabIndex={3}
                         />
-                        <Label htmlFor="remember">Remember me</Label>
+                        <Label htmlFor="remember" className="mr-2">
+                            تذكرني
+                        </Label>
                     </div>
 
                     <Button
@@ -106,10 +99,10 @@ export default function Login({ status, canResetPassword }: Props) {
                         {processing ? (
                             <>
                                 <Loader2 className="mr-2 size-4 animate-spin" />
-                                Logging in...
+                                جاري تسجيل الدخول...
                             </>
                         ) : (
-                            'Log in'
+                            'تسجيل الدخول'
                         )}
                     </Button>
                 </div>
