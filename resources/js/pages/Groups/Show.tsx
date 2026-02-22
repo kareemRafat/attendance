@@ -176,7 +176,7 @@ export default function GroupShow({ group, students, sessions }: Props) {
                         <Table>
                             <TableHeader className="bg-slate-50/50 dark:bg-slate-800/20">
                                 <TableRow className="dark:border-slate-800">
-                                    <TableHead className="py-4 pr-6 font-bold text-slate-900 dark:text-slate-300">
+                                    <TableHead className="py-4 ps-6 font-bold text-slate-900 dark:text-slate-300">
                                         اسم الطالب
                                     </TableHead>
                                     <TableHead className="font-bold text-slate-900 dark:text-slate-300">
@@ -194,7 +194,7 @@ export default function GroupShow({ group, students, sessions }: Props) {
                                     <TableHead className="text-center font-bold text-amber-600 dark:text-amber-400">
                                         بعذر
                                     </TableHead>
-                                    <TableHead className="pl-6 text-left font-bold text-slate-900 dark:text-slate-300">
+                                    <TableHead className="pe-6 text-end font-bold text-slate-900 dark:text-slate-300">
                                         إجراء
                                     </TableHead>
                                 </TableRow>
@@ -220,7 +220,7 @@ export default function GroupShow({ group, students, sessions }: Props) {
                                             key={student.id}
                                             className="group transition-colors hover:bg-slate-50/50 dark:border-slate-800 dark:hover:bg-slate-800/30"
                                         >
-                                            <TableCell className="py-4 pr-6 font-bold text-slate-900 dark:text-slate-200">
+                                            <TableCell className="py-4 ps-6 font-bold text-slate-900 dark:text-slate-200">
                                                 {student.name}
                                             </TableCell>
                                             <TableCell>
@@ -267,7 +267,7 @@ export default function GroupShow({ group, students, sessions }: Props) {
                                                     {student.excused_count}
                                                 </span>
                                             </TableCell>
-                                            <TableCell className="pl-6 text-left">
+                                            <TableCell className="pe-6 text-end">
                                                 <Link
                                                     href={`/students/${student.id}`}
                                                 >
@@ -365,7 +365,7 @@ export default function GroupShow({ group, students, sessions }: Props) {
                         <Table>
                             <TableHeader className="bg-slate-50/50 dark:bg-slate-800/20">
                                 <TableRow className="dark:border-slate-800">
-                                    <TableHead className="py-4 pr-6 font-bold text-slate-900 dark:text-slate-300">
+                                    <TableHead className="py-4 ps-6 font-bold text-slate-900 dark:text-slate-300">
                                         رقم الجلسة
                                     </TableHead>
                                     <TableHead className="font-bold text-slate-900 dark:text-slate-300">
@@ -388,7 +388,7 @@ export default function GroupShow({ group, students, sessions }: Props) {
                                         key={session.id}
                                         className="transition-colors hover:bg-slate-50/50 dark:border-slate-800 dark:hover:bg-slate-800/30"
                                     >
-                                        <TableCell className="py-4 pr-6 font-black text-slate-900 dark:text-slate-200">
+                                        <TableCell className="py-4 ps-6 font-black text-slate-900 dark:text-slate-200">
                                             محاضرة {session.lecture_number}
                                         </TableCell>
                                         <TableCell className="font-medium text-slate-600 dark:text-slate-400">

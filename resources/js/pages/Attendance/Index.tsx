@@ -302,7 +302,7 @@ export default function AttendanceIndex({
 
             <div className="flex flex-col gap-6 p-4">
                 <div className="flex flex-col items-start justify-between gap-4 md:flex-row md:items-center">
-                    <h1 className="text-2xl font-bold">
+                    <h1 className="text-2xl font-bold text-slate-900 dark:text-white">
                         الحضور والغياب - {selectedDate}
                     </h1>
 
@@ -312,7 +312,7 @@ export default function AttendanceIndex({
                                 value={selectedBranchId?.toString() || 'all'}
                                 onValueChange={handleBranchChange}
                             >
-                                <SelectTrigger className="w-full sm:w-[180px]">
+                                <SelectTrigger className="w-full rounded-xl bg-white shadow-sm sm:w-[200px] dark:bg-slate-900">
                                     <SelectValue placeholder="جميع الفروع" />
                                 </SelectTrigger>
                                 <SelectContent>
@@ -330,48 +330,33 @@ export default function AttendanceIndex({
                                 </SelectContent>
                             </Select>
                         )}
-
-                        <Select
-                            value={activeGroupId?.toString() || ''}
-                            onValueChange={(val) =>
-                                setActiveGroupId(parseInt(val))
-                            }
-                        >
-                            <SelectTrigger className="w-full sm:w-[240px]">
-                                <SelectValue placeholder="اختر المجموعة" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                {isAdmin
-                                    ? Object.entries(groupedGroups).map(
-                                          ([branchId, data]) => (
-                                              <SelectGroup key={branchId}>
-                                                  <SelectLabel>
-                                                      {data.name}
-                                                  </SelectLabel>
-                                                  {data.groups.map((group) => (
-                                                      <SelectItem
-                                                          key={group.id}
-                                                          value={group.id.toString()}
-                                                      >
-                                                          {group.name}
-                                                      </SelectItem>
-                                                  ))}
-                                              </SelectGroup>
-                                          ),
-                                      )
-                                    : groups.map((group) => (
-                                          <SelectItem
-                                              key={group.id}
-                                              value={group.id.toString()}
-                                          >
-                                              {group.name}
-                                          </SelectItem>
-                                      ))}
-                            </SelectContent>
-                        </Select>
                     </div>
                 </div>
 
+                {/* Groups Selection Buttons */}
+                {groups.length > 0 && (
+                    <div className="flex flex-wrap justify-end gap-2 border-b border-slate-100 pb-3 dark:border-slate-800">
+                        {groups.map((group) => (
+                            <Button
+                                key={group.id}
+                                variant={
+                                    activeGroupId === group.id
+                                        ? 'default'
+                                        : 'outline'
+                                }
+                                onClick={() => setActiveGroupId(group.id)}
+                                className={cn(
+                                    'h-9 cursor-pointer rounded-lg px-4 text-sm font-bold transition-all',
+                                    activeGroupId === group.id
+                                        ? 'bg-indigo-600 text-white shadow-md shadow-indigo-500/20 hover:bg-indigo-700'
+                                        : 'border-slate-200 bg-white text-slate-600 hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300 dark:hover:bg-slate-800',
+                                )}
+                            >
+                                {group.name}
+                            </Button>
+                        ))}
+                    </div>
+                )}
                 {activeGroup ? (
                     <Card className="flex-1">
                         <CardHeader className="flex flex-row items-center justify-between space-y-0">
@@ -439,7 +424,7 @@ export default function AttendanceIndex({
                                         >
                                             2/E
                                         </Badge>{' '}
-                                        بعذر
+                                        إعتذر
                                     </span>
                                     <span className="flex items-center gap-1">
                                         <Badge
@@ -592,7 +577,7 @@ export default function AttendanceIndex({
                                                     >
                                                         <Clock className="size-4 sm:me-2" />
                                                         <span className="hidden sm:inline">
-                                                            بعذر
+                                                            إعتذر
                                                         </span>
                                                         <span className="text-xs sm:hidden">
                                                             ع
