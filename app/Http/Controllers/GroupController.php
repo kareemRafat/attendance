@@ -40,14 +40,16 @@ class GroupController extends Controller
             ->paginate(9)
             ->withQueryString();
 
+        $user = Auth::user();
+
         return Inertia::render('Groups/Index', [
             'groups' => $groups,
-            'branches' => Branch::all(),
+            'branches' => $user->isAdmin() ? Branch::select(['id', 'name'])->get() : [],
             'daysPatterns' => collect(DaysPattern::cases())->map(fn ($case) => [
                 'name' => $case->label(),
                 'value' => $case->value,
             ]),
-            'canManageEverything' => Auth::user()->isAdmin(),
+            'canManageEverything' => $user->isAdmin(),
             'currentTab' => $status,
             'filters' => $request->only(['search', 'branch_id', 'pattern']),
         ]);

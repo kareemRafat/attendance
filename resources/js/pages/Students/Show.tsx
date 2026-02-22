@@ -101,6 +101,9 @@ interface Props {
             label: string;
             active: boolean;
         }[];
+        from: number;
+        to: number;
+        total: number;
     };
     transferHistory: {
         data: TransferLog[];
@@ -109,6 +112,9 @@ interface Props {
             label: string;
             active: boolean;
         }[];
+        from: number;
+        to: number;
+        total: number;
     };
 }
 
@@ -445,47 +451,61 @@ export default function StudentShow({
                             </div>
                             {attendanceHistory.links &&
                                 attendanceHistory.links.length > 3 && (
-                                    <div className="flex flex-wrap justify-center gap-1 border-t border-slate-100 py-4 dark:border-slate-800">
-                                        {attendanceHistory.links.map(
-                                            (link, i) => (
-                                                <Link
-                                                    key={i}
-                                                    href={link.url || '#'}
-                                                    preserveScroll
-                                                >
-                                                    <Button
-                                                        variant={
-                                                            link.active
-                                                                ? 'default'
-                                                                : 'outline'
-                                                        }
-                                                        size="sm"
-                                                        className={cn(
-                                                            'h-8 rounded-lg px-3 text-xs font-bold transition-all',
-                                                            !link.url
-                                                                ? 'pointer-events-none opacity-50'
-                                                                : 'cursor-pointer',
-                                                            link.active
-                                                                ? 'border-transparent bg-slate-900 shadow-md dark:bg-white dark:text-slate-900'
-                                                                : 'border-slate-200 bg-white dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300 dark:hover:bg-slate-800',
-                                                        )}
+                                    <div className="flex items-center justify-between border-t border-slate-100 px-6 py-4 dark:border-slate-800">
+                                        <div className="text-sm font-bold tracking-tight text-slate-500 uppercase dark:text-slate-400">
+                                            عرض{' '}
+                                            <span className="text-slate-900 dark:text-white">
+                                                {attendanceHistory.from}-
+                                                {attendanceHistory.to}
+                                            </span>{' '}
+                                            من أصل{' '}
+                                            <span className="text-slate-900 dark:text-white">
+                                                {attendanceHistory.total}
+                                            </span>{' '}
+                                            سجل
+                                        </div>
+                                        <div className="flex flex-wrap justify-center gap-1">
+                                            {attendanceHistory.links.map(
+                                                (link, i) => (
+                                                    <Link
+                                                        key={i}
+                                                        href={link.url || '#'}
+                                                        preserveScroll
                                                     >
-                                                        <span
-                                                            dangerouslySetInnerHTML={{
-                                                                __html:
-                                                                    link.label ===
-                                                                    '&laquo; Previous'
-                                                                        ? 'السابق'
-                                                                        : link.label ===
-                                                                            'Next &raquo;'
-                                                                          ? 'التالي'
-                                                                          : link.label,
-                                                            }}
-                                                        />
-                                                    </Button>
-                                                </Link>
-                                            ),
-                                        )}
+                                                        <Button
+                                                            variant={
+                                                                link.active
+                                                                    ? 'default'
+                                                                    : 'outline'
+                                                            }
+                                                            size="sm"
+                                                            className={cn(
+                                                                'h-8 rounded-lg px-3 text-xs font-bold transition-all',
+                                                                !link.url
+                                                                    ? 'pointer-events-none opacity-50'
+                                                                    : 'cursor-pointer',
+                                                                link.active
+                                                                    ? 'border-transparent bg-slate-900 shadow-md dark:bg-white dark:text-slate-900'
+                                                                    : 'border-slate-200 bg-white dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300 dark:hover:bg-slate-800',
+                                                            )}
+                                                        >
+                                                            <span
+                                                                dangerouslySetInnerHTML={{
+                                                                    __html:
+                                                                        link.label ===
+                                                                        '&laquo; Previous'
+                                                                            ? 'السابق'
+                                                                            : link.label ===
+                                                                                'Next &raquo;'
+                                                                              ? 'التالي'
+                                                                              : link.label,
+                                                                }}
+                                                            />
+                                                        </Button>
+                                                    </Link>
+                                                ),
+                                            )}
+                                        </div>
                                     </div>
                                 )}
                         </CardContent>
@@ -572,47 +592,61 @@ export default function StudentShow({
                             </div>
                             {transferHistory.links &&
                                 transferHistory.links.length > 3 && (
-                                    <div className="flex flex-wrap justify-center gap-1 border-t border-slate-100 py-4 dark:border-slate-800">
-                                        {transferHistory.links.map(
-                                            (link, i) => (
-                                                <Link
-                                                    key={i}
-                                                    href={link.url || '#'}
-                                                    preserveScroll
-                                                >
-                                                    <Button
-                                                        variant={
-                                                            link.active
-                                                                ? 'default'
-                                                                : 'outline'
-                                                        }
-                                                        size="sm"
-                                                        className={cn(
-                                                            'h-8 rounded-lg px-3 text-xs font-bold transition-all',
-                                                            !link.url
-                                                                ? 'pointer-events-none opacity-50'
-                                                                : 'cursor-pointer',
-                                                            link.active
-                                                                ? 'border-transparent bg-slate-900 shadow-md dark:bg-white dark:text-slate-900'
-                                                                : 'border-slate-200 bg-white dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300 dark:hover:bg-slate-800',
-                                                        )}
+                                    <div className="flex items-center justify-between border-t border-slate-100 px-6 py-4 dark:border-slate-800">
+                                        <div className="text-sm font-bold tracking-tight text-slate-500 uppercase dark:text-slate-400">
+                                            عرض{' '}
+                                            <span className="text-slate-900 dark:text-white">
+                                                {transferHistory.from}-
+                                                {transferHistory.to}
+                                            </span>{' '}
+                                            من أصل{' '}
+                                            <span className="text-slate-900 dark:text-white">
+                                                {transferHistory.total}
+                                            </span>{' '}
+                                            سجل
+                                        </div>
+                                        <div className="flex flex-wrap justify-center gap-1">
+                                            {transferHistory.links.map(
+                                                (link, i) => (
+                                                    <Link
+                                                        key={i}
+                                                        href={link.url || '#'}
+                                                        preserveScroll
                                                     >
-                                                        <span
-                                                            dangerouslySetInnerHTML={{
-                                                                __html:
-                                                                    link.label ===
-                                                                    '&laquo; Previous'
-                                                                        ? 'السابق'
-                                                                        : link.label ===
-                                                                            'Next &raquo;'
-                                                                          ? 'التالي'
-                                                                          : link.label,
-                                                            }}
-                                                        />
-                                                    </Button>
-                                                </Link>
-                                            ),
-                                        )}
+                                                        <Button
+                                                            variant={
+                                                                link.active
+                                                                    ? 'default'
+                                                                    : 'outline'
+                                                            }
+                                                            size="sm"
+                                                            className={cn(
+                                                                'h-8 rounded-lg px-3 text-xs font-bold transition-all',
+                                                                !link.url
+                                                                    ? 'pointer-events-none opacity-50'
+                                                                    : 'cursor-pointer',
+                                                                link.active
+                                                                    ? 'border-transparent bg-slate-900 shadow-md dark:bg-white dark:text-slate-900'
+                                                                    : 'border-slate-200 bg-white dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300 dark:hover:bg-slate-800',
+                                                            )}
+                                                        >
+                                                            <span
+                                                                dangerouslySetInnerHTML={{
+                                                                    __html:
+                                                                        link.label ===
+                                                                        '&laquo; Previous'
+                                                                            ? 'السابق'
+                                                                            : link.label ===
+                                                                                'Next &raquo;'
+                                                                              ? 'التالي'
+                                                                              : link.label,
+                                                                }}
+                                                            />
+                                                        </Button>
+                                                    </Link>
+                                                ),
+                                            )}
+                                        </div>
                                     </div>
                                 )}
                         </CardContent>

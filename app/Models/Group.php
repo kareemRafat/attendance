@@ -37,7 +37,7 @@ class Group extends Model
 
     public function getFormattedPatternAttribute(): string
     {
-        return $this->pattern->label();
+        return $this->pattern?->label() ?? 'غير محدد';
     }
 
     public function branch(): BelongsTo

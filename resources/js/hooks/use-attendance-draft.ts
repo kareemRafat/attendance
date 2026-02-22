@@ -34,11 +34,16 @@ export function useAttendanceDraft(selectedDate: string, groups: Group[]) {
 
         groupsList.forEach((group) => {
             state[group.id] = {};
+            
+            // Map existing attendances for O(1) lookup
+            const existingAttendances = (group.lecture_session?.attendances || []).reduce((acc, a) => {
+                acc[a.student_id] = a;
+                return acc;
+            }, {} as Record<number, { status: string; is_installment_due: boolean }>);
+
             group.students.forEach((student) => {
                 const draft = draftData[group.id]?.[student.id];
-                const existing = group.lecture_session?.attendances.find(
-                    (a) => a.student_id === student.id,
-                );
+                const existing = existingAttendances[student.id];
 
                 state[group.id][student.id] = {
                     status: draft ? draft.status : (existing ? existing.status : 'absent'),

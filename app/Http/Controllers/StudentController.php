@@ -44,10 +44,16 @@ class StudentController extends Controller
             $query->where('track', $request->track);
         }
 
+        $user = $request->user();
+
         return Inertia::render('Students/Index', [
             'students' => $query->latest()->paginate(10)->withQueryString(),
-            'availableGroups' => Group::where('is_active', true)->get(),
-            'availableBranches' => \App\Models\Branch::all(),
+            'availableGroups' => Group::where('is_active', true)
+                ->select(['id', 'name'])
+                ->get(),
+            'availableBranches' => $user->isAdmin() 
+                ? \App\Models\Branch::select(['id', 'name'])->get() 
+                : [],
             'courseTypes' => collect(CourseType::cases())->map(fn ($case) => [
                 'name' => $case->label(),
                 'value' => $case->value,
@@ -89,9 +95,10 @@ class StudentController extends Controller
             ->paginate(5, ['*'], 'transfer_page')
             ->withQueryString();
 
-        $totalLectures = $student->attendances()->count();
-        $presentCount = $student->attendances()->where('status', \App\Enums\AttendanceStatus::Present)->count();
-        $excusedCount = $student->attendances()->where('status', \App\Enums\AttendanceStatus::Excused)->count();
+        $presentCount = $attendanceStats->get(\App\Enums\AttendanceStatus::Present->value, 0);
+        $excusedCount = $attendanceStats->get(\App\Enums\AttendanceStatus::Excused->value, 0);
+        $absentCount = $attendanceStats->get(\App\Enums\AttendanceStatus::Absent->value, 0);
+        $totalLectures = $attendanceStats->sum();
 
         $compliance = $totalLectures > 0 ? round((($presentCount + $excusedCount) / $totalLectures) * 100, 2) : 100;
 
@@ -107,7 +114,7 @@ class StudentController extends Controller
                 'compliance' => $compliance,
                 'present' => $presentCount,
                 'excused' => $excusedCount,
-                'absent' => $totalLectures - ($presentCount + $excusedCount),
+                'absent' => $absentCount,
                 'total' => $totalLectures,
             ],
             'attendanceHistory' => $attendanceHistory,

@@ -39,17 +39,23 @@ class AttendanceController extends Controller
 
         $query = Group::where('is_active', true)
             ->whereIn('pattern', $activePatterns)
-            ->with(['branch', 'students' => function ($query) use ($carbonDate) {
-                // Only students enrolled on this date and not ended
-                $enrolledBefore = $carbonDate->copy()->endOfDay();
-                $endedAfter = $carbonDate->copy()->startOfDay();
+            ->with([
+                'branch',
+                'students' => function ($query) use ($carbonDate) {
+                    // Only students enrolled on this date and not ended
+                    $enrolledBefore = $carbonDate->copy()->endOfDay();
+                    $endedAfter = $carbonDate->copy()->startOfDay();
 
-                $query->wherePivot('enrolled_at', '<=', $enrolledBefore)
-                    ->where(function ($q) use ($endedAfter) {
-                        $q->whereNull('enrollments.ended_at')
-                            ->orWhere('enrollments.ended_at', '>', $endedAfter);
-                    });
-            }]);
+                    $query->wherePivot('enrolled_at', '<=', $enrolledBefore)
+                        ->where(function ($q) use ($endedAfter) {
+                            $q->whereNull('enrollments.ended_at')
+                                ->orWhere('enrollments.ended_at', '>', $endedAfter);
+                        });
+                },
+                'lectureSessions' => function ($query) use ($date) {
+                    $query->where('date', $date)->with('attendances');
+                }
+            ]);
 
         if (! $user->isAdmin()) {
             $query->where('branch_id', $user->branch_id);
@@ -57,17 +63,13 @@ class AttendanceController extends Controller
             $query->where('branch_id', $branchId);
         }
 
-        $groups = $query->get();
-
-        // Check if attendance already exists for these groups
-        foreach ($groups as $group) {
-            $session = LectureSession::where('group_id', $group->id)
-                ->where('date', $date)
-                ->with('attendances')
-                ->first();
-
-            $group->lecture_session = $session;
-        }
+        $groups = $query->get()->map(function ($group) {
+            // Set the lecture_session property from the eager-loaded relationship
+            $group->lecture_session = $group->lectureSessions->first();
+            // Remove the collection to keep the payload clean
+            unset($group->lectureSessions);
+            return $group;
+        });
 
         return Inertia::render('Attendance/Index', [
             'groups' => $groups,
