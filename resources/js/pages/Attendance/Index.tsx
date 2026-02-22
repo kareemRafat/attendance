@@ -22,13 +22,12 @@ import { Checkbox } from '@/components/ui/checkbox';
 import {
     Select,
     SelectContent,
-    SelectGroup,
     SelectItem,
-    SelectLabel,
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select';
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
+import { useAttendanceDraft } from '@/hooks/use-attendance-draft';
 import AppLayout from '@/layouts/app-layout';
 import { cn } from '@/lib/utils';
 
@@ -66,11 +65,6 @@ interface Props {
     selectedBranchId: number | null;
 }
 
-interface AttendanceState {
-    status: string;
-    is_installment_due: boolean;
-}
-
 export default function AttendanceIndex({
     groups,
     selectedDate,
@@ -89,42 +83,14 @@ export default function AttendanceIndex({
     );
     const [isSaving, setIsSaving] = useState(false);
 
-    // Initial state calculation helper
-    const calculateInitialState = (groupsList: Group[]) => {
-        const state: Record<number, Record<number, AttendanceState>> = {};
-
-        // Try to load from localStorage first
-        const savedDraft = localStorage.getItem(`attendance_draft_${selectedDate}`);
-        const draftData = savedDraft ? JSON.parse(savedDraft) : {};
-
-        groupsList.forEach((group) => {
-            state[group.id] = {};
-            group.students.forEach((student) => {
-                // Priority: 1. LocalStorage Draft, 2. Database Existing, 3. Default 'absent'
-                const draft = draftData[group.id]?.[student.id];
-                const existing = group.lecture_session?.attendances.find(
-                    (a) => a.student_id === student.id,
-                );
-
-                state[group.id][student.id] = {
-                    status: draft ? draft.status : (existing ? existing.status : 'absent'),
-                    is_installment_due: draft
-                        ? draft.is_installment_due
-                        : (existing ? existing.is_installment_due : false),
-                };
-            });
-        });
-        return state;
-    };
-
-    // Local state for attendance to make it "Ultra-Fast"
-    const [localAttendances, setLocalAttendances] = useState<
-        Record<number, Record<number, AttendanceState>>
-    >(() => calculateInitialState(groups));
+    const {
+        localAttendances,
+        updateStatus,
+        updateInstallment,
+        clearGroupDraft,
+    } = useAttendanceDraft(selectedDate, groups);
 
     useEffect(() => {
-        setLocalAttendances(calculateInitialState(groups));
-
         // Focus first student by default
         if (groups.length > 0 && groups[0].students.length > 0) {
             setFocusedStudentId(groups[0].students[0].id);
@@ -140,63 +106,6 @@ export default function AttendanceIndex({
     }, [groups]);
 
     const activeGroup = groups.find((g) => g.id === activeGroupId);
-
-    const handleStatusChange = (
-        groupId: number,
-        studentId: number,
-        status: string,
-    ) => {
-        if (!status) return; // Prevent unselecting
-        setLocalAttendances((prev) => {
-            const newGroupState = {
-                ...prev[groupId],
-                [studentId]: {
-                    ...prev[groupId][studentId],
-                    status,
-                },
-            };
-
-            // Save ONLY this group's draft to localStorage
-            const key = `attendance_draft_${selectedDate}`;
-            const savedDraft = localStorage.getItem(key);
-            const draftData = savedDraft ? JSON.parse(savedDraft) : {};
-            draftData[groupId] = newGroupState;
-            localStorage.setItem(key, JSON.stringify(draftData));
-
-            return {
-                ...prev,
-                [groupId]: newGroupState,
-            };
-        });
-    };
-
-    const handleInstallmentToggle = (
-        groupId: number,
-        studentId: number,
-        checked: boolean,
-    ) => {
-        setLocalAttendances((prev) => {
-            const newGroupState = {
-                ...prev[groupId],
-                [studentId]: {
-                    ...prev[groupId][studentId],
-                    is_installment_due: checked,
-                },
-            };
-
-            // Save ONLY this group's draft to localStorage
-            const key = `attendance_draft_${selectedDate}`;
-            const savedDraft = localStorage.getItem(key);
-            const draftData = savedDraft ? JSON.parse(savedDraft) : {};
-            draftData[groupId] = newGroupState;
-            localStorage.setItem(key, JSON.stringify(draftData));
-
-            return {
-                ...prev,
-                [groupId]: newGroupState,
-            };
-        });
-    };
 
     const saveAttendance = useCallback(
         (groupId: number) => {
@@ -219,25 +128,13 @@ export default function AttendanceIndex({
                 {
                     preserveScroll: true,
                     onSuccess: () => {
-                        // Clear this group's draft from localStorage after successful save
-                        const key = `attendance_draft_${selectedDate}`;
-                        const savedDraft = localStorage.getItem(key);
-                        if (savedDraft) {
-                            const draftData = JSON.parse(savedDraft);
-                            delete draftData[groupId];
-
-                            if (Object.keys(draftData).length === 0) {
-                                localStorage.removeItem(key);
-                            } else {
-                                localStorage.setItem(key, JSON.stringify(draftData));
-                            }
-                        }
+                        clearGroupDraft(groupId);
                     },
                     onFinish: () => setIsSaving(false),
                 },
             );
         },
-        [localAttendances, selectedDate],
+        [localAttendances, selectedDate, clearGroupDraft],
     );
 
     const handleBranchChange = (branchId: string) => {
@@ -250,21 +147,6 @@ export default function AttendanceIndex({
             { preserveState: true },
         );
     };
-
-    // Group groups by branch for admin display
-    const groupedGroups = useMemo(() => {
-        const grouped: Record<number, { name: string; groups: Group[] }> = {};
-        groups.forEach((group) => {
-            if (!grouped[group.branch_id]) {
-                grouped[group.branch_id] = {
-                    name: group.branch.name,
-                    groups: [],
-                };
-            }
-            grouped[group.branch_id].groups.push(group);
-        });
-        return grouped;
-    }, [groups]);
 
     // Keyboard shortcuts
     useEffect(() => {
@@ -296,19 +178,19 @@ export default function AttendanceIndex({
             // Status marking
             if (focusedStudentId) {
                 if (e.key === '1' || e.key === 'p') {
-                    handleStatusChange(
+                    updateStatus(
                         activeGroup.id,
                         focusedStudentId,
                         'present',
                     );
                 } else if (e.key === '2' || e.key === 'e') {
-                    handleStatusChange(
+                    updateStatus(
                         activeGroup.id,
                         focusedStudentId,
                         'excused',
                     );
                 } else if (e.key === '3' || e.key === 'a') {
-                    handleStatusChange(
+                    updateStatus(
                         activeGroup.id,
                         focusedStudentId,
                         'absent',
@@ -316,7 +198,7 @@ export default function AttendanceIndex({
                 } else if (e.key === 'i') {
                     const current =
                         localAttendances[activeGroup.id][focusedStudentId];
-                    handleInstallmentToggle(
+                    updateInstallment(
                         activeGroup.id,
                         focusedStudentId,
                         !current.is_installment_due,
@@ -327,7 +209,7 @@ export default function AttendanceIndex({
 
         window.addEventListener('keydown', handleKeyDown);
         return () => window.removeEventListener('keydown', handleKeyDown);
-    }, [activeGroup, focusedStudentId, saveAttendance, localAttendances]);
+    }, [activeGroup, focusedStudentId, saveAttendance, localAttendances, updateStatus, updateInstallment]);
 
     const counters = useMemo(() => {
         if (!activeGroupId || !localAttendances[activeGroupId])
@@ -562,7 +444,7 @@ export default function AttendanceIndex({
                                                     onCheckedChange={(
                                                         checked,
                                                     ) =>
-                                                        handleInstallmentToggle(
+                                                        updateInstallment(
                                                             activeGroup.id,
                                                             student.id,
                                                             checked === true,
@@ -612,7 +494,7 @@ export default function AttendanceIndex({
                                                         studentAttendance?.status
                                                     }
                                                     onValueChange={(val) =>
-                                                        handleStatusChange(
+                                                        updateStatus(
                                                             activeGroup.id,
                                                             student.id,
                                                             val,
