@@ -625,6 +625,7 @@ export default function StudentShow({
                     onClose={() => setIsEditOpen(false)}
                     courseTypes={courseTypes}
                     availableBranches={availableBranches}
+                    availableGroups={availableGroups}
                 />
 
                 <TransferStudentDialog

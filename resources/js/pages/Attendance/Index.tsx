@@ -6,6 +6,7 @@ import {
     Save,
     User as UserIcon,
     ReceiptText,
+    CircleCheck,
 } from 'lucide-react';
 import { useState, useMemo, useEffect, useCallback } from 'react';
 import { Badge } from '@/components/ui/badge';
@@ -91,17 +92,25 @@ export default function AttendanceIndex({
     // Initial state calculation helper
     const calculateInitialState = (groupsList: Group[]) => {
         const state: Record<number, Record<number, AttendanceState>> = {};
+
+        // Try to load from localStorage first
+        const savedDraft = localStorage.getItem(`attendance_draft_${selectedDate}`);
+        const draftData = savedDraft ? JSON.parse(savedDraft) : {};
+
         groupsList.forEach((group) => {
             state[group.id] = {};
             group.students.forEach((student) => {
+                // Priority: 1. LocalStorage Draft, 2. Database Existing, 3. Default 'present'
+                const draft = draftData[group.id]?.[student.id];
                 const existing = group.lecture_session?.attendances.find(
                     (a) => a.student_id === student.id,
                 );
+
                 state[group.id][student.id] = {
-                    status: existing ? existing.status : 'present',
-                    is_installment_due: existing
-                        ? existing.is_installment_due
-                        : false,
+                    status: draft ? draft.status : (existing ? existing.status : 'present'),
+                    is_installment_due: draft
+                        ? draft.is_installment_due
+                        : (existing ? existing.is_installment_due : false),
                 };
             });
         });
@@ -138,16 +147,26 @@ export default function AttendanceIndex({
         status: string,
     ) => {
         if (!status) return; // Prevent unselecting
-        setLocalAttendances((prev) => ({
-            ...prev,
-            [groupId]: {
-                ...prev[groupId],
-                [studentId]: {
-                    ...prev[groupId][studentId],
-                    status,
+        setLocalAttendances((prev) => {
+            const newState = {
+                ...prev,
+                [groupId]: {
+                    ...prev[groupId],
+                    [studentId]: {
+                        ...prev[groupId][studentId],
+                        status,
+                    },
                 },
-            },
-        }));
+            };
+
+            // Save to localStorage
+            localStorage.setItem(
+                `attendance_draft_${selectedDate}`,
+                JSON.stringify(newState),
+            );
+
+            return newState;
+        });
     };
 
     const handleInstallmentToggle = (
@@ -155,16 +174,26 @@ export default function AttendanceIndex({
         studentId: number,
         checked: boolean,
     ) => {
-        setLocalAttendances((prev) => ({
-            ...prev,
-            [groupId]: {
-                ...prev[groupId],
-                [studentId]: {
-                    ...prev[groupId][studentId],
-                    is_installment_due: checked,
+        setLocalAttendances((prev) => {
+            const newState = {
+                ...prev,
+                [groupId]: {
+                    ...prev[groupId],
+                    [studentId]: {
+                        ...prev[groupId][studentId],
+                        is_installment_due: checked,
+                    },
                 },
-            },
-        }));
+            };
+
+            // Save to localStorage
+            localStorage.setItem(
+                `attendance_draft_${selectedDate}`,
+                JSON.stringify(newState),
+            );
+
+            return newState;
+        });
     };
 
     const saveAttendance = useCallback(
@@ -187,6 +216,18 @@ export default function AttendanceIndex({
                 },
                 {
                     preserveScroll: true,
+                    onSuccess: () => {
+                        // Clear this group's draft from localStorage after successful save
+                        const savedDraft = localStorage.getItem(`attendance_draft_${selectedDate}`);
+                        if (savedDraft) {
+                            const draftData = JSON.parse(savedDraft);
+                            delete draftData[groupId];
+                            localStorage.setItem(
+                                `attendance_draft_${selectedDate}`,
+                                JSON.stringify(draftData),
+                            );
+                        }
+                    },
                     onFinish: () => setIsSaving(false),
                 },
             );
@@ -367,6 +408,7 @@ export default function AttendanceIndex({
                                             : 'border-slate-200 bg-white text-slate-600 hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300 dark:hover:bg-slate-800',
                                     )}
                                 >
+                                    <CircleCheck className="me-2 size-4" />
                                     {group.name}
                                 </Button>
                             );
