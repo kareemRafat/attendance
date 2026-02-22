@@ -1,5 +1,12 @@
 import { Head, router, usePage } from '@inertiajs/react';
-import { CheckCircle2, XCircle, Clock, Save, User as UserIcon, ReceiptText } from 'lucide-react';
+import {
+    CheckCircle2,
+    XCircle,
+    Clock,
+    Save,
+    User as UserIcon,
+    ReceiptText,
+} from 'lucide-react';
 import { useState, useMemo, useEffect, useCallback } from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -92,7 +99,9 @@ export default function AttendanceIndex({
                 );
                 state[group.id][student.id] = {
                     status: existing ? existing.status : 'present',
-                    is_installment_due: existing ? existing.is_installment_due : false,
+                    is_installment_due: existing
+                        ? existing.is_installment_due
+                        : false,
                 };
             });
         });
@@ -113,7 +122,10 @@ export default function AttendanceIndex({
         }
 
         // Set active group to the first one if not set or not in the current list
-        if (groups.length > 0 && (!activeGroupId || !groups.find(g => g.id === activeGroupId))) {
+        if (
+            groups.length > 0 &&
+            (!activeGroupId || !groups.find((g) => g.id === activeGroupId))
+        ) {
             setActiveGroupId(groups[0].id);
         }
     }, [groups]);
@@ -195,12 +207,12 @@ export default function AttendanceIndex({
 
     // Group groups by branch for admin display
     const groupedGroups = useMemo(() => {
-        const grouped: Record<number, { name: string, groups: Group[] }> = {};
-        groups.forEach(group => {
+        const grouped: Record<number, { name: string; groups: Group[] }> = {};
+        groups.forEach((group) => {
             if (!grouped[group.branch_id]) {
                 grouped[group.branch_id] = {
                     name: group.branch.name,
-                    groups: []
+                    groups: [],
                 };
             }
             grouped[group.branch_id].groups.push(group);
@@ -256,8 +268,13 @@ export default function AttendanceIndex({
                         'absent',
                     );
                 } else if (e.key === 'i') {
-                    const current = localAttendances[activeGroup.id][focusedStudentId];
-                    handleInstallmentToggle(activeGroup.id, focusedStudentId, !current.is_installment_due);
+                    const current =
+                        localAttendances[activeGroup.id][focusedStudentId];
+                    handleInstallmentToggle(
+                        activeGroup.id,
+                        focusedStudentId,
+                        !current.is_installment_due,
+                    );
                 }
             }
         };
@@ -299,7 +316,9 @@ export default function AttendanceIndex({
                                     <SelectValue placeholder="جميع الفروع" />
                                 </SelectTrigger>
                                 <SelectContent>
-                                    <SelectItem value="all">جميع الفروع</SelectItem>
+                                    <SelectItem value="all">
+                                        جميع الفروع
+                                    </SelectItem>
                                     {branches.map((branch) => (
                                         <SelectItem
                                             key={branch.id}
@@ -314,36 +333,40 @@ export default function AttendanceIndex({
 
                         <Select
                             value={activeGroupId?.toString() || ''}
-                            onValueChange={(val) => setActiveGroupId(parseInt(val))}
+                            onValueChange={(val) =>
+                                setActiveGroupId(parseInt(val))
+                            }
                         >
                             <SelectTrigger className="w-full sm:w-[240px]">
                                 <SelectValue placeholder="اختر المجموعة" />
                             </SelectTrigger>
                             <SelectContent>
-                                {isAdmin ? (
-                                    Object.entries(groupedGroups).map(([branchId, data]) => (
-                                        <SelectGroup key={branchId}>
-                                            <SelectLabel>{data.name}</SelectLabel>
-                                            {data.groups.map((group) => (
-                                                <SelectItem
-                                                    key={group.id}
-                                                    value={group.id.toString()}
-                                                >
-                                                    {group.name}
-                                                </SelectItem>
-                                            ))}
-                                        </SelectGroup>
-                                    ))
-                                ) : (
-                                    groups.map((group) => (
-                                        <SelectItem
-                                            key={group.id}
-                                            value={group.id.toString()}
-                                        >
-                                            {group.name}
-                                        </SelectItem>
-                                    ))
-                                )}
+                                {isAdmin
+                                    ? Object.entries(groupedGroups).map(
+                                          ([branchId, data]) => (
+                                              <SelectGroup key={branchId}>
+                                                  <SelectLabel>
+                                                      {data.name}
+                                                  </SelectLabel>
+                                                  {data.groups.map((group) => (
+                                                      <SelectItem
+                                                          key={group.id}
+                                                          value={group.id.toString()}
+                                                      >
+                                                          {group.name}
+                                                      </SelectItem>
+                                                  ))}
+                                              </SelectGroup>
+                                          ),
+                                      )
+                                    : groups.map((group) => (
+                                          <SelectItem
+                                              key={group.id}
+                                              value={group.id.toString()}
+                                          >
+                                              {group.name}
+                                          </SelectItem>
+                                      ))}
                             </SelectContent>
                         </Select>
                     </div>
@@ -358,7 +381,8 @@ export default function AttendanceIndex({
                                     {activeGroup.lecture_session
                                         ? `محاضرة رقم #${activeGroup.lecture_session.lecture_number}`
                                         : 'محاضرة جديدة'}
-                                    {isAdmin && ` • الفرع: ${activeGroup.branch.name}`}
+                                    {isAdmin &&
+                                        ` • الفرع: ${activeGroup.branch.name}`}
                                 </CardDescription>
                             </div>
                             <div className="flex items-center gap-4">
@@ -449,9 +473,14 @@ export default function AttendanceIndex({
 
                             <div className="space-y-4">
                                 {activeGroup.students.map((student, index) => {
-                                    const studentAttendance = localAttendances[activeGroup.id]?.[student.id];
-                                    const isDue = studentAttendance?.is_installment_due;
-                                    const isFocused = focusedStudentId === student.id;
+                                    const studentAttendance =
+                                        localAttendances[activeGroup.id]?.[
+                                            student.id
+                                        ];
+                                    const isDue =
+                                        studentAttendance?.is_installment_due;
+                                    const isFocused =
+                                        focusedStudentId === student.id;
 
                                     return (
                                         <div
@@ -460,11 +489,19 @@ export default function AttendanceIndex({
                                                 setFocusedStudentId(student.id)
                                             }
                                             className={cn(
-                                                "flex cursor-pointer flex-col items-start justify-between rounded-lg border p-3 transition-all sm:flex-row sm:items-center",
-                                                isFocused && !isDue && "border-primary bg-accent ring-1 ring-primary/50",
-                                                isFocused && isDue && "border-red-500 bg-red-100 ring-1 ring-red-500/50",
-                                                !isFocused && isDue && "bg-red-50 hover:bg-red-100 border-red-200",
-                                                !isFocused && !isDue && "bg-card hover:bg-accent/30"
+                                                'flex cursor-pointer flex-col items-start justify-between rounded-lg border p-3 transition-all sm:flex-row sm:items-center',
+                                                isFocused &&
+                                                    !isDue &&
+                                                    'border-primary bg-accent ring-1 ring-primary/50',
+                                                isFocused &&
+                                                    isDue &&
+                                                    'border-red-500 bg-red-100 ring-1 ring-red-500/50',
+                                                !isFocused &&
+                                                    isDue &&
+                                                    'border-red-200 bg-red-50 hover:bg-red-100',
+                                                !isFocused &&
+                                                    !isDue &&
+                                                    'bg-card hover:bg-accent/30',
                                             )}
                                         >
                                             <div className="mb-3 flex items-center gap-4 sm:mb-0">
@@ -474,24 +511,34 @@ export default function AttendanceIndex({
                                                 <Checkbox
                                                     id={`installment-${student.id}`}
                                                     checked={isDue}
-                                                    onCheckedChange={(checked) =>
-                                                        handleInstallmentToggle(activeGroup.id, student.id, checked === true)
+                                                    onCheckedChange={(
+                                                        checked,
+                                                    ) =>
+                                                        handleInstallmentToggle(
+                                                            activeGroup.id,
+                                                            student.id,
+                                                            checked === true,
+                                                        )
                                                     }
                                                     className={cn(
-                                                        "size-5 transition-transform hover:scale-110",
+                                                        'size-5 transition-transform hover:scale-110',
                                                         isDue
-                                                            ? "border-transparent data-[state=checked]:bg-red-600 data-[state=checked]:border-red-600"
-                                                            : "border-muted-foreground"
+                                                            ? 'border-transparent data-[state=checked]:border-red-600 data-[state=checked]:bg-red-600'
+                                                            : 'border-muted-foreground',
                                                     )}
                                                     title="تحديد قسط مستحق"
-                                                    onClick={(e) => e.stopPropagation()}
+                                                    onClick={(e) =>
+                                                        e.stopPropagation()
+                                                    }
                                                 />
 
                                                 <div className="flex items-center gap-3">
                                                     <div
                                                         className={cn(
-                                                            "flex size-8 items-center justify-center rounded-full transition-colors",
-                                                            isFocused ? "bg-primary text-primary-foreground" : "bg-muted"
+                                                            'flex size-8 items-center justify-center rounded-full transition-colors',
+                                                            isFocused
+                                                                ? 'bg-primary text-primary-foreground'
+                                                                : 'bg-muted',
                                                         )}
                                                     >
                                                         <UserIcon className="size-4" />
@@ -502,7 +549,8 @@ export default function AttendanceIndex({
                                                         </span>
                                                         {isDue && (
                                                             <span className="flex items-center gap-1 text-[10px] font-bold text-red-600 uppercase">
-                                                                <ReceiptText className="size-3" /> قسط مستحق
+                                                                <ReceiptText className="size-3" />{' '}
+                                                                قسط مستحق
                                                             </span>
                                                         )}
                                                     </div>
@@ -512,7 +560,9 @@ export default function AttendanceIndex({
                                             <div className="flex w-full items-center justify-end gap-4 sm:w-auto">
                                                 <ToggleGroup
                                                     type="single"
-                                                    value={studentAttendance?.status}
+                                                    value={
+                                                        studentAttendance?.status
+                                                    }
                                                     onValueChange={(val) =>
                                                         handleStatusChange(
                                                             activeGroup.id,

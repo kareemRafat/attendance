@@ -213,7 +213,7 @@ export default function BranchesIndex({ branches }: Props) {
                                         </div>
                                         <div className="flex flex-col rounded-2xl border border-blue-100 bg-blue-50/30 p-4 dark:border-blue-900/20 dark:bg-blue-900/10">
                                             <span className="mb-1 text-[10px] font-black tracking-[0.15em] text-blue-400 uppercase dark:text-blue-500">
-                                                الموظفون المعينون
+                                                الموظفون
                                             </span>
                                             <div className="flex items-baseline gap-1">
                                                 <span className="text-3xl font-black text-blue-700 dark:text-blue-400">
@@ -248,7 +248,8 @@ export default function BranchesIndex({ branches }: Props) {
                                             )}
                                         </div>
                                         <span className="ms-3 text-[10px] font-bold tracking-widest text-slate-400 uppercase dark:text-slate-500">
-                                            إجمالي عدد الموظفين: {branch.users_count}
+                                            إجمالي عدد الموظفين:{' '}
+                                            {branch.users_count}
                                         </span>
                                     </div>
                                 </CardContent>
@@ -265,14 +266,16 @@ export default function BranchesIndex({ branches }: Props) {
                                 وسع شبكتك
                             </h3>
                             <p className="mx-auto mt-2 max-w-sm font-medium text-slate-500 dark:text-slate-400">
-                                لم يتم إنشاء أي فروع بعد. هل أنت مستعد لافتتاح أول موقع أكاديمي فعلي أو افتراضي؟
+                                لم يتم إنشاء أي فروع بعد. هل أنت مستعد لافتتاح
+                                أول موقع أكاديمي فعلي أو افتراضي؟
                             </p>
                             <Button
                                 variant="outline"
                                 className="mt-8 h-12 cursor-pointer rounded-xl border-indigo-200 px-8 font-bold text-indigo-600 transition-all hover:bg-indigo-50 dark:border-indigo-900 dark:text-indigo-400 dark:hover:bg-indigo-950/30"
                                 onClick={() => setIsCreateOpen(true)}
                             >
-                                <Plus className="ms-2 size-5" /> ابدأ الفرع الأول
+                                <Plus className="ms-2 size-5" /> ابدأ الفرع
+                                الأول
                             </Button>
                         </div>
                     )}

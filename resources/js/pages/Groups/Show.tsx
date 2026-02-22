@@ -334,7 +334,14 @@ export default function GroupShow({ group, students, sessions }: Props) {
                                             >
                                                 <span
                                                     dangerouslySetInnerHTML={{
-                                                        __html: link.label === '&laquo; Previous' ? 'السابق' : (link.label === 'Next &raquo;' ? 'التالي' : link.label),
+                                                        __html:
+                                                            link.label ===
+                                                            '&laquo; Previous'
+                                                                ? 'السابق'
+                                                                : link.label ===
+                                                                    'Next &raquo;'
+                                                                  ? 'التالي'
+                                                                  : link.label,
                                                     }}
                                                 />
                                             </Button>
@@ -416,7 +423,8 @@ export default function GroupShow({ group, students, sessions }: Props) {
                                             colSpan={5}
                                             className="h-24 text-center text-slate-400 italic"
                                         >
-                                            لم يتم تسجيل أي جلسات لهذه المجموعة بعد.
+                                            لم يتم تسجيل أي جلسات لهذه المجموعة
+                                            بعد.
                                         </TableCell>
                                     </TableRow>
                                 )}
@@ -461,7 +469,14 @@ export default function GroupShow({ group, students, sessions }: Props) {
                                             >
                                                 <span
                                                     dangerouslySetInnerHTML={{
-                                                        __html: link.label === '&laquo; Previous' ? 'السابق' : (link.label === 'Next &raquo;' ? 'التالي' : link.label),
+                                                        __html:
+                                                            link.label ===
+                                                            '&laquo; Previous'
+                                                                ? 'السابق'
+                                                                : link.label ===
+                                                                    'Next &raquo;'
+                                                                  ? 'التالي'
+                                                                  : link.label,
                                                     }}
                                                 />
                                             </Button>

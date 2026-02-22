@@ -219,7 +219,7 @@ export default function StudentShow({
                                 <p className="text-xs font-medium tracking-wider text-slate-500 uppercase">
                                     الفرع
                                 </p>
-                                <p className="mt-1 text-sm font-semibold text-slate-900 dark:text-slate-200 capitalize">
+                                <p className="mt-1 text-sm font-semibold text-slate-900 capitalize dark:text-slate-200">
                                     {student.branch?.name || '-'}
                                 </p>
                             </div>
@@ -330,7 +330,7 @@ export default function StudentShow({
                     {/* Excused */}
                     <Card className="flex flex-col justify-between border-amber-100 bg-amber-50/50 transition-colors hover:bg-amber-50 dark:border-amber-900 dark:bg-amber-950/20">
                         <CardHeader className="p-4 pb-0">
-                            <CardTitle className="text-xs font-bold tracking-wider text-amber-600 uppercase dark:text-amber-400">
+                            <CardTitle className="text-xs font-bold tracking-wider text-amber-600 uppercase dark:text-indigo-400">
                                 بعذر
                             </CardTitle>
                         </CardHeader>
@@ -402,7 +402,13 @@ export default function StudentShow({
                                                                       : 'border-amber-100 bg-amber-50 text-amber-700 dark:border-amber-900 dark:bg-amber-900/20 dark:text-amber-400'
                                                             }`}
                                                         >
-                                                            {record.status === 'present' ? 'حضور' : (record.status === 'absent' ? 'غياب' : 'بعذر')}
+                                                            {record.status ===
+                                                            'present'
+                                                                ? 'حضور'
+                                                                : record.status ===
+                                                                    'absent'
+                                                                  ? 'غياب'
+                                                                  : 'بعذر'}
                                                         </span>
                                                     </TableCell>
                                                     <TableCell className="text-center font-medium text-slate-500 dark:text-slate-400">
@@ -466,7 +472,14 @@ export default function StudentShow({
                                                     >
                                                         <span
                                                             dangerouslySetInnerHTML={{
-                                                                __html: link.label === '&laquo; Previous' ? 'السابق' : (link.label === 'Next &raquo;' ? 'التالي' : link.label),
+                                                                __html:
+                                                                    link.label ===
+                                                                    '&laquo; Previous'
+                                                                        ? 'السابق'
+                                                                        : link.label ===
+                                                                            'Next &raquo;'
+                                                                          ? 'التالي'
+                                                                          : link.label,
                                                             }}
                                                         />
                                                     </Button>
@@ -517,7 +530,7 @@ export default function StudentShow({
                                                             }
                                                         </span>
                                                         <ArrowRightLeft className="size-3 text-slate-400 rtl:rotate-180" />
-                                                        <span className=" text-indigo-600 dark:text-indigo-400">
+                                                        <span className="text-indigo-600 dark:text-indigo-400">
                                                             {log.to_group.name}
                                                         </span>
                                                     </div>
@@ -537,7 +550,7 @@ export default function StudentShow({
                                                                 {log.reason}
                                                             </span>
                                                         </TooltipTrigger>
-                                                        <TooltipContent className="max-w-xs whitespace-pre-wrap text-sm">
+                                                        <TooltipContent className="max-w-xs text-sm whitespace-pre-wrap">
                                                             {log.reason}
                                                         </TooltipContent>
                                                     </Tooltip>
@@ -586,7 +599,14 @@ export default function StudentShow({
                                                     >
                                                         <span
                                                             dangerouslySetInnerHTML={{
-                                                                __html: link.label === '&laquo; Previous' ? 'السابق' : (link.label === 'Next &raquo;' ? 'التالي' : link.label),
+                                                                __html:
+                                                                    link.label ===
+                                                                    '&laquo; Previous'
+                                                                        ? 'السابق'
+                                                                        : link.label ===
+                                                                            'Next &raquo;'
+                                                                          ? 'التالي'
+                                                                          : link.label,
                                                             }}
                                                         />
                                                     </Button>

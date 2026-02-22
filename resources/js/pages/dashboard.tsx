@@ -22,7 +22,7 @@ interface Props {
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
-        title: 'Dashboard',
+        title: 'لوحة التحكم',
         href: '/dashboard',
     },
 ];
@@ -30,12 +30,12 @@ const breadcrumbs: BreadcrumbItem[] = [
 export default function Dashboard({ stats, branches }: Props) {
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="Dashboard" />
+            <Head title="لوحة التحكم" />
 
             <div className="flex flex-col gap-6 p-4">
                 <div className="flex items-center justify-between">
                     <h1 className="text-2xl font-bold text-slate-900 dark:text-white">
-                        Dashboard Overview
+                        نظرة عامة على لوحة التحكم
                     </h1>
                 </div>
 
@@ -44,8 +44,7 @@ export default function Dashboard({ stats, branches }: Props) {
                     <Card className="border-blue-100 bg-blue-50/50 shadow-sm dark:border-blue-900 dark:bg-blue-950/20">
                         <CardHeader className="p-4 pb-2">
                             <CardTitle className="flex items-center gap-2 text-xs font-bold tracking-wider text-blue-600 uppercase dark:text-blue-400">
-                                <Building2 className="size-3.5" /> Total
-                                Branches
+                                <Building2 className="size-3.5" /> إجمالي الفروع
                             </CardTitle>
                         </CardHeader>
                         <CardContent className="p-4 pt-0">
@@ -58,7 +57,7 @@ export default function Dashboard({ stats, branches }: Props) {
                     <Card className="border-indigo-100 bg-indigo-50/50 shadow-sm dark:border-indigo-900 dark:bg-indigo-950/20">
                         <CardHeader className="p-4 pb-2">
                             <CardTitle className="flex items-center gap-2 text-xs font-bold tracking-wider text-indigo-600 uppercase dark:text-indigo-400">
-                                <Layers className="size-3.5" /> Active Groups
+                                <Layers className="size-3.5" /> المجموعات النشطة
                             </CardTitle>
                         </CardHeader>
                         <CardContent className="p-4 pt-0">
@@ -71,7 +70,7 @@ export default function Dashboard({ stats, branches }: Props) {
                     <Card className="border-emerald-100 bg-emerald-50/50 shadow-sm dark:border-emerald-900 dark:bg-emerald-950/20">
                         <CardHeader className="p-4 pb-2">
                             <CardTitle className="flex items-center gap-2 text-xs font-bold tracking-wider text-emerald-600 uppercase dark:text-emerald-400">
-                                <Users className="size-3.5" /> Total Students
+                                <Users className="size-3.5" /> إجمالي الطلاب
                             </CardTitle>
                         </CardHeader>
                         <CardContent className="p-4 pt-0">
@@ -87,15 +86,15 @@ export default function Dashboard({ stats, branches }: Props) {
                     <CardHeader className="border-b border-slate-100 bg-slate-50/30 pb-3 dark:border-slate-800 dark:bg-slate-800/30">
                         <CardTitle className="flex items-center gap-2 text-lg font-bold text-slate-800 dark:text-white">
                             <TrendingUp className="size-5 text-indigo-500" />
-                            Branch Performance Breakdown
+                            تفاصيل أداء الفروع
                         </CardTitle>
                     </CardHeader>
                     <CardContent className="p-0">
-                        <div className="grid grid-cols-1 gap-0 divide-x divide-y divide-slate-100 md:grid-cols-2 md:divide-y-0 lg:grid-cols-3 dark:divide-slate-800">
+                        <div className="grid grid-cols-1 gap-0 divide-y divide-slate-100 md:grid-cols-2 md:divide-x md:divide-y-0 lg:grid-cols-3 rtl:md:divide-x-reverse dark:divide-slate-800">
                             {branches.map((branch) => (
                                 <div
                                     key={branch.id}
-                                    className="p-6 transition-colors hover:bg-slate-50/50 dark:hover:bg-slate-800/30"
+                                    className="p-6 text-start transition-colors hover:bg-slate-50/50 dark:hover:bg-slate-800/30"
                                 >
                                     <h3 className="mb-4 font-black text-slate-900 dark:text-white">
                                         {branch.name}
@@ -103,7 +102,7 @@ export default function Dashboard({ stats, branches }: Props) {
                                     <div className="space-y-3">
                                         <div className="flex items-center justify-between">
                                             <span className="text-xs font-medium tracking-wider text-slate-500 uppercase">
-                                                Active Groups
+                                                المجموعات النشطة
                                             </span>
                                             <span className="rounded-lg bg-indigo-50 px-2 py-0.5 text-sm font-bold text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-400">
                                                 {branch.groups_count}
@@ -111,7 +110,7 @@ export default function Dashboard({ stats, branches }: Props) {
                                         </div>
                                         <div className="flex items-center justify-between">
                                             <span className="text-xs font-medium tracking-wider text-slate-500 uppercase">
-                                                Assigned Staff
+                                                الموظفون
                                             </span>
                                             <span className="rounded-lg bg-blue-50 px-2 py-0.5 text-sm font-bold text-blue-700 dark:bg-blue-900/30 dark:text-blue-400">
                                                 {branch.users_count}
