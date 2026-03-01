@@ -19,6 +19,7 @@ import { useState } from 'react';
 import * as ReportActions from '@/actions/App/Http/Controllers/AttendanceReportController';
 import { DeleteConfirmationDialog } from '@/components/delete-confirmation-dialog';
 import { EditStudentDialog } from '@/components/edit-student-dialog';
+import { ReasonTooltip } from '@/components/reason-tooltip';
 import { TransferStudentDialog } from '@/components/transfer-student-dialog';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -161,19 +162,19 @@ export default function StudentShow({
             <Head title={`طالب: ${student.name}`} />
 
             <div className="flex flex-col gap-6 p-4">
-                <div className="flex items-center justify-between">
+                <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                     <div className="flex items-center gap-4">
                         <Link href="/students">
                             <Button
                                 variant="outline"
                                 size="icon"
-                                className="rounded-full"
+                                className="rounded-full shrink-0"
                             >
                                 <ArrowLeft className="size-4 rtl:rotate-180" />
                             </Button>
                         </Link>
-                        <div>
-                            <h1 className="text-2xl font-bold text-slate-900 dark:text-white">
+                        <div className="min-w-0">
+                            <h1 className="truncate text-xl font-bold text-slate-900 sm:text-2xl dark:text-white">
                                 {student.name}
                             </h1>
                             <p className="text-sm font-medium text-slate-500 capitalize">
@@ -181,7 +182,7 @@ export default function StudentShow({
                             </p>
                         </div>
                     </div>
-                    <div className="flex gap-2">
+                    <div className="flex flex-wrap gap-2">
                         <Button
                             variant="outline"
                             className="cursor-pointer gap-2 rounded-xl border-indigo-200 bg-indigo-50/50 text-indigo-700 hover:bg-indigo-100 dark:border-indigo-900/50 dark:bg-indigo-950/20 dark:text-indigo-400 dark:hover:bg-indigo-950/40"
@@ -200,7 +201,8 @@ export default function StudentShow({
                                 }, 60000); // 1 minute timeout for safety
                             }}
                         >
-                            <Printer className="size-4" /> تقرير الحضور
+                            <Printer className="size-4" />
+                            <span className="hidden sm:inline">تقرير الحضور</span>
                         </Button>
 
                         <Button
@@ -208,21 +210,24 @@ export default function StudentShow({
                             className="cursor-pointer gap-2 rounded-xl dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800"
                             onClick={() => setIsTransferOpen(true)}
                         >
-                            <ArrowRightLeft className="size-4" /> نقل
+                            <ArrowRightLeft className="size-4" />
+                            <span className="hidden sm:inline">نقل</span>
                         </Button>
                         <Button
                             variant="outline"
                             className="cursor-pointer gap-2 rounded-xl dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800"
                             onClick={() => setIsEditOpen(true)}
                         >
-                            <Pencil className="size-4" /> تعديل
+                            <Pencil className="size-4" />
+                            <span className="hidden sm:inline">تعديل</span>
                         </Button>
                         <Button
                             variant="destructive"
                             className="cursor-pointer gap-2 rounded-xl shadow-lg shadow-rose-500/20"
                             onClick={() => setIsDeleteOpen(true)}
                         >
-                            <Trash className="size-4" /> حذف
+                            <Trash className="size-4" />
+                            <span className="hidden sm:inline">حذف</span>
                         </Button>
                     </div>
                 </div>
@@ -389,16 +394,16 @@ export default function StudentShow({
                                 <Table>
                                     <TableHeader className="bg-slate-50/50 dark:bg-slate-800/20">
                                         <TableRow className="dark:border-slate-800">
-                                            <TableHead className="px-6 py-4 text-start text-base font-bold text-slate-900 dark:text-slate-300">
+                                            <TableHead className="px-3 py-4 text-start text-base font-bold text-slate-900 md:px-6 dark:text-slate-300">
                                                 التاريخ
                                             </TableHead>
-                                            <TableHead className="text-start text-base font-bold text-slate-900 dark:text-slate-300">
+                                            <TableHead className="px-3 py-4 text-start text-base font-bold text-slate-900 md:px-6 dark:text-slate-300">
                                                 الحالة
                                             </TableHead>
-                                            <TableHead className="text-center text-base font-bold text-slate-900 dark:text-slate-300">
+                                            <TableHead className="px-3 py-4 text-center text-base font-bold text-slate-900 md:px-6 dark:text-slate-300">
                                                 المجموعة
                                             </TableHead>
-                                            <TableHead className="px-6 text-end text-base font-bold text-slate-900 dark:text-slate-300">
+                                            <TableHead className="px-3 py-4 text-end text-base font-bold text-slate-900 md:px-6 dark:text-slate-300">
                                                 الوقت
                                             </TableHead>
                                         </TableRow>
@@ -410,7 +415,7 @@ export default function StudentShow({
                                                     key={record.id}
                                                     className="transition-colors hover:bg-slate-50/50 dark:border-slate-800 dark:hover:bg-slate-800/30"
                                                 >
-                                                    <TableCell className="px-6 text-start text-base font-bold text-slate-900 dark:text-slate-200">
+                                                    <TableCell className="px-3 text-start text-base font-bold text-slate-900 md:px-6 dark:text-slate-200">
                                                         {format(
                                                             new Date(
                                                                 record
@@ -420,7 +425,7 @@ export default function StudentShow({
                                                             'yyyy-MM-dd',
                                                         )}
                                                     </TableCell>
-                                                    <TableCell className="text-start">
+                                                    <TableCell className="px-3 text-start md:px-6">
                                                         <span
                                                             className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-black tracking-wider uppercase ${
                                                                 record.status ===
@@ -441,14 +446,14 @@ export default function StudentShow({
                                                                   : 'بعذر'}
                                                         </span>
                                                     </TableCell>
-                                                    <TableCell className="text-center text-base font-medium text-slate-500 dark:text-slate-400">
+                                                    <TableCell className="px-3 text-center text-base font-medium text-slate-500 md:px-6 dark:text-slate-400">
                                                         {
                                                             record
                                                                 .lecture_session
                                                                 .group.name
                                                         }
                                                     </TableCell>
-                                                    <TableCell className="px-6 text-end text-sm font-medium text-slate-400">
+                                                    <TableCell className="px-3 text-end text-sm font-medium text-slate-400 md:px-6">
                                                         {format(
                                                             new Date(
                                                                 record.created_at,
@@ -548,13 +553,13 @@ export default function StudentShow({
                                 <Table>
                                     <TableHeader className="bg-slate-50/50 dark:bg-slate-800/20">
                                         <TableRow className="dark:border-slate-800">
-                                            <TableHead className="min-w-[250px] px-6 py-4 text-start text-base font-bold text-slate-900 dark:text-slate-300">
+                                            <TableHead className="min-w-[150px] px-3 py-4 text-start text-base font-bold text-slate-900 md:min-w-[250px] md:px-6 dark:text-slate-300">
                                                 من / إلى
                                             </TableHead>
-                                            <TableHead className="text-start text-base font-bold text-slate-900 dark:text-slate-300">
+                                            <TableHead className="px-3 py-4 text-start text-base font-bold text-slate-900 md:px-6 dark:text-slate-300">
                                                 التاريخ
                                             </TableHead>
-                                            <TableHead className="px-6 text-end text-base font-bold text-slate-900 dark:text-slate-300">
+                                            <TableHead className="px-3 py-4 text-end text-base font-bold text-slate-900 md:px-6 dark:text-slate-300">
                                                 السبب
                                             </TableHead>
                                         </TableRow>
@@ -565,21 +570,21 @@ export default function StudentShow({
                                                 key={log.id}
                                                 className="transition-colors hover:bg-slate-50/50 dark:border-slate-800 dark:hover:bg-slate-800/30"
                                             >
-                                                <TableCell className="px-6 text-start text-base font-bold text-slate-900 dark:text-slate-200">
-                                                    <div className="flex items-center gap-2">
-                                                        <span>
+                                                <TableCell className="max-w-[150px] truncate px-3 text-start text-base font-bold text-slate-900 md:max-w-none md:px-6 dark:text-slate-200">
+                                                    <div className="flex items-center gap-2 overflow-hidden">
+                                                        <span className="truncate">
                                                             {
                                                                 log.from_group
                                                                     .name
                                                             }
                                                         </span>
-                                                        <ArrowRightLeft className="size-4 text-slate-400 rtl:rotate-180" />
-                                                        <span className="text-indigo-600 dark:text-indigo-400">
+                                                        <ArrowRightLeft className="size-4 shrink-0 text-slate-400 rtl:rotate-180" />
+                                                        <span className="truncate text-indigo-600 dark:text-indigo-400">
                                                             {log.to_group.name}
                                                         </span>
                                                     </div>
                                                 </TableCell>
-                                                <TableCell className="text-start text-base font-medium text-slate-500 dark:text-slate-400">
+                                                <TableCell className="px-3 text-start text-base font-medium text-slate-500 md:px-6 dark:text-slate-400">
                                                     {format(
                                                         new Date(
                                                             log.effective_date,
@@ -587,17 +592,8 @@ export default function StudentShow({
                                                         'yyyy-MM-dd',
                                                     )}
                                                 </TableCell>
-                                                <TableCell className="max-w-[200px] truncate px-6 text-end text-sm text-slate-600 dark:text-slate-400">
-                                                    <Tooltip>
-                                                        <TooltipTrigger asChild>
-                                                            <span className="cursor-help">
-                                                                {log.reason}
-                                                            </span>
-                                                        </TooltipTrigger>
-                                                        <TooltipContent className="max-w-xs text-sm whitespace-pre-wrap">
-                                                            {log.reason}
-                                                        </TooltipContent>
-                                                    </Tooltip>
+                                                <TableCell className="max-w-[100px] truncate px-3 text-end text-sm text-slate-600 md:max-w-[200px] md:px-6 dark:text-slate-400">
+                                                    <ReasonTooltip reason={log.reason} />
                                                 </TableCell>
                                             </TableRow>
                                         ))}
