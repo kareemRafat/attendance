@@ -12,7 +12,6 @@ import {
     TrendingUp,
     Pencil,
     Trash,
-    FileDown,
     Printer,
 } from 'lucide-react';
 import { useState } from 'react';
@@ -24,12 +23,6 @@ import { TransferStudentDialog } from '@/components/transfer-student-dialog';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
-    Dialog,
-    DialogContent,
-    DialogHeader,
-    DialogTitle,
-} from '@/components/ui/dialog';
-import {
     Table,
     TableBody,
     TableCell,
@@ -37,11 +30,6 @@ import {
     TableHeader,
     TableRow,
 } from '@/components/ui/table';
-import {
-    Tooltip,
-    TooltipContent,
-    TooltipTrigger,
-} from '@/components/ui/tooltip';
 import AppLayout from '@/layouts/app-layout';
 import { cn } from '@/lib/utils';
 
@@ -147,11 +135,6 @@ export default function StudentShow({
             onFinish: () => setIsDeleting(false),
         });
     };
-
-    const attendanceRate =
-        stats.total > 0
-            ? Math.round(((stats.present + stats.excused) / stats.total) * 100)
-            : 0;
 
     const currentGroups = student.enrollments
         .filter((e) => !e.ended_at)
