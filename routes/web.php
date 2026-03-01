@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AttendanceController;
+use App\Http\Controllers\AttendanceReportController;
 use App\Http\Controllers\BranchController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EmployeeController;
@@ -15,7 +16,6 @@ Route::get('/', function () {
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
-
     Route::middleware(['admin'])->group(function () {
         Route::resource('branches', BranchController::class)->except(['show']);
         Route::resource('employees', EmployeeController::class)->except(['show', 'create', 'edit']);
@@ -27,6 +27,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::post('students/{student}/enroll', [StudentController::class, 'enroll'])->name('students.enroll');
     Route::post('students/{student}/transfer', [StudentController::class, 'transfer'])->name('students.transfer');
+    Route::get('students/{student}/attendance/report', [AttendanceReportController::class, 'download'])->name('students.attendance.report');
+    Route::get('students/{student}/attendance/print', [AttendanceReportController::class, 'print'])->name('students.attendance.print');
     Route::resource('students', StudentController::class);
 
     Route::get('attendance', [AttendanceController::class, 'index'])->name('attendance.index');

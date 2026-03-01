@@ -12,8 +12,11 @@ import {
     TrendingUp,
     Pencil,
     Trash,
+    FileDown,
+    Printer,
 } from 'lucide-react';
 import { useState } from 'react';
+import * as ReportActions from '@/actions/App/Http/Controllers/AttendanceReportController';
 import { DeleteConfirmationDialog } from '@/components/delete-confirmation-dialog';
 import { EditStudentDialog } from '@/components/edit-student-dialog';
 import { TransferStudentDialog } from '@/components/transfer-student-dialog';
@@ -181,6 +184,37 @@ export default function StudentShow({
                     <div className="flex gap-2">
                         <Button
                             variant="outline"
+                            className="cursor-pointer gap-2 rounded-xl border-indigo-200 bg-indigo-50/50 text-indigo-700 hover:bg-indigo-100 dark:border-indigo-900/50 dark:bg-indigo-950/20 dark:text-indigo-400 dark:hover:bg-indigo-950/40"
+                            asChild
+                        >
+                            <a
+                                href={ReportActions.download.url({ student: student.id })}
+                            >
+                                <FileDown className="size-4" /> تقرير الحضور
+                            </a>
+                        </Button>
+                        <Button
+                            variant="outline"
+                            className="cursor-pointer gap-2 rounded-xl border-emerald-200 bg-emerald-50/50 text-emerald-700 hover:bg-emerald-100 dark:border-emerald-900/50 dark:bg-emerald-950/20 dark:text-emerald-400 dark:hover:bg-emerald-950/40"
+                            onClick={() => {
+                                const printUrl = ReportActions.print.url({ student: student.id });
+                                const iframe = document.createElement('iframe');
+                                iframe.style.display = 'none';
+                                iframe.src = printUrl;
+                                document.body.appendChild(iframe);
+
+                                // Clean up the iframe after a delay
+                                setTimeout(() => {
+                                    if (document.body.contains(iframe)) {
+                                        document.body.removeChild(iframe);
+                                    }
+                                }, 60000); // 1 minute timeout for safety
+                            }}
+                        >
+                            <Printer className="size-4" /> طباعة التقرير
+                        </Button>
+                        <Button
+                            variant="outline"
                             className="cursor-pointer gap-2 rounded-xl dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800"
                             onClick={() => setIsTransferOpen(true)}
                         >
@@ -214,31 +248,31 @@ export default function StudentShow({
                     <CardContent>
                         <div className="grid grid-cols-1 gap-6 md:grid-cols-4">
                             <div>
-                                <p className="text-xs font-medium tracking-wider text-slate-500 uppercase">
+                                <p className="text-sm font-medium tracking-wider text-slate-500 uppercase">
                                     الاسم بالكامل
                                 </p>
-                                <p className="mt-1 text-sm font-semibold text-slate-900 dark:text-slate-200">
+                                <p className="mt-1 text-base font-semibold text-slate-900 dark:text-slate-200">
                                     {student.name}
                                 </p>
                             </div>
                             <div>
-                                <p className="text-xs font-medium tracking-wider text-slate-500 uppercase">
+                                <p className="text-sm font-medium tracking-wider text-slate-500 uppercase">
                                     الفرع
                                 </p>
-                                <p className="mt-1 text-sm font-semibold text-slate-900 capitalize dark:text-slate-200">
+                                <p className="mt-1 text-base font-semibold text-slate-900 capitalize dark:text-slate-200">
                                     {student.branch?.name || '-'}
                                 </p>
                             </div>
                             <div>
-                                <p className="text-xs font-medium tracking-wider text-slate-500 uppercase">
+                                <p className="text-sm font-medium tracking-wider text-slate-500 uppercase">
                                     المسار
                                 </p>
-                                <p className="mt-1 text-sm font-semibold text-slate-900 capitalize dark:text-slate-200">
+                                <p className="mt-1 text-base font-semibold text-slate-900 capitalize dark:text-slate-200">
                                     {student.formatted_track || '-'}
                                 </p>
                             </div>
                             <div>
-                                <p className="text-xs font-medium tracking-wider text-slate-500 uppercase">
+                                <p className="text-sm font-medium tracking-wider text-slate-500 uppercase">
                                     المجموعات الحالية
                                 </p>
                                 <div className="mt-1 flex flex-wrap gap-2">
@@ -246,14 +280,14 @@ export default function StudentShow({
                                         currentGroups.map((group) => (
                                             <span
                                                 key={group.id}
-                                                className="inline-flex items-center rounded border border-slate-200 bg-white px-2 py-0.5 text-sm font-medium text-slate-700 shadow-sm dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200"
+                                                className="inline-flex items-center rounded border border-slate-200 bg-white px-2 py-0.5 text-base font-medium text-slate-700 shadow-sm dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200"
                                             >
-                                                <GraduationCap className="me-1 size-3 text-slate-400" />
+                                                <GraduationCap className="me-1 size-4 text-slate-400" />
                                                 {group.name}
                                             </span>
                                         ))
                                     ) : (
-                                        <span className="text-xs text-slate-400 italic">
+                                        <span className="text-sm text-slate-400 italic">
                                             غير مسجل في أي مجموعة
                                         </span>
                                     )}
@@ -267,13 +301,13 @@ export default function StudentShow({
                 <div className="grid grid-cols-2 gap-4 md:grid-cols-5">
                     <Card className="flex flex-col justify-between border-indigo-100 bg-indigo-50/50 transition-colors hover:bg-indigo-50 dark:border-indigo-900 dark:bg-indigo-950/20">
                         <CardHeader className="p-4 pb-0">
-                            <CardTitle className="text-xs font-bold tracking-wider text-indigo-600 uppercase dark:text-indigo-400">
+                            <CardTitle className="text-sm font-bold tracking-wider text-indigo-600 uppercase dark:text-indigo-400">
                                 نسبة الحضور
                             </CardTitle>
                         </CardHeader>
                         <CardContent className="p-4 pt-2">
                             <div className="flex items-end gap-2">
-                                <span className="text-3xl font-extrabold text-indigo-900 dark:text-indigo-200">
+                                <span className="text-4xl font-extrabold text-indigo-900 dark:text-indigo-200">
                                     {stats.compliance}%
                                 </span>
                                 <TrendingUp
@@ -285,13 +319,13 @@ export default function StudentShow({
 
                     <Card className="flex flex-col justify-between border-blue-100 bg-blue-50/50 transition-colors hover:bg-blue-50 dark:border-blue-900 dark:bg-blue-950/20">
                         <CardHeader className="p-4 pb-0">
-                            <CardTitle className="text-xs font-bold tracking-wider text-blue-600 uppercase dark:text-blue-400">
+                            <CardTitle className="text-sm font-bold tracking-wider text-blue-600 uppercase dark:text-blue-400">
                                 إجمالي المحاضرات
                             </CardTitle>
                         </CardHeader>
                         <CardContent className="p-4 pt-2">
                             <div className="flex items-center justify-between">
-                                <span className="text-3xl font-extrabold text-blue-900 dark:text-blue-200">
+                                <span className="text-4xl font-extrabold text-blue-900 dark:text-blue-200">
                                     {stats.total}
                                 </span>
                                 <Calendar className="size-5 text-blue-400" />
@@ -302,13 +336,13 @@ export default function StudentShow({
                     {/* Present */}
                     <Card className="flex flex-col justify-between border-emerald-100 bg-emerald-50/50 transition-colors hover:bg-emerald-50 dark:border-emerald-900 dark:bg-emerald-950/20">
                         <CardHeader className="p-4 pb-0">
-                            <CardTitle className="text-xs font-bold tracking-wider text-emerald-600 uppercase dark:text-emerald-400">
+                            <CardTitle className="text-sm font-bold tracking-wider text-emerald-600 uppercase dark:text-emerald-400">
                                 حضور
                             </CardTitle>
                         </CardHeader>
                         <CardContent className="p-4 pt-2">
                             <div className="flex items-center justify-between">
-                                <span className="text-3xl font-extrabold text-emerald-900 dark:text-emerald-200">
+                                <span className="text-4xl font-extrabold text-emerald-900 dark:text-emerald-200">
                                     {stats.present}
                                 </span>
                                 <CheckCircle2 className="size-5 text-emerald-400" />
@@ -319,13 +353,13 @@ export default function StudentShow({
                     {/* Absent */}
                     <Card className="flex flex-col justify-between border-rose-100 bg-rose-50/50 transition-colors hover:bg-rose-50 dark:border-rose-900 dark:bg-rose-950/20">
                         <CardHeader className="p-4 pb-0">
-                            <CardTitle className="text-xs font-bold tracking-wider text-rose-600 uppercase dark:text-rose-400">
+                            <CardTitle className="text-sm font-bold tracking-wider text-rose-600 uppercase dark:text-rose-400">
                                 غياب
                             </CardTitle>
                         </CardHeader>
                         <CardContent className="p-4 pt-2">
                             <div className="flex items-center justify-between">
-                                <span className="text-3xl font-extrabold text-rose-900 dark:text-rose-200">
+                                <span className="text-4xl font-extrabold text-rose-900 dark:text-rose-200">
                                     {stats.absent}
                                 </span>
                                 <XCircle className="size-5 text-rose-400" />
@@ -336,13 +370,13 @@ export default function StudentShow({
                     {/* Excused */}
                     <Card className="flex flex-col justify-between border-amber-100 bg-amber-50/50 transition-colors hover:bg-amber-50 dark:border-amber-900 dark:bg-amber-950/20">
                         <CardHeader className="p-4 pb-0">
-                            <CardTitle className="text-xs font-bold tracking-wider text-amber-600 uppercase dark:text-indigo-400">
+                            <CardTitle className="text-sm font-bold tracking-wider text-amber-600 uppercase dark:text-indigo-400">
                                 بعذر
                             </CardTitle>
                         </CardHeader>
                         <CardContent className="p-4 pt-2">
                             <div className="flex items-center justify-between">
-                                <span className="text-3xl font-extrabold text-amber-900 dark:text-amber-200">
+                                <span className="text-4xl font-extrabold text-amber-900 dark:text-amber-200">
                                     {stats.excused}
                                 </span>
                                 <Clock className="size-5 text-amber-400" />
@@ -365,16 +399,16 @@ export default function StudentShow({
                                 <Table>
                                     <TableHeader className="bg-slate-50/50 dark:bg-slate-800/20">
                                         <TableRow className="dark:border-slate-800">
-                                            <TableHead className="px-6 py-4 text-start font-bold text-slate-900 dark:text-slate-300">
+                                            <TableHead className="px-6 py-4 text-start text-base font-bold text-slate-900 dark:text-slate-300">
                                                 التاريخ
                                             </TableHead>
-                                            <TableHead className="text-start font-bold text-slate-900 dark:text-slate-300">
+                                            <TableHead className="text-start text-base font-bold text-slate-900 dark:text-slate-300">
                                                 الحالة
                                             </TableHead>
-                                            <TableHead className="text-center font-bold text-slate-900 dark:text-slate-300">
+                                            <TableHead className="text-center text-base font-bold text-slate-900 dark:text-slate-300">
                                                 المجموعة
                                             </TableHead>
-                                            <TableHead className="px-6 text-end font-bold text-slate-900 dark:text-slate-300">
+                                            <TableHead className="px-6 text-end text-base font-bold text-slate-900 dark:text-slate-300">
                                                 الوقت
                                             </TableHead>
                                         </TableRow>
@@ -386,7 +420,7 @@ export default function StudentShow({
                                                     key={record.id}
                                                     className="transition-colors hover:bg-slate-50/50 dark:border-slate-800 dark:hover:bg-slate-800/30"
                                                 >
-                                                    <TableCell className="px-6 text-start font-bold text-slate-900 dark:text-slate-200">
+                                                    <TableCell className="px-6 text-start text-base font-bold text-slate-900 dark:text-slate-200">
                                                         {format(
                                                             new Date(
                                                                 record
@@ -398,7 +432,7 @@ export default function StudentShow({
                                                     </TableCell>
                                                     <TableCell className="text-start">
                                                         <span
-                                                            className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-[10px] font-black tracking-wider uppercase ${
+                                                            className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-black tracking-wider uppercase ${
                                                                 record.status ===
                                                                 'present'
                                                                     ? 'border-emerald-100 bg-emerald-50 text-emerald-700 dark:border-emerald-900 dark:bg-emerald-900/20 dark:text-emerald-400'
@@ -417,14 +451,14 @@ export default function StudentShow({
                                                                   : 'بعذر'}
                                                         </span>
                                                     </TableCell>
-                                                    <TableCell className="text-center font-medium text-slate-500 dark:text-slate-400">
+                                                    <TableCell className="text-center text-base font-medium text-slate-500 dark:text-slate-400">
                                                         {
                                                             record
                                                                 .lecture_session
                                                                 .group.name
                                                         }
                                                     </TableCell>
-                                                    <TableCell className="px-6 text-end text-xs font-medium text-slate-400">
+                                                    <TableCell className="px-6 text-end text-sm font-medium text-slate-400">
                                                         {format(
                                                             new Date(
                                                                 record.created_at,
@@ -524,13 +558,13 @@ export default function StudentShow({
                                 <Table>
                                     <TableHeader className="bg-slate-50/50 dark:bg-slate-800/20">
                                         <TableRow className="dark:border-slate-800">
-                                            <TableHead className="min-w-[250px] px-6 py-4 text-start font-bold text-slate-900 dark:text-slate-300">
+                                            <TableHead className="min-w-[250px] px-6 py-4 text-start text-base font-bold text-slate-900 dark:text-slate-300">
                                                 من / إلى
                                             </TableHead>
-                                            <TableHead className="text-start font-bold text-slate-900 dark:text-slate-300">
+                                            <TableHead className="text-start text-base font-bold text-slate-900 dark:text-slate-300">
                                                 التاريخ
                                             </TableHead>
-                                            <TableHead className="px-6 text-end font-bold text-slate-900 dark:text-slate-300">
+                                            <TableHead className="px-6 text-end text-base font-bold text-slate-900 dark:text-slate-300">
                                                 السبب
                                             </TableHead>
                                         </TableRow>
@@ -541,7 +575,7 @@ export default function StudentShow({
                                                 key={log.id}
                                                 className="transition-colors hover:bg-slate-50/50 dark:border-slate-800 dark:hover:bg-slate-800/30"
                                             >
-                                                <TableCell className="px-6 text-start font-bold text-slate-900 dark:text-slate-200">
+                                                <TableCell className="px-6 text-start text-base font-bold text-slate-900 dark:text-slate-200">
                                                     <div className="flex items-center gap-2">
                                                         <span>
                                                             {
@@ -549,13 +583,13 @@ export default function StudentShow({
                                                                     .name
                                                             }
                                                         </span>
-                                                        <ArrowRightLeft className="size-3 text-slate-400 rtl:rotate-180" />
+                                                        <ArrowRightLeft className="size-4 text-slate-400 rtl:rotate-180" />
                                                         <span className="text-indigo-600 dark:text-indigo-400">
                                                             {log.to_group.name}
                                                         </span>
                                                     </div>
                                                 </TableCell>
-                                                <TableCell className="text-start font-medium text-slate-500 dark:text-slate-400">
+                                                <TableCell className="text-start text-base font-medium text-slate-500 dark:text-slate-400">
                                                     {format(
                                                         new Date(
                                                             log.effective_date,
@@ -563,7 +597,7 @@ export default function StudentShow({
                                                         'yyyy-MM-dd',
                                                     )}
                                                 </TableCell>
-                                                <TableCell className="max-w-[200px] truncate px-6 text-end text-xs text-slate-600 dark:text-slate-400">
+                                                <TableCell className="max-w-[200px] truncate px-6 text-end text-sm text-slate-600 dark:text-slate-400">
                                                     <Tooltip>
                                                         <TooltipTrigger asChild>
                                                             <span className="cursor-help">
@@ -676,7 +710,15 @@ export default function StudentShow({
                     onConfirm={confirmDelete}
                     processing={isDeleting}
                     title="حذف الطالب"
-                    description={`هل أنت متأكد من حذف الطالب ${student.name}؟ لا يمكن التراجع عن هذا الإجراء.`}
+                    description={
+                        <>
+                            هل أنت متأكد من حذف الطالب{' '}
+                            <span className="text-base font-bold text-indigo-600 dark:text-indigo-400">
+                                {student.name}
+                            </span>
+                            ؟ لا يمكن التراجع عن هذا الإجراء.
+                        </>
+                    }
                 />
             </div>
         </AppLayout>

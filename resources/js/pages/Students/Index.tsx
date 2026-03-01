@@ -819,19 +819,19 @@ export default function StudentsIndex({
                         <Table>
                             <TableHeader className="dark:bg-slate-800/20">
                                 <TableRow className="dark:border-slate-800">
-                                    <TableHead className="ps-6 text-start font-bold text-slate-900 dark:text-slate-300">
+                                    <TableHead className="ps-6 text-start text-base font-bold text-slate-900 dark:text-slate-300">
                                         الاسم
                                     </TableHead>
-                                    <TableHead className="text-start font-bold text-slate-900 dark:text-slate-300">
+                                    <TableHead className="text-start text-base font-bold text-slate-900 dark:text-slate-300">
                                         الفرع
                                     </TableHead>
-                                    <TableHead className="text-start font-bold text-slate-900 dark:text-slate-300">
+                                    <TableHead className="text-start text-base font-bold text-slate-900 dark:text-slate-300">
                                         المسار
                                     </TableHead>
-                                    <TableHead className="text-start font-bold text-slate-900 dark:text-slate-300">
+                                    <TableHead className="text-start text-base font-bold text-slate-900 dark:text-slate-300">
                                         المجموعات الحالية
                                     </TableHead>
-                                    <TableHead className="pe-6 text-end font-bold text-slate-900 dark:text-slate-300">
+                                    <TableHead className="pe-6 text-end text-base font-bold text-slate-900 dark:text-slate-300">
                                         الإجراءات
                                     </TableHead>
                                 </TableRow>
@@ -842,7 +842,7 @@ export default function StudentsIndex({
                                         key={student.id}
                                         className="transition-colors even:bg-slate-50/50 hover:bg-slate-100/50 dark:border-slate-800 dark:even:bg-slate-800/10 dark:hover:bg-slate-800/30"
                                     >
-                                        <TableCell className="ps-6 text-start font-bold">
+                                        <TableCell className="ps-6 text-start text-base font-bold">
                                             <Link
                                                 href={`/students/${student.id}`}
                                                 className="text-indigo-600 transition-colors hover:underline dark:text-indigo-400"
@@ -850,14 +850,14 @@ export default function StudentsIndex({
                                                 {student.name}
                                             </Link>
                                         </TableCell>
-                                        <TableCell className="text-start font-medium dark:text-slate-300">
-                                            <MapPinCheck size={17} className='text-slate-700 inline mx-2'/>
+                                        <TableCell className="text-start text-base font-medium dark:text-slate-300">
+                                            <MapPinCheck size={18} className='text-slate-700 inline mx-2'/>
                                             {student.branch?.name || '-'}
                                         </TableCell>
-                                        <TableCell className="text-start">
-                                            <NotebookText size={17} className='text-slate-700 inline mx-2' />
+                                        <TableCell className="text-start text-base">
+                                            <NotebookText size={18} className='text-slate-700 inline mx-2' />
                                             {student.formatted_track ? (
-                                                <span className="rounded-full border bg-slate-100 px-2.5 py-0.5 text-[11px] font-black tracking-tight text-slate-700 uppercase dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300">
+                                                <span className="rounded-full border bg-slate-100 px-2.5 py-0.5 text-xs font-black tracking-tight text-slate-700 uppercase dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300">
                                                     {student.formatted_track}
                                                 </span>
                                             ) : (
@@ -869,38 +869,37 @@ export default function StudentsIndex({
                                                 {student.groups.map((g) => (
                                                     <span
                                                         key={g.id}
-                                                        className="inline-flex items-center rounded-md border bg-white px-2 py-0.5 text-[13px] font-bold text-slate-700 shadow-xs dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300"
+                                                        className="inline-flex items-center rounded-md border bg-white px-2 py-0.5 text-sm font-bold text-slate-700 shadow-xs dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300"
                                                     >
                                                         {g.name}
                                                     </span>
                                                 ))}
                                                 {student.groups.length ===
                                                     0 && (
-                                                    <span className="text-xs text-muted-foreground italic dark:text-slate-500">
+                                                    <span className="text-sm text-muted-foreground italic dark:text-slate-500">
                                                         غير مسجل
                                                     </span>
                                                 )}
                                             </div>
                                         </TableCell>
                                         <TableCell className="pe-6 text-end">
-                                            <div className="flex justify-end gap-1.5">
+                                            <div className="flex justify-end gap-2">
                                                 <Link
                                                     href={`/students/${student.id}`}
                                                 >
                                                     <Button
                                                         variant="ghost"
-                                                        size="icon"
-                                                        title="عرض الطالب"
-                                                        className="size-8 cursor-pointer rounded-lg text-indigo-600 transition-colors hover:bg-indigo-50 dark:text-indigo-400 dark:hover:bg-indigo-900/30"
+                                                        size="sm"
+                                                        className="h-9 cursor-pointer gap-1.5 rounded-lg border-indigo-100 text-indigo-600 transition-colors hover:bg-indigo-50 dark:text-indigo-400 dark:hover:bg-indigo-900/30"
                                                     >
                                                         <Eye className="size-4" />
+                                                        <span className="font-bold">عرض</span>
                                                     </Button>
                                                 </Link>
                                                 <Button
                                                     variant="ghost"
-                                                    size="icon"
-                                                    title="نقل الطالب"
-                                                    className="size-8 cursor-pointer rounded-lg text-amber-600 transition-colors hover:bg-amber-50 dark:text-amber-400 dark:hover:bg-amber-900/30"
+                                                    size="sm"
+                                                    className="h-9 cursor-pointer gap-1.5 rounded-lg border-amber-100 text-amber-600 transition-colors hover:bg-amber-50 dark:text-amber-400 dark:hover:bg-amber-900/30"
                                                     onClick={() =>
                                                         setTransferringStudent(
                                                             student,
@@ -908,12 +907,12 @@ export default function StudentsIndex({
                                                     }
                                                 >
                                                     <ArrowRightLeft className="size-4" />
+                                                    <span className="font-bold">نقل</span>
                                                 </Button>
                                                 <Button
                                                     variant="ghost"
-                                                    size="icon"
-                                                    title="تعديل الطالب"
-                                                    className="size-8 cursor-pointer rounded-lg text-slate-600 transition-colors hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-800"
+                                                    size="sm"
+                                                    className="h-9 cursor-pointer gap-1.5 rounded-lg border-slate-200 text-slate-600 transition-colors hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-800"
                                                     onClick={() =>
                                                         setEditingStudent(
                                                             student,
@@ -921,12 +920,12 @@ export default function StudentsIndex({
                                                     }
                                                 >
                                                     <Pencil className="size-4" />
+                                                    <span className="font-bold">تعديل</span>
                                                 </Button>
                                                 <Button
                                                     variant="ghost"
-                                                    size="icon"
-                                                    title="حذف الطالب"
-                                                    className="size-8 cursor-pointer rounded-lg text-rose-600 transition-colors hover:bg-rose-50 dark:text-rose-400 dark:hover:bg-rose-900/30"
+                                                    size="sm"
+                                                    className="h-9 cursor-pointer gap-1.5 rounded-lg border-rose-100 text-rose-600 transition-colors hover:bg-rose-50 dark:text-rose-400 dark:hover:bg-rose-900/30"
                                                     onClick={() =>
                                                         setDeletingStudent(
                                                             student,
@@ -934,6 +933,7 @@ export default function StudentsIndex({
                                                     }
                                                 >
                                                     <Trash className="size-4" />
+                                                    <span className="font-bold">حذف</span>
                                                 </Button>
                                             </div>
                                         </TableCell>
@@ -1029,7 +1029,15 @@ export default function StudentsIndex({
                     onConfirm={confirmDelete}
                     processing={isDeleting}
                     title="حذف الطالب"
-                    description={`هل أنت متأكد من حذف الطالب ${deletingStudent?.name}؟ لا يمكن التراجع عن هذا الإجراء.`}
+                    description={
+                        <>
+                            هل أنت متأكد من حذف الطالب{' '}
+                            <span className="text-base font-bold text-indigo-600 dark:text-indigo-400">
+                                {deletingStudent?.name}
+                            </span>
+                            ؟ لا يمكن التراجع عن هذا الإجراء.
+                        </>
+                    }
                 />
             </div>
         </AppLayout>

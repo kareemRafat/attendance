@@ -355,16 +355,16 @@ export default function GroupsIndex({
                             <div className="p-5 pb-0">
                                 <div className="flex items-start justify-between gap-4">
                                     <div className="min-w-0">
-                                        <h3 className="truncate text-xl leading-tight font-extrabold text-slate-900 transition-colors group-hover:text-indigo-600 dark:text-white capitalize">
+                                        <h3 className="truncate text-2xl leading-tight font-extrabold text-slate-900 transition-colors group-hover:text-indigo-600 dark:text-white capitalize">
                                             {group.name}
                                         </h3>
                                         <div className="mt-1 flex items-center gap-1.5">
                                             {/* <Building2 size={17} className='text-slate-700' /> */}
                                             <Navigation
-                                                size={17}
+                                                size={18}
                                                 className="text-slate-700"
                                             />
-                                            <span className="inline-flex items-center rounded-full bg-slate-100 px-2 py-1 text-xs font-bold tracking-wider text-blue-900 capitalize dark:bg-slate-800">
+                                            <span className="inline-flex items-center rounded-full bg-slate-100 px-2.5 py-1 text-sm font-bold tracking-wider text-blue-900 capitalize dark:bg-slate-800">
                                                 {group.branch?.name}
                                             </span>
                                         </div>
@@ -381,12 +381,12 @@ export default function GroupsIndex({
                             {/* Card Body Area */}
                             <div className="p-5">
                                 <div className="grid grid-cols-1 gap-3">
-                                    <div className="flex items-center gap-3 rounded-xl border border-slate-100 bg-slate-50 p-3 text-sm font-medium text-slate-600 dark:border-slate-800/50 dark:bg-slate-800/50 dark:text-slate-400">
-                                        <div className="flex size-8 items-center justify-center rounded-lg bg-white text-amber-500 shadow-sm dark:bg-slate-800">
-                                            <Calendar className="size-4" />
+                                    <div className="flex items-center gap-3 rounded-xl border border-slate-100 bg-slate-50 p-3 text-base font-medium text-slate-600 dark:border-slate-800/50 dark:bg-slate-800/50 dark:text-slate-400">
+                                        <div className="flex size-9 items-center justify-center rounded-lg bg-white text-amber-500 shadow-sm dark:bg-slate-800">
+                                            <Calendar className="size-5" />
                                         </div>
                                         <div className="flex flex-col">
-                                            <span className="text-[10px] font-bold tracking-tight text-slate-400 uppercase">
+                                            <span className="text-xs font-bold tracking-tight text-slate-400 uppercase">
                                                 الجدول
                                             </span>
                                             <span className="text-slate-900 dark:text-slate-200">
@@ -395,12 +395,12 @@ export default function GroupsIndex({
                                         </div>
                                     </div>
 
-                                    <div className="flex items-center gap-3 rounded-xl border border-slate-100 bg-slate-50 p-3 text-sm font-medium text-slate-600 dark:border-slate-800/50 dark:bg-slate-800/50 dark:text-slate-400">
-                                        <div className="flex size-8 items-center justify-center rounded-lg bg-white text-emerald-500 shadow-sm dark:bg-slate-800">
-                                            <Users className="size-4" />
+                                    <div className="flex items-center gap-3 rounded-xl border border-slate-100 bg-slate-50 p-3 text-base font-medium text-slate-600 dark:border-slate-800/50 dark:bg-slate-800/50 dark:text-slate-400">
+                                        <div className="flex size-9 items-center justify-center rounded-lg bg-white text-emerald-500 shadow-sm dark:bg-slate-800">
+                                            <Users className="size-5" />
                                         </div>
                                         <div className="flex flex-col">
-                                            <span className="text-[10px] font-bold tracking-tight text-slate-400 uppercase">
+                                            <span className="text-xs font-bold tracking-tight text-slate-400 uppercase">
                                                 المسجلين
                                             </span>
                                             <span className="text-slate-900 dark:text-slate-200">
@@ -420,7 +420,7 @@ export default function GroupsIndex({
                                                 : 'default'
                                         }
                                         className={cn(
-                                            'h-10 flex-1 cursor-pointer rounded-xl border-2 font-bold transition-all',
+                                            'h-11 flex-1 cursor-pointer rounded-xl border-2 text-base font-bold transition-all',
                                             group.is_active
                                                 ? 'border-slate-100 text-slate-600 hover:border-red-100 hover:bg-red-50 hover:text-red-600'
                                                 : 'border-transparent bg-indigo-600 text-white shadow-lg shadow-indigo-500/20 hover:bg-indigo-700',
@@ -429,12 +429,12 @@ export default function GroupsIndex({
                                     >
                                         {group.is_active ? (
                                             <>
-                                                <CheckCircle className="mr-2 size-4" />{' '}
+                                                <CheckCircle className="mr-2 size-5" />{' '}
                                                 إنهاء المجموعة
                                             </>
                                         ) : (
                                             <>
-                                                <RotateCcw className="mr-2 size-4" />{' '}
+                                                <RotateCcw className="mr-2 size-5" />{' '}
                                                 إعادة تنشيط
                                             </>
                                         )}
@@ -443,7 +443,7 @@ export default function GroupsIndex({
                                     {group.is_active && (
                                         <Button
                                             asChild
-                                            className="h-10 cursor-pointer rounded-xl bg-slate-900 px-5 font-bold text-white shadow-lg shadow-slate-500/10 transition-all hover:bg-slate-800"
+                                            className="h-11 cursor-pointer rounded-xl bg-slate-900 px-6 text-base font-bold text-white shadow-lg shadow-slate-500/10 transition-all hover:bg-slate-800"
                                         >
                                             <Link
                                                 href={`/groups/${group.id}${window.location.search}`}

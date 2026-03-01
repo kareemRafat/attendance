@@ -164,15 +164,15 @@ export default function GroupShow({
                 <div className="grid grid-cols-1 gap-4 text-slate-900 md:grid-cols-3">
                     <Card className="border-indigo-100 bg-indigo-50/50 shadow-sm dark:border-indigo-900 dark:bg-indigo-950/20">
                         <CardHeader className="p-4 pb-2">
-                            <CardTitle className="flex items-center gap-2 text-xs font-bold tracking-wider text-indigo-600 uppercase dark:text-indigo-400">
-                                <Calendar className="size-3.5" /> الجدول
+                            <CardTitle className="flex items-center gap-2 text-sm font-bold tracking-wider text-indigo-600 uppercase dark:text-indigo-400">
+                                <Calendar className="size-4" /> الجدول
                             </CardTitle>
                         </CardHeader>
                         <CardContent className="p-4 pt-0">
-                            <p className="text-lg font-bold text-indigo-900 dark:text-indigo-200">
+                            <p className="text-xl font-bold text-indigo-900 dark:text-indigo-200">
                                 {group.formatted_pattern}
                             </p>
-                            <p className="text-xs font-medium text-indigo-600/70">
+                            <p className="text-sm font-medium text-indigo-600/70">
                                 بدأت في{' '}
                                 {format(new Date(group.start_date), 'PPP')}
                             </p>
@@ -181,15 +181,15 @@ export default function GroupShow({
 
                     <Card className="border-emerald-100 bg-emerald-50/50 shadow-sm dark:border-emerald-900 dark:bg-emerald-950/20">
                         <CardHeader className="p-4 pb-2">
-                            <CardTitle className="flex items-center gap-2 text-xs font-bold tracking-wider text-emerald-600 uppercase dark:text-emerald-400">
-                                <Users className="size-3.5" /> المسجلين
+                            <CardTitle className="flex items-center gap-2 text-sm font-bold tracking-wider text-emerald-600 uppercase dark:text-emerald-400">
+                                <Users className="size-4" /> المسجلين
                             </CardTitle>
                         </CardHeader>
                         <CardContent className="p-4 pt-0">
-                            <p className="text-lg font-bold text-emerald-900 dark:text-emerald-200">
+                            <p className="text-xl font-bold text-emerald-900 dark:text-emerald-200">
                                 {students.total} طلاب
                             </p>
-                            <p className="text-xs font-medium text-emerald-600/70">
+                            <p className="text-sm font-medium text-emerald-600/70">
                                 نشط في هذه المجموعة
                             </p>
                         </CardContent>
@@ -197,15 +197,15 @@ export default function GroupShow({
 
                     <Card className="border-amber-100 bg-amber-50/50 shadow-sm dark:border-amber-900 dark:bg-amber-950/20">
                         <CardHeader className="p-4 pb-2">
-                            <CardTitle className="flex items-center gap-2 text-xs font-bold tracking-wider text-amber-600 uppercase dark:text-amber-400">
-                                <BookOpen className="size-3.5" /> التقدم
+                            <CardTitle className="flex items-center gap-2 text-sm font-bold tracking-wider text-amber-600 uppercase dark:text-amber-400">
+                                <BookOpen className="size-4" /> التقدم
                             </CardTitle>
                         </CardHeader>
                         <CardContent className="p-4 pt-0">
-                            <p className="text-lg font-bold text-amber-900 dark:text-amber-200">
+                            <p className="text-xl font-bold text-amber-900 dark:text-amber-200">
                                 {totalSessions} / {group.max_lectures} محاضرة
                             </p>
-                            <p className="text-xs font-medium text-amber-600/70">
+                            <p className="text-sm font-medium text-amber-600/70">
                                 إجمالي الجلسات المسجلة
                             </p>
                         </CardContent>
@@ -257,25 +257,25 @@ export default function GroupShow({
                         <Table>
                             <TableHeader className="bg-slate-50/50 dark:bg-slate-800/20">
                                 <TableRow className="dark:border-slate-800">
-                                    <TableHead className="py-4 ps-6 font-bold text-slate-900 dark:text-slate-300">
+                                    <TableHead className="py-4 ps-6 text-base font-bold text-slate-900 dark:text-slate-300">
                                         اسم الطالب
                                     </TableHead>
-                                    <TableHead className="font-bold text-slate-900 dark:text-slate-300">
+                                    <TableHead className="text-base font-bold text-slate-900 dark:text-slate-300">
                                         المسار
                                     </TableHead>
-                                    <TableHead className="text-center font-bold text-slate-900 dark:text-slate-300">
+                                    <TableHead className="text-center text-base font-bold text-slate-900 dark:text-slate-300">
                                         النسبة
                                     </TableHead>
-                                    <TableHead className="text-center font-bold text-emerald-600 dark:text-emerald-400">
+                                    <TableHead className="text-center text-base font-bold text-emerald-600 dark:text-emerald-400">
                                         حضور
                                     </TableHead>
-                                    <TableHead className="text-center font-bold text-rose-600 dark:text-rose-400">
+                                    <TableHead className="text-center text-base font-bold text-rose-600 dark:text-rose-400">
                                         غياب
                                     </TableHead>
-                                    <TableHead className="text-center font-bold text-amber-600 dark:text-amber-400">
+                                    <TableHead className="text-center text-base font-bold text-amber-600 dark:text-amber-400">
                                         بعذر
                                     </TableHead>
-                                    <TableHead className="pe-6 text-end font-bold text-slate-900 dark:text-slate-300">
+                                    <TableHead className="pe-6 text-end text-base font-bold text-slate-900 dark:text-slate-300">
                                         إجراء
                                     </TableHead>
                                 </TableRow>
@@ -301,11 +301,11 @@ export default function GroupShow({
                                             key={student.id}
                                             className="group transition-colors hover:bg-slate-50/50 dark:border-slate-800 dark:hover:bg-slate-800/30"
                                         >
-                                            <TableCell className="py-4 ps-6 font-bold text-slate-900 dark:text-slate-200">
+                                            <TableCell className="py-4 ps-6 text-base font-bold text-slate-900 dark:text-slate-200">
                                                 {student.name}
                                             </TableCell>
                                             <TableCell>
-                                                <span className="inline-flex items-center rounded-full border bg-slate-100 px-2.5 py-0.5 text-[10px] font-black tracking-tight text-slate-600 uppercase dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300">
+                                                <span className="inline-flex items-center rounded-full border bg-slate-100 px-2.5 py-0.5 text-xs font-black tracking-tight text-slate-600 uppercase dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300">
                                                     {student.formatted_track}
                                                 </span>
                                             </TableCell>
@@ -313,7 +313,7 @@ export default function GroupShow({
                                                 <div className="flex items-center justify-center gap-1.5">
                                                     <span
                                                         className={cn(
-                                                            'text-sm font-black',
+                                                            'text-base font-black',
                                                             rate >= 80
                                                                 ? 'text-emerald-600 dark:text-emerald-400'
                                                                 : rate >= 60
@@ -325,7 +325,7 @@ export default function GroupShow({
                                                     </span>
                                                     <TrendingUp
                                                         className={cn(
-                                                            'size-3',
+                                                            'size-4',
                                                             rate >= 80
                                                                 ? 'text-emerald-400'
                                                                 : 'text-slate-300',
@@ -334,17 +334,17 @@ export default function GroupShow({
                                                 </div>
                                             </TableCell>
                                             <TableCell className="text-center">
-                                                <span className="inline-flex size-7 items-center justify-center rounded-lg border border-emerald-100 bg-emerald-50 text-xs font-bold text-emerald-700 dark:border-emerald-900 dark:bg-emerald-950/30 dark:text-emerald-400">
+                                                <span className="inline-flex size-8 items-center justify-center rounded-lg border border-emerald-100 bg-emerald-50 text-sm font-bold text-emerald-700 dark:border-emerald-900 dark:bg-emerald-950/30 dark:text-emerald-400">
                                                     {student.present_count}
                                                 </span>
                                             </TableCell>
                                             <TableCell className="text-center">
-                                                <span className="inline-flex size-7 items-center justify-center rounded-lg border border-rose-100 bg-rose-50 text-xs font-bold text-rose-700 dark:border-rose-900 dark:bg-rose-950/30 dark:text-rose-400">
+                                                <span className="inline-flex size-8 items-center justify-center rounded-lg border border-rose-100 bg-rose-50 text-sm font-bold text-rose-700 dark:border-rose-900 dark:bg-rose-950/30 dark:text-rose-400">
                                                     {student.absent_count}
                                                 </span>
                                             </TableCell>
                                             <TableCell className="text-center">
-                                                <span className="inline-flex size-7 items-center justify-center rounded-lg border border-amber-100 bg-amber-50 text-xs font-bold text-amber-700 dark:border-amber-900 dark:bg-emerald-950/30 dark:text-amber-400">
+                                                <span className="inline-flex size-8 items-center justify-center rounded-lg border border-amber-100 bg-amber-50 text-sm font-bold text-amber-700 dark:border-amber-900 dark:bg-emerald-950/30 dark:text-amber-400">
                                                     {student.excused_count}
                                                 </span>
                                             </TableCell>
@@ -355,7 +355,7 @@ export default function GroupShow({
                                                     <Button
                                                         variant="ghost"
                                                         size="sm"
-                                                        className="h-8 rounded-full text-xs font-bold text-indigo-600 hover:bg-indigo-50 hover:text-indigo-700 dark:text-indigo-400 dark:hover:bg-indigo-900/30"
+                                                        className="h-9 cursor-pointer rounded-full text-sm font-bold text-indigo-600 hover:bg-indigo-50 hover:text-indigo-700 dark:text-indigo-400 dark:hover:bg-indigo-900/30"
                                                     >
                                                         عرض الملف الشخصي
                                                     </Button>
@@ -446,19 +446,19 @@ export default function GroupShow({
                         <Table>
                             <TableHeader className="bg-slate-50/50 dark:bg-slate-800/20">
                                 <TableRow className="dark:border-slate-800">
-                                    <TableHead className="py-4 ps-6 font-bold text-slate-900 dark:text-slate-300">
+                                    <TableHead className="py-4 ps-6 text-base font-bold text-slate-900 dark:text-slate-300">
                                         رقم الجلسة
                                     </TableHead>
-                                    <TableHead className="font-bold text-slate-900 dark:text-slate-300">
+                                    <TableHead className="text-base font-bold text-slate-900 dark:text-slate-300">
                                         التاريخ
                                     </TableHead>
-                                    <TableHead className="text-center font-bold text-emerald-600 dark:text-emerald-400">
+                                    <TableHead className="text-center text-base font-bold text-emerald-600 dark:text-emerald-400">
                                         حضور
                                     </TableHead>
-                                    <TableHead className="text-center font-bold text-rose-600 dark:text-rose-400">
+                                    <TableHead className="text-center text-base font-bold text-rose-600 dark:text-rose-400">
                                         غياب
                                     </TableHead>
-                                    <TableHead className="text-center font-bold text-amber-600 dark:text-amber-400">
+                                    <TableHead className="text-center text-base font-bold text-amber-600 dark:text-amber-400">
                                         بعذر
                                     </TableHead>
                                 </TableRow>
@@ -469,30 +469,30 @@ export default function GroupShow({
                                         key={session.id}
                                         className="transition-colors hover:bg-slate-50/50 dark:border-slate-800 dark:hover:bg-slate-800/30"
                                     >
-                                        <TableCell className="py-4 ps-6 font-black text-slate-900 dark:text-slate-200">
+                                        <TableCell className="py-4 ps-6 text-base font-black text-slate-900 dark:text-slate-200">
                                             محاضرة {session.lecture_number}
                                         </TableCell>
-                                        <TableCell className="font-medium text-slate-600 dark:text-slate-400">
+                                        <TableCell className="text-base font-medium text-slate-600 dark:text-slate-400">
                                             {format(
                                                 new Date(session.date),
                                                 'PPP',
                                             )}
                                         </TableCell>
                                         <TableCell className="text-center">
-                                            <div className="flex items-center justify-center gap-1 font-bold text-emerald-600 dark:text-emerald-400">
-                                                <CheckCircle2 className="size-3.5" />
+                                            <div className="flex items-center justify-center gap-1 text-base font-bold text-emerald-600 dark:text-emerald-400">
+                                                <CheckCircle2 className="size-4" />
                                                 {session.present_count}
                                             </div>
                                         </TableCell>
                                         <TableCell className="text-center">
-                                            <div className="flex items-center justify-center gap-1 font-bold text-rose-600 dark:text-rose-400">
-                                                <XCircle className="size-3.5" />
+                                            <div className="flex items-center justify-center gap-1 text-base font-bold text-rose-600 dark:text-rose-400">
+                                                <XCircle className="size-4" />
                                                 {session.absent_count}
                                             </div>
                                         </TableCell>
                                         <TableCell className="text-center">
-                                            <div className="flex items-center justify-center gap-1 font-bold text-amber-600 dark:text-amber-400">
-                                                <Clock className="size-3.5" />
+                                            <div className="flex items-center justify-center gap-1 text-base font-bold text-amber-600 dark:text-amber-400">
+                                                <Clock className="size-4" />
                                                 {session.excused_count}
                                             </div>
                                         </TableCell>

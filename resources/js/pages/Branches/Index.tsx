@@ -187,12 +187,12 @@ export default function BranchesIndex({ branches }: Props) {
                                             <Pencil className="size-4" />
                                         </Button>
                                     </div>
-                                    <CardTitle className="text-2xl leading-tight font-black text-slate-900 dark:text-white">
+                                    <CardTitle className="text-3xl leading-tight font-black text-slate-900 dark:text-white">
                                         {branch.name}
                                     </CardTitle>
                                     <div className="mt-2 flex items-center gap-1.5 text-slate-500 dark:text-slate-400">
-                                        <MapPin className="size-4 text-blue-400 dark:text-blue-500" />
-                                        <span className="line-clamp-1 text-sm font-medium">
+                                        <MapPin className="size-5 text-blue-400 dark:text-blue-500" />
+                                        <span className="line-clamp-1 text-base font-medium">
                                             {branch.location ||
                                                 'مكتب عن بعد / افتراضي'}
                                         </span>
@@ -201,25 +201,25 @@ export default function BranchesIndex({ branches }: Props) {
                                 <CardContent className="px-6 pb-8">
                                     <div className="mt-2 grid grid-cols-2 gap-4">
                                         <div className="flex flex-col rounded-2xl border border-indigo-100 bg-indigo-50/30 p-4 dark:border-indigo-900/20 dark:bg-indigo-900/10">
-                                            <span className="mb-1 text-[10px] font-black tracking-[0.15em] text-indigo-400 uppercase dark:text-indigo-500">
+                                            <span className="mb-1 text-xs font-black tracking-[0.15em] text-indigo-400 uppercase dark:text-indigo-500">
                                                 المجموعات النشطة
                                             </span>
                                             <div className="flex items-baseline gap-1">
-                                                <span className="text-3xl font-black text-indigo-700 dark:text-indigo-400">
+                                                <span className="text-4xl font-black text-indigo-700 dark:text-indigo-400">
                                                     {branch.groups_count}
                                                 </span>
-                                                <Library className="size-4 text-indigo-300 dark:text-indigo-600" />
+                                                <Library className="size-5 text-indigo-300 dark:text-indigo-600" />
                                             </div>
                                         </div>
                                         <div className="flex flex-col rounded-2xl border border-blue-100 bg-blue-50/30 p-4 dark:border-blue-900/20 dark:bg-blue-900/10">
-                                            <span className="mb-1 text-[10px] font-black tracking-[0.15em] text-blue-400 uppercase dark:text-blue-500">
+                                            <span className="mb-1 text-xs font-black tracking-[0.15em] text-blue-400 uppercase dark:text-blue-500">
                                                 الموظفون
                                             </span>
                                             <div className="flex items-baseline gap-1">
-                                                <span className="text-3xl font-black text-blue-700 dark:text-blue-400">
+                                                <span className="text-4xl font-black text-blue-700 dark:text-blue-400">
                                                     {branch.users_count}
                                                 </span>
-                                                <Users className="size-4 text-blue-300 dark:text-blue-600" />
+                                                <Users className="size-5 text-blue-300 dark:text-blue-600" />
                                             </div>
                                         </div>
                                     </div>
@@ -236,18 +236,18 @@ export default function BranchesIndex({ branches }: Props) {
                                             ].map((_, i) => (
                                                 <div
                                                     key={i}
-                                                    className="flex size-8 items-center justify-center rounded-full border-2 border-white bg-slate-100 dark:border-slate-900 dark:bg-slate-800"
+                                                    className="flex size-9 items-center justify-center rounded-full border-2 border-white bg-slate-100 dark:border-slate-900 dark:bg-slate-800"
                                                 >
-                                                    <Users className="size-3 text-slate-400 dark:text-slate-500" />
+                                                    <Users className="size-4 text-slate-400 dark:text-slate-500" />
                                                 </div>
                                             ))}
                                             {branch.users_count > 3 && (
-                                                <div className="flex size-8 items-center justify-center rounded-full border-2 border-white bg-slate-50 text-[10px] font-bold text-slate-500 dark:border-slate-900 dark:bg-slate-800 dark:text-slate-400">
+                                                <div className="flex size-9 items-center justify-center rounded-full border-2 border-white bg-slate-50 text-xs font-bold text-slate-500 dark:border-slate-900 dark:bg-slate-800 dark:text-slate-400">
                                                     +{branch.users_count - 3}
                                                 </div>
                                             )}
                                         </div>
-                                        <span className="ms-3 text-[10px] font-bold tracking-widest text-slate-400 uppercase dark:text-slate-500">
+                                        <span className="ms-3 text-xs font-bold tracking-widest text-slate-400 uppercase dark:text-slate-500">
                                             إجمالي عدد الموظفين:{' '}
                                             {branch.users_count}
                                         </span>

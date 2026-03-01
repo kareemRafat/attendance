@@ -1,3 +1,4 @@
+import { ReactNode } from 'react';
 import { Loader2, AlertTriangle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
@@ -15,7 +16,7 @@ interface DeleteConfirmationDialogProps {
     onClose: () => void;
     onConfirm: () => void;
     title: string;
-    description: string;
+    description: ReactNode;
     processing?: boolean;
     confirmText?: string;
     confirmVariant?:
@@ -61,7 +62,9 @@ export function DeleteConfirmationDialog({
                             {title}
                         </DialogTitle>
                     </div>
-                    <DialogDescription>{description}</DialogDescription>
+                    <DialogDescription asChild>
+                        <div>{description}</div>
+                    </DialogDescription>
                 </DialogHeader>
                 <DialogFooter className="mt-4 gap-2 sm:gap-0">
                     <Button

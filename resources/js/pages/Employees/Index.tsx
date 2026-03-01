@@ -303,16 +303,16 @@ export default function EmployeesIndex({ employees, branches }: Props) {
                     <Table>
                         <TableHeader className="bg-slate-50/50 dark:bg-slate-800/20">
                             <TableRow className="dark:border-slate-800">
-                                <TableHead className="px-6 py-4 text-start font-bold text-slate-900 dark:text-slate-300">
+                                <TableHead className="px-6 py-4 text-start text-base font-bold text-slate-900 dark:text-slate-300">
                                     الموظف
                                 </TableHead>
-                                <TableHead className="text-start font-bold text-slate-900 dark:text-slate-300">
+                                <TableHead className="text-start text-base font-bold text-slate-900 dark:text-slate-300">
                                     الفرع
                                 </TableHead>
-                                <TableHead className="text-start font-bold text-slate-900 dark:text-slate-300">
+                                <TableHead className="text-start text-base font-bold text-slate-900 dark:text-slate-300">
                                     الصلاحية
                                 </TableHead>
-                                <TableHead className="px-6 text-end font-bold text-slate-900 dark:text-slate-300">
+                                <TableHead className="px-6 text-end text-base font-bold text-slate-900 dark:text-slate-300">
                                     الإجراءات
                                 </TableHead>
                             </TableRow>
@@ -325,14 +325,14 @@ export default function EmployeesIndex({ employees, branches }: Props) {
                                 >
                                     <TableCell className="px-6 py-4 text-start">
                                         <div className="flex items-center gap-3 text-start">
-                                            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-indigo-50 text-indigo-600 dark:bg-indigo-900/20 dark:text-indigo-400">
-                                                <Users className="size-5" />
+                                            <div className="flex h-11 w-11 items-center justify-center rounded-full bg-indigo-50 text-indigo-600 dark:bg-indigo-900/20 dark:text-indigo-400">
+                                                <Users className="size-6" />
                                             </div>
                                             <div className="flex flex-col text-start">
-                                                <span className="font-bold text-slate-900 dark:text-white">
+                                                <span className="text-base font-bold text-slate-900 dark:text-white">
                                                     {employee.name}
                                                 </span>
-                                                <span className="text-xs text-slate-500 dark:text-slate-400">
+                                                <span className="text-sm text-slate-500 dark:text-slate-400">
                                                     {employee.email}
                                                 </span>
                                             </div>
@@ -340,8 +340,8 @@ export default function EmployeesIndex({ employees, branches }: Props) {
                                     </TableCell>
                                     <TableCell className="text-start">
                                         <div className="flex items-center gap-2">
-                                            <Building2 className="size-4 text-slate-400" />
-                                            <span className="font-medium text-slate-700 dark:text-slate-200">
+                                            <Building2 className="size-5 text-slate-400" />
+                                            <span className="text-base font-medium text-slate-700 dark:text-slate-200">
                                                 {employee.branch?.name || 'غير محدد'}
                                             </span>
                                         </div>
@@ -349,13 +349,13 @@ export default function EmployeesIndex({ employees, branches }: Props) {
                                     <TableCell className="text-start">
                                         <span
                                             className={cn(
-                                                'inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-bold capitalize',
+                                                'inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-sm font-bold capitalize',
                                                 employee.role === 'admin'
                                                     ? 'bg-amber-50 text-amber-700 dark:bg-amber-900/20 dark:text-amber-400'
                                                     : 'bg-emerald-50 text-emerald-700 dark:bg-emerald-900/20 dark:text-emerald-400',
                                             )}
                                         >
-                                            <Shield className="size-3" />
+                                            <Shield className="size-4" />
                                             {employee.role === 'admin' ? 'مدير' : 'موظف'}
                                         </span>
                                     </TableCell>
@@ -557,7 +557,15 @@ export default function EmployeesIndex({ employees, branches }: Props) {
                     onClose={() => setDeletingEmployee(null)}
                     onConfirm={confirmDelete}
                     title="حذف الموظف"
-                    description={`هل أنت متأكد من حذف الموظف ${deletingEmployee?.name}؟ سيؤدي هذا إلى إزالة صلاحية وصوله إلى النظام بشكل نهائي.`}
+                    description={
+                        <>
+                            هل أنت متأكد من حذف الموظف{' '}
+                            <span className="text-xl font-bold text-indigo-600 dark:text-indigo-400">
+                                {deletingEmployee?.name}
+                            </span>
+                            ؟ سيؤدي هذا إلى إزالة صلاحية وصوله إلى النظام بشكل نهائي.
+                        </>
+                    }
                 />
             </div>
         </AppLayout>
