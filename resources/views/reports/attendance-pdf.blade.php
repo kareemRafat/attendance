@@ -7,11 +7,7 @@
     <style>
         @font-face {
             font-family: 'Readex Pro';
-            @if(isset($print) && $print)
-                src: url('{{ asset('fonts/ReadexPro-Regular.ttf') }}') format('truetype');
-            @else
-                src: url('{{ public_path('fonts/ReadexPro-Regular.ttf') }}') format('truetype');
-            @endif
+            src: url('{{ asset('fonts/ReadexPro-Regular.ttf') }}') format('truetype');
             font-weight: 400;
             font-style: normal;
         }

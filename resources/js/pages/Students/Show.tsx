@@ -185,17 +185,6 @@ export default function StudentShow({
                         <Button
                             variant="outline"
                             className="cursor-pointer gap-2 rounded-xl border-indigo-200 bg-indigo-50/50 text-indigo-700 hover:bg-indigo-100 dark:border-indigo-900/50 dark:bg-indigo-950/20 dark:text-indigo-400 dark:hover:bg-indigo-950/40"
-                            asChild
-                        >
-                            <a
-                                href={ReportActions.download.url({ student: student.id })}
-                            >
-                                <FileDown className="size-4" /> تقرير الحضور
-                            </a>
-                        </Button>
-                        <Button
-                            variant="outline"
-                            className="cursor-pointer gap-2 rounded-xl border-emerald-200 bg-emerald-50/50 text-emerald-700 hover:bg-emerald-100 dark:border-emerald-900/50 dark:bg-emerald-950/20 dark:text-emerald-400 dark:hover:bg-emerald-950/40"
                             onClick={() => {
                                 const printUrl = ReportActions.print.url({ student: student.id });
                                 const iframe = document.createElement('iframe');
@@ -211,8 +200,9 @@ export default function StudentShow({
                                 }, 60000); // 1 minute timeout for safety
                             }}
                         >
-                            <Printer className="size-4" /> طباعة التقرير
+                            <Printer className="size-4" /> تقرير الحضور
                         </Button>
+
                         <Button
                             variant="outline"
                             className="cursor-pointer gap-2 rounded-xl dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800"

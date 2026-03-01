@@ -355,7 +355,7 @@ export default function GroupsIndex({
                             <div className="p-5 pb-0">
                                 <div className="flex items-start justify-between gap-4">
                                     <div className="min-w-0">
-                                        <h3 className="truncate text-2xl leading-tight font-extrabold text-slate-900 transition-colors group-hover:text-indigo-600 dark:text-white capitalize">
+                                        <h3 className="truncate text-2xl leading-tight font-extrabold text-slate-900 capitalize transition-colors group-hover:text-indigo-600 dark:text-white">
                                             {group.name}
                                         </h3>
                                         <div className="mt-1 flex items-center gap-1.5">
@@ -404,8 +404,7 @@ export default function GroupsIndex({
                                                 المسجلين
                                             </span>
                                             <span className="text-slate-900 dark:text-slate-200">
-                                                {group.students_count || 0}{' '}
-                                                طلاب
+                                                {group.students_count || 0} طلاب
                                             </span>
                                         </div>
                                     </div>
@@ -505,7 +504,14 @@ export default function GroupsIndex({
                                     >
                                         <span
                                             dangerouslySetInnerHTML={{
-                                                __html: link.label === '&laquo; Previous' ? 'السابق' : (link.label === 'Next &raquo;' ? 'التالي' : link.label),
+                                                __html:
+                                                    link.label ===
+                                                    '&laquo; Previous'
+                                                        ? 'السابق'
+                                                        : link.label ===
+                                                            'Next &raquo;'
+                                                          ? 'التالي'
+                                                          : link.label,
                                             }}
                                         />
                                     </Button>
@@ -561,7 +567,9 @@ export default function GroupsIndex({
                             </div>
 
                             <div className="grid gap-2">
-                                <Label htmlFor="create-name">اسم المجموعة</Label>
+                                <Label htmlFor="create-name">
+                                    اسم المجموعة
+                                </Label>
                                 <Input
                                     id="create-name"
                                     value={createForm.data.name}
@@ -725,9 +733,7 @@ export default function GroupsIndex({
                             </div>
 
                             <div className="grid gap-2">
-                                <Label htmlFor="edit-pattern">
-                                    نمط الأيام
-                                </Label>
+                                <Label htmlFor="edit-pattern">نمط الأيام</Label>
                                 <Select
                                     value={editForm.data.pattern}
                                     onValueChange={(v) =>
@@ -821,7 +827,15 @@ export default function GroupsIndex({
                 onConfirm={handleConfirmFinish}
                 processing={finishing}
                 title="إنهاء المجموعة"
-                description={`هل أنت متأكد من إنهاء المجموعة "${finishingGroup?.name}"؟ سيتم نقلها إلى قسم المجموعات المغلقة.`}
+                description={
+                    <>
+                        هل أنت متأكد من إنهاء المجموعة   "
+                        <span className="text-base font-bold text-indigo-600 dark:text-indigo-400">
+                            {finishingGroup?.name}
+                        </span>
+                        " ؟ سيتم نقلها إلى قسم المجموعات المغلقة.
+                    </>
+                }
                 confirmText="إنهاء المجموعة"
                 confirmVariant="destructive"
                 confirmSize="sm"
