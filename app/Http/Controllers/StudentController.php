@@ -51,8 +51,8 @@ class StudentController extends Controller
             'availableGroups' => Group::where('is_active', true)
                 ->select(['id', 'name'])
                 ->get(),
-            'availableBranches' => $user->isAdmin() 
-                ? \App\Models\Branch::select(['id', 'name'])->get() 
+            'availableBranches' => $user->isAdmin()
+                ? \App\Models\Branch::select(['id', 'name'])->get()
                 : [],
             'courseTypes' => collect(CourseType::cases())->map(fn ($case) => [
                 'name' => $case->label(),
@@ -133,7 +133,7 @@ class StudentController extends Controller
                 foreach ($validated['students'] as $studentData) {
                     $student = Student::create([
                         'name' => $studentData['name'],
-                        'details' => $studentData['details'] ?? null,
+                        // 'details' => $studentData['details'] ?? null,
                         'branch_id' => $branchId,
                         'track' => $track,
                     ]);
@@ -153,7 +153,7 @@ class StudentController extends Controller
         DB::transaction(function () use ($validated, $branchId, $track) {
             $student = Student::create([
                 'name' => $validated['name'],
-                'details' => $validated['details'] ?? null,
+                // 'details' => $validated['details'] ?? null,
                 'branch_id' => $branchId,
                 'track' => $track,
             ]);
